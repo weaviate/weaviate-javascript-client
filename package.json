@@ -1,0 +1,25 @@
+{
+  "name": "weaviate-client",
+  "version": "0.0.1",
+  "description": "Javascript client for Weaviate",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semi-technologies/weaviate-js-client.git"
+  },
+  "keywords": [
+    "weaviate"
+  ],
+  "author": "SeMI Technologies",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/semi-technologies/weaviate-js-client/issues"
+  },
+  "homepage": "https://github.com/semi-technologies/weaviate-js-client#readme",
+  "dependencies": {
+    "graphql-client": "^2.0.1"
+  }
+}

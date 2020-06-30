@@ -1,0 +1,8 @@
+language: node_js
+cache: npm
+node_js:
+  - 14
+before_script:
+  - npm install
+script:
+  - npm test
