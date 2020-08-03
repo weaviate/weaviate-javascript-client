@@ -34,10 +34,19 @@ class GraphQLWhere {
 
   toString() {
     this.parse()
-    return `{`+
-      `operator: ${this.operator}, `+
-      `${this.valueType}:${JSON.stringify(this.valueContent)}, `+
-      `${this.path}:${JSON.stringify(this.path)}}`
+    if (this.operands) {
+      return `{`+
+        `operator: ${this.operator}, `+
+        `operands: ${this.operands}` +
+        `}`
+
+    } else {
+      // this is an on-value filter
+      return `{`+
+        `operator: ${this.operator}, `+
+        `${this.valueType}:${JSON.stringify(this.valueContent)}, `+
+        `${this.path}:${JSON.stringify(this.path)}}`
+    }
 
   }
 
@@ -48,7 +57,7 @@ class GraphQLWhere {
           this.parseOperator(this.source[key])
           break
         case "operands":
-          // parse operator
+          this.parseOperands(this.source[key])
           break
         case "path":
           this.parsePath(this.source[key])
@@ -72,7 +81,7 @@ class GraphQLWhere {
 
   parsePath(path) {
     if (!Array.isArray(path)) {
-      throw new Error("where filter: path must be a array")
+      throw new Error("where filter: path must be an array")
     }
 
     this.path=path
@@ -95,11 +104,29 @@ class GraphQLWhere {
     this.valueContent=value
   }
 
+  parseOperands(ops) {
+    if (!Array.isArray(ops)) {
+      throw new Error("where filter: operator must be an array")
+    }
+
+    this.operands = ops
+      .map(element => {
+        return new GraphQLWhere(element).toString()
+      })
+      .join(",")
+  }
+
 }
 
+// Examples
 get.things("Person", "name, street, city").do()
+
 get.things("Person", "name, street, city").
   withWhere({operator:"Equal", valueString:"Johne Doe", path: ["name"]}).
   do()
 
 
+get.things("Person", "name, street, city").
+  withWhere({operator:"And", operands:[{valueString: "foo", operator: "Equal", path: ["foo"]}, 
+    {valueString: "bar", operator: "NotEqual", path: ["bar"]}]}).
+  do()
