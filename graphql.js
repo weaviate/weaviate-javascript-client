@@ -34,6 +34,7 @@ class GraphQLWhere {
 
   toString() {
     this.parse()
+    this.validate()
     if (this.operands) {
       return `{`+
         `operator: ${this.operator}, `+
@@ -48,6 +49,22 @@ class GraphQLWhere {
         `${this.path}:${JSON.stringify(this.path)}}`
     }
 
+  }
+
+  validate() {
+    if (!this.operator) {
+      throw new Error("where filter: operator cannot be empty")
+    }
+
+    if (!this.operands) {
+      if (!this.valueType) {
+        throw new Error("where filter: value<Type> cannot be empty")
+      }
+
+      if (!this.path) {
+        throw new Error("where filter: path cannot be empty")
+      }
+    }
   }
 
   parse() {
