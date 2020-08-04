@@ -12,6 +12,18 @@ test('a simple query without params', () => {
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
+test('a simple query with a limit', () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const expectedQuery = `{Get{Things{Person(limit:7){name}}}}`;
+
+  get.things('Person', 'name').withClient(mockClient).withLimit(7).do();
+
+  expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+});
+
 describe('where filters', () => {
   test('a query with a valid where filter', () => {
     const mockClient = {

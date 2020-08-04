@@ -16,7 +16,8 @@ module.exports = {get};
 class GraphQLBuilder {
   constructor(kind, className, queryString) {
     this.kind = kind;
-    (this.className = className), (this.queryString = queryString);
+    this.className = className;
+    this.queryString = queryString;
   }
 
   withClient(client) {
@@ -34,10 +35,15 @@ class GraphQLBuilder {
     return this;
   }
 
+  withLimit(limit) {
+    this.limit = limit;
+    return this;
+  }
+
   do() {
     let params = '';
 
-    if (this.whereString || this.exploreString) {
+    if (this.whereString || this.exploreString || this.limit) {
       let args = [];
 
       if (this.whereString) {
@@ -46,6 +52,10 @@ class GraphQLBuilder {
 
       if (this.exploreString) {
         args = [...args, `explore:${this.exploreString}`];
+      }
+
+      if (this.limit) {
+        args = [...args, `limit:${this.limit}`];
       }
 
       params = `(${args.join(',')})`;

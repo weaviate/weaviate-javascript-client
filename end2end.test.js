@@ -23,9 +23,19 @@ describe('an end2end test against a deployed instance', () => {
         path: ['wordCount'],
         valueInt: 50,
       })
+      .withLimit(7)
       .do()
       .then(function (result) {
-        expect(result.data.Get.Things.Article.length).toBeGreaterThan(0);
+        expect(result.data.Get.Things.Article.length).toBe(7);
+        expect(
+          result.data.Get.Things.Article[0]['title'].length,
+        ).toBeGreaterThan(0);
+        expect(result.data.Get.Things.Article[0]['url'].length).toBeGreaterThan(
+          0,
+        );
+        expect(
+          result.data.Get.Things.Article[0]['wordCount'],
+        ).toBeGreaterThanOrEqual(50);
       });
   });
   // Execute a request
