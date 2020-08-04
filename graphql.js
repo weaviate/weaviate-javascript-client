@@ -131,7 +131,7 @@ class GraphQLWhere {
 
   parseOperands(ops) {
     if (!Array.isArray(ops)) {
-      throw new Error('where filter: operator must be an array');
+      throw new Error('where filter: operands must be an array');
     }
 
     this.operands = ops
