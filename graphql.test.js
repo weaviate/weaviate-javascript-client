@@ -1,4 +1,4 @@
-const gql = require('./graphql.js');
+const get = require('./graphql.js').get();
 
 test('a simple query without params', () => {
   const mockClient = {
@@ -7,7 +7,7 @@ test('a simple query without params', () => {
 
   const expectedQuery = `{Get{Things{Person{name}}}}`;
 
-  gql.get.things('Person', 'name').withClient(mockClient).do();
+  get.things('Person', 'name').withClient(mockClient).do();
 
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
@@ -23,7 +23,7 @@ describe('where filters', () => {
       `(where:{operator:Equal,valueString:"John Doe",path:["name"]})` +
       `{name}}}}`;
 
-    gql.get
+    get
       .things('Person', 'name')
       .withClient(mockClient)
       .withWhere({operator: 'Equal', valueString: 'John Doe', path: ['name']})
@@ -52,7 +52,7 @@ describe('where filters', () => {
       `]})` +
       `{name}}}}`;
 
-    gql.get
+    get
       .things('Person', 'name')
       .withClient(mockClient)
       .withWhere(nestedWhere)
@@ -102,7 +102,7 @@ describe('where filters', () => {
     tests.forEach(t => {
       test(t.title, () => {
         expect(() => {
-          gql.get
+          get
             .things('Person', 'name')
             .withClient(mockClient)
             .withWhere(t.where)
@@ -122,7 +122,7 @@ describe('explore searchers', () => {
     const expectedQuery =
       `{Get{Things{Person` + `(explore:{concepts:["foo","bar"]})` + `{name}}}}`;
 
-    gql.get
+    get
       .things('Person', 'name')
       .withClient(mockClient)
       .withExplore({concepts: ['foo', 'bar']})
@@ -141,7 +141,7 @@ describe('explore searchers', () => {
       `(explore:{concepts:["foo","bar"],certainty:0.7,moveTo:{concepts:["foo"],force:0.7},moveAwayFrom:{concepts:["bar"],force:0.5}})` +
       `{name}}}}`;
 
-    gql.get
+    get
       .things('Person', 'name')
       .withClient(mockClient)
       .withExplore({
@@ -202,7 +202,7 @@ describe('explore searchers', () => {
     tests.forEach(t => {
       test(t.title, () => {
         expect(() => {
-          gql.get
+          get
             .things('Person', 'name')
             .withClient(mockClient)
             .withExplore(t.explore)

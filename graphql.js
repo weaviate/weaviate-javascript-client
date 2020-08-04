@@ -1,10 +1,14 @@
 const where = require('./graphqlWhere.js');
 const explore = require('./graphqlExplore.js');
 
-const get = {
-  things: function (className, queryString) {
-    return new GraphQLBuilder('Things', className, queryString);
-  },
+const get = client => {
+  return {
+    things: function (className, queryString) {
+      return new GraphQLBuilder('Things', className, queryString).withClient(
+        client,
+      );
+    },
+  };
 };
 
 module.exports = {get};
@@ -47,7 +51,7 @@ class GraphQLBuilder {
       params = `(${args.join(',')})`;
     }
 
-    this.client.query(
+    return this.client.query(
       `{Get{${this.kind}{${this.className}${params}{${this.queryString}}}}}`,
     );
   }
