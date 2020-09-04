@@ -1,5 +1,6 @@
 const {get} = require('./graphql');
 const schema = require('./schema');
+const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
 
 module.exports = {
   client: function (params) {
@@ -30,4 +31,8 @@ module.exports = {
       schema: schema(httpClient),
     };
   },
+
+  // constants
+  KIND_THINGS,
+  KIND_ACTIONS,
 };

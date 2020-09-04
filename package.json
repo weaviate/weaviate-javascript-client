@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/semi-technologies/weaviate-js-client#readme",
   "dependencies": {
-    "graphql-client": "^2.0.1"
+    "graphql-client": "^2.0.1",
+    "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
     "jest": "^26.2.2",
