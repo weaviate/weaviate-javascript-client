@@ -1,6 +1,4 @@
 describe('an end2end test against a deployed instance', () => {
-  // Connect to Weaviate
-
   const client = require('./index.js').client({
     scheme: 'https',
     host: 'demo.dataset.playground.semi.technology',
@@ -39,5 +37,4 @@ describe('an end2end test against a deployed instance', () => {
         ).toBeGreaterThanOrEqual(50);
       });
   });
-  // Execute a request
 });
