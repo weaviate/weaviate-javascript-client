@@ -1,12 +1,13 @@
 describe('an end2end test against a deployed instance', () => {
   // Connect to Weaviate
-  const weaviate = require('./index.js')({
+
+  const client = require('./index.js').client({
     scheme: 'https',
     host: 'demo.dataset.playground.semi.technology',
   });
 
   test('the typed graphql get method with minimal fields', () => {
-    weaviate.graphql.get
+    client.graphql.get
       .things('Article', 'title url wordCount')
       .do()
       .then(function (result) {
@@ -15,7 +16,7 @@ describe('an end2end test against a deployed instance', () => {
   });
 
   test('the typed graphql get method with optional fields', () => {
-    weaviate.graphql.get
+    client.graphql.get
       .things('Article', 'title url wordCount')
       .withExplore({concepts: ['news'], certainty: 0.1})
       .withWhere({
