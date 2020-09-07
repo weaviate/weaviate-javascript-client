@@ -17,6 +17,8 @@ describe('schema', () => {
       ],
     };
 
+    // Note that we are only using one argument in createClass, i.e. the kind
+    // is implicit
     return client.schema.createClass(classObj).then(res => {
       expect(res).toEqual(classObj);
     });
@@ -33,10 +35,26 @@ describe('schema', () => {
       ],
     };
 
+    // Note that we are explicitly setting the kind to thing (2nd argument in
+    // create Class)
     return client.schema
       .createClass(classObj, weaviate.KIND_THINGS)
       .then(res => {
         expect(res).toEqual(classObj);
+      });
+  });
+
+  it('extends the thing class with a new property', () => {
+    const className = 'MyExplicitThingClass';
+    const prop = {
+      dataType: ['string'],
+      name: 'anotherProp',
+    };
+
+    return client.schema
+      .createProperty(className, prop, weaviate.KIND_THINGS)
+      .then(res => {
+        expect(res).toEqual(prop);
       });
   });
 
@@ -100,6 +118,10 @@ describe('schema', () => {
                 {
                   dataType: ['string'],
                   name: 'stringProp',
+                },
+                {
+                  dataType: ['string'],
+                  name: 'anotherProp',
                 },
               ],
             },

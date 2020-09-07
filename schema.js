@@ -10,6 +10,7 @@ const schema = client => {
     createClass: makeCreateClass(client),
     deleteClass: makeDeleteClass(client),
     get: makeGet(client),
+    createProperty: makeCreateProperty(client),
   };
 };
 
@@ -40,4 +41,19 @@ const makeDeleteClass = client => (className, kind = DEFAULT_KIND) => {
 const makeGet = client => className => {
   const path = `/schema`;
   return client.get(path);
+};
+
+const makeCreateProperty = client => (
+  className,
+  property,
+  kind = DEFAULT_KIND,
+) => {
+  try {
+    validateKind(kind);
+  } catch (e) {
+    return Promise.reject(e);
+  }
+
+  const path = `/schema/${kind}/${className}/properties`;
+  return client.post(path, property);
 };
