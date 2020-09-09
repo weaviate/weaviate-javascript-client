@@ -104,6 +104,27 @@ describe('data', () => {
       .catch(e => fail('it should not have errord: ' + e));
   });
 
+  it('gets all things with all optional _underscore params', () => {
+    return client.data
+      .getter()
+      .withUnderscoreClassification()
+      .withUnderscoreInterpretation()
+      .withUnderscoreNearestNeighbors()
+      .withUnderscoreFeatureProjection()
+      .withUnderscoreVector()
+      .do()
+      .then(res => {
+        expect(res.things).toHaveLength(2);
+        expect(res.things[0]._vector.length).toBeGreaterThan(10);
+        expect(res.things[0]._interpretation).toBeDefined();
+        expect(res.things[0]._featureProjection).toBeDefined();
+        expect(res.things[0]._nearestNeighbors).toBeDefined();
+        // not testing for classification as that's only set if the object was
+        // actually classified, this one wasn't
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
   it('gets all actions', () => {
     return client.data
       .getter()
@@ -134,6 +155,25 @@ describe('data', () => {
             schema: {stringProp: 'with-id'},
           }),
         );
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('gets one thing by id with all optional underscore props', () => {
+    return client.data
+      .getterById()
+      .withId('1565c06c-463f-466c-9092-5930dbac3887')
+      .withUnderscoreClassification()
+      .withUnderscoreInterpretation()
+      .withUnderscoreNearestNeighbors()
+      .withUnderscoreVector()
+      .do()
+      .then(res => {
+        expect(res._vector.length).toBeGreaterThan(10);
+        expect(res._interpretation).toBeDefined();
+        expect(res._nearestNeighbors).toBeDefined();
+        // not testing for classification as that's only set if the object was
+        // actually classified, this one wasn't
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
