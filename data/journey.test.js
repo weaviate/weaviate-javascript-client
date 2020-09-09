@@ -1,4 +1,4 @@
-const weaviate = require('./index');
+const weaviate = require('../index');
 
 const thingClassName = 'DataJourneyTestThing';
 const actionClassName = 'DataJourneyTestAction';
