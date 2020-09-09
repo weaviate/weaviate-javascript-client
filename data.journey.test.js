@@ -180,9 +180,11 @@ describe('data', () => {
         const schema = res.schema;
         schema.stringProp = 'thing-updated';
         return client.data
-          .updater(id)
-          .withKind(weaviate.KIND_ACTIONS)
-          .withSchema(schema);
+          .updater()
+          .withId(id)
+          .withClassName(thingClassName)
+          .withSchema(schema)
+          .do();
       })
       .then(res => {
         expect(res.schema).toEqual({
@@ -204,14 +206,38 @@ describe('data', () => {
         const schema = res.schema;
         schema.stringProp = 'action-updated';
         return client.data
-          .updater(id)
+          .updater()
+          .withId(id)
+          .withClassName(actionClassName)
           .withKind(weaviate.KIND_ACTIONS)
-          .withSchema(schema);
+          .withSchema(schema)
+          .do();
       })
       .then(res => {
         expect(res.schema).toEqual({
           stringProp: 'action-updated',
         });
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('merges a thing', () => {
+    const id = '1565c06c-463f-466c-9092-5930dbac3887';
+    return client.data
+      .getterById()
+      .withId(id)
+      .do()
+      .then(res => {
+        // alter the schema
+        const schema = res.schema;
+        schema.intProp = 7;
+        return client.data
+          .merger()
+          .withId(id)
+          .withKind(weaviate.KIND_THINGS)
+          .withClassName(thingClassName)
+          .withSchema(schema)
+          .do();
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
