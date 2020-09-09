@@ -18,7 +18,8 @@ describe('data', () => {
     const schema = {stringProp: 'without-id'};
 
     return client.data
-      .creator(thingClassName)
+      .creator()
+      .withClassName(thingClassName)
       .withSchema(schema)
       .do()
       .then(res => {
@@ -32,7 +33,8 @@ describe('data', () => {
     const id = '1565c06c-463f-466c-9092-5930dbac3887';
 
     return client.data
-      .creator(thingClassName)
+      .creator()
+      .withClassName(thingClassName)
       .withSchema(schema)
       .withId(id)
       .withKind(weaviate.KIND_THINGS)
@@ -49,7 +51,8 @@ describe('data', () => {
     const id = '40d2f93a-8f55-4561-8636-7c759f89ef13';
 
     return client.data
-      .creator(actionClassName)
+      .creator()
+      .withClassName(actionClassName)
       .withSchema(schema)
       .withId(id)
       .withKind(weaviate.KIND_ACTIONS)
@@ -66,22 +69,6 @@ describe('data', () => {
       // TODO: remove in 1.0.0
       setTimeout(resolve, 1000);
     });
-  });
-
-  it('gets one action by id', () => {
-    return client.data
-      .getterById('40d2f93a-8f55-4561-8636-7c759f89ef13')
-      .withKind(weaviate.KIND_ACTIONS)
-      .do()
-      .then(res => {
-        expect(res).toEqual(
-          expect.objectContaining({
-            id: '40d2f93a-8f55-4561-8636-7c759f89ef13',
-            schema: {stringProp: 'this-is-the-action'},
-          }),
-        );
-      })
-      .catch(e => fail('it should not have errord: ' + e));
   });
 
   it('errors without a className', () => {
@@ -137,13 +124,31 @@ describe('data', () => {
 
   it('gets one thing by id', () => {
     return client.data
-      .getterById('1565c06c-463f-466c-9092-5930dbac3887')
+      .getterById()
+      .withId('1565c06c-463f-466c-9092-5930dbac3887')
       .do()
       .then(res => {
         expect(res).toEqual(
           expect.objectContaining({
             id: '1565c06c-463f-466c-9092-5930dbac3887',
             schema: {stringProp: 'with-id'},
+          }),
+        );
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('gets one action by id', () => {
+    return client.data
+      .getterById()
+      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
+      .withKind(weaviate.KIND_ACTIONS)
+      .do()
+      .then(res => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: '40d2f93a-8f55-4561-8636-7c759f89ef13',
+            schema: {stringProp: 'this-is-the-action'},
           }),
         );
       })
@@ -162,6 +167,53 @@ describe('data', () => {
           ),
         );
       });
+  });
+
+  it('updates a thing', () => {
+    const id = '1565c06c-463f-466c-9092-5930dbac3887';
+    return client.data
+      .getterById()
+      .withId(id)
+      .do()
+      .then(res => {
+        // alter the schema
+        const schema = res.schema;
+        schema.stringProp = 'thing-updated';
+        return client.data
+          .updater(id)
+          .withKind(weaviate.KIND_ACTIONS)
+          .withSchema(schema);
+      })
+      .then(res => {
+        expect(res.schema).toEqual({
+          stringProp: 'thing-updated',
+        });
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('updates an action', () => {
+    const id = '40d2f93a-8f55-4561-8636-7c759f89ef13';
+    return client.data
+      .getterById()
+      .withId(id)
+      .withKind(weaviate.KIND_ACTIONS)
+      .do()
+      .then(res => {
+        // alter the schema
+        const schema = res.schema;
+        schema.stringProp = 'action-updated';
+        return client.data
+          .updater(id)
+          .withKind(weaviate.KIND_ACTIONS)
+          .withSchema(schema);
+      })
+      .then(res => {
+        expect(res.schema).toEqual({
+          stringProp: 'action-updated',
+        });
+      })
+      .catch(e => fail('it should not have errord: ' + e));
   });
 
   it('tears down and cleans up', () => {
