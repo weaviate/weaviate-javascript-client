@@ -79,7 +79,7 @@ describe('data', () => {
       .catch(err => {
         expect(err).toEqual(
           new Error(
-            'invalid usage: className must be set - initialize with creator(className)',
+            'invalid usage: className must be set - set with .withClassName(className)',
           ),
         );
       });
@@ -284,8 +284,12 @@ describe('data', () => {
 
   it('tears down and cleans up', () => {
     return Promise.all([
-      client.schema.deleteClass(actionClassName, weaviate.KIND_ACTIONS),
-      client.schema.deleteClass(thingClassName),
+      client.schema
+        .classDeleter()
+        .withClassName(actionClassName)
+        .withKind(weaviate.KIND_ACTIONS)
+        .do(),
+      client.schema.classDeleter().withClassName(thingClassName).do(),
     ]);
   });
 });
@@ -320,7 +324,11 @@ const setup = client => {
   };
 
   return Promise.all([
-    client.schema.createClass(thing),
-    client.schema.createClass(action, weaviate.KIND_ACTIONS),
+    client.schema.classCreator().withClass(thing).do(),
+    client.schema
+      .classCreator()
+      .withClass(action)
+      .withKind(weaviate.KIND_ACTIONS)
+      .do(),
   ]);
 };

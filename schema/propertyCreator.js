@@ -1,6 +1,6 @@
 const {DEFAULT_KIND, validateKind} = require('../kinds');
 
-class Creator {
+class ClassCreator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -12,18 +12,12 @@ class Creator {
     return this;
   };
 
-  withSchema = schema => {
-    this.schema = schema;
-    return this;
-  };
-
-  withId = id => {
-    this.id = id;
+  withProperty = property => {
+    this.property = property;
     return this;
   };
 
   withKind = kind => {
-    validateKind(kind);
     this.kind = kind;
     return this;
   };
@@ -41,14 +35,31 @@ class Creator {
     }
   };
 
-  payload = () => ({
-    schema: this.schema,
-    class: this.className,
-    id: this.id,
-  });
+  validateProperty = () => {
+    if (
+      this.property == undefined ||
+      this.property == null ||
+      this.property.length == 0
+    ) {
+      this.errors = [
+        ...this.errors,
+        'property must be set - set with .withProperty(property)',
+      ];
+    }
+  };
+
+  validateKind = () => {
+    try {
+      validateKind(this.kind);
+    } catch (e) {
+      this.errors = [...this.errors, e.toString()];
+    }
+  };
 
   validate = () => {
+    this.validateKind();
     this.validateClassName();
+    this.validateProperty();
   };
 
   do = () => {
@@ -58,9 +69,9 @@ class Creator {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}`;
-    return this.client.post(path, this.payload());
+    const path = `/schema/${this.kind}/${this.className}/properties`;
+    return this.client.post(path, this.property);
   };
 }
 
-module.exports = Creator;
+module.exports = ClassCreator;

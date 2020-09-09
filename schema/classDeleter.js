@@ -1,6 +1,6 @@
 const {DEFAULT_KIND, validateKind} = require('../kinds');
 
-class Creator {
+class ClassDeleter {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -9,16 +9,6 @@ class Creator {
 
   withClassName = className => {
     this.className = className;
-    return this;
-  };
-
-  withSchema = schema => {
-    this.schema = schema;
-    return this;
-  };
-
-  withId = id => {
-    this.id = id;
     return this;
   };
 
@@ -41,12 +31,6 @@ class Creator {
     }
   };
 
-  payload = () => ({
-    schema: this.schema,
-    class: this.className,
-    id: this.id,
-  });
-
   validate = () => {
     this.validateClassName();
   };
@@ -58,9 +42,9 @@ class Creator {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}`;
-    return this.client.post(path, this.payload());
+    const path = `/schema/${this.kind}/${this.className}`;
+    return this.client.delete(path);
   };
 }
 
-module.exports = Creator;
+module.exports = ClassDeleter;
