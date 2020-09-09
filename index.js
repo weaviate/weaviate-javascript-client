@@ -1,5 +1,6 @@
 const {get} = require('./graphql');
 const schema = require('./schema');
+const data = require('./data');
 const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
 
 module.exports = {
@@ -29,6 +30,7 @@ module.exports = {
       },
 
       schema: schema(httpClient),
+      data: data(httpClient),
     };
   },
 

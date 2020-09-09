@@ -79,9 +79,12 @@ describe('schema', () => {
   it('errors with an invalid kind', () => {
     const classObj = {};
 
-    return client.schema.createClass(classObj, 'invalid').catch(err => {
-      expect(err).toEqual(new Error('invalid kind: invalid'));
-    });
+    return client.schema
+      .createClass(classObj, 'invalid')
+      .then(() => fail('it should have errord'))
+      .catch(err => {
+        expect(err).toEqual(new Error('invalid kind: invalid'));
+      });
   });
 
   it('retrieves the schema and it matches the expectations', () => {
