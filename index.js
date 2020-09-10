@@ -2,6 +2,7 @@ const {get} = require('./graphql');
 const schema = require('./schema');
 const data = require('./data');
 const classifications = require('./classifications');
+const batch = require('./batch');
 const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
 
 module.exports = {
@@ -33,6 +34,7 @@ module.exports = {
       schema: schema(httpClient),
       data: data(httpClient),
       classifications: classifications(httpClient),
+      batch: batch(httpClient),
     };
   },
 
