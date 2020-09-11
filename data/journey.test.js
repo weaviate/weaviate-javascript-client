@@ -282,6 +282,50 @@ describe('data', () => {
       .catch(e => fail('it should not have errord: ' + e));
   });
 
+  it('deletes a thing', () => {
+    return client.data
+      .deleter()
+      .withId('1565c06c-463f-466c-9092-5930dbac3887')
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('deletes an action', () => {
+    return client.data
+      .deleter()
+      .withKind(weaviate.KIND_ACTIONS)
+      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('waits for es index updates', () => {
+    return new Promise((resolve, reject) => {
+      // TODO: remove in 1.0.0
+      setTimeout(resolve, 1000);
+    });
+  });
+
+  it('verifies there are now fewer things (after delete)', () => {
+    return Promise.all([
+      client.data
+        .getter()
+        .do()
+        .then(res => {
+          expect(res.things).toHaveLength(1);
+        })
+        .catch(e => fail('it should not have errord: ' + e)),
+      client.data
+        .getter()
+        .withKind(weaviate.KIND_ACTIONS)
+        .do()
+        .then(res => {
+          expect(res.actions).toHaveLength(0);
+        })
+        .catch(e => fail('it should not have errord: ' + e)),
+    ]);
+  });
+
   it('tears down and cleans up', () => {
     return Promise.all([
       client.schema
