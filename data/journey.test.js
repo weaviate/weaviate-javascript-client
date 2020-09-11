@@ -14,6 +14,37 @@ describe('data', () => {
     return setup(client);
   });
 
+  it('validates a valid thing', () => {
+    const schema = {stringProp: 'without-id'};
+
+    return client.data
+      .validator()
+      .withId('11992f06-2eac-4f0b-973f-7d230d3bdbaf')
+      .withClassName(thingClassName)
+      .withSchema(schema)
+      .do()
+      .then(res => {
+        expect(res).toEqual(true);
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('(validator) errors on an invalid valid thing', () => {
+    const schema = {stringProp: 234}; // number is invalid
+
+    return client.data
+      .validator()
+      .withId('11992f06-2eac-4f0b-973f-7d230d3bdbaf')
+      .withClassName(thingClassName)
+      .withSchema(schema)
+      .do()
+      .catch(e => {
+        expect(e).toEqual(
+            `usage error (422): {"error":[{"message":"invalid thing: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`,
+        );
+      });
+  });
+
   it('creates a new thing object without an explicit id', () => {
     const schema = {stringProp: 'without-id'};
 

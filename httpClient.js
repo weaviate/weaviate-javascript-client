@@ -4,7 +4,7 @@ const client = config => {
   const url = makeUrl(config.baseUri);
 
   return {
-    post: (path, payload) => {
+    post: (path, payload, expectReturnContent=true) => {
       return fetch(url(path), {
         method: 'POST',
         headers: {
@@ -12,7 +12,7 @@ const client = config => {
           'content-type': 'application/json',
         },
         body: JSON.stringify(payload),
-      }).then(makeCheckStatus(true));
+      }).then(makeCheckStatus(expectReturnContent));
     },
     put: (path, payload) => {
       return fetch(url(path), {
@@ -59,13 +59,13 @@ const makeUrl = basePath => path => basePath + path;
 const makeCheckStatus = expectResponseBody => res => {
   if (res.status >= 400 && res.status < 500) {
     return res.json().then(err => {
-      Promise.reject(`usage error (${res.status}): ${JSON.stringify(err)}`);
+      return Promise.reject(`usage error (${res.status}): ${JSON.stringify(err)}`);
     });
   }
 
   if (res.status >= 500) {
     return res.json().then(err => {
-      Promise.reject(`usage error (${res.status}): ${JSON.stringify(err)}`);
+      return Promise.reject(`usage error (${res.status}): ${JSON.stringify(err)}`);
     });
   }
 
