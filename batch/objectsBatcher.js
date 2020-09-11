@@ -1,4 +1,4 @@
-const {DEFAULT_KIND} = require('../kinds');
+const {DEFAULT_KIND, validateKind} = require('../kinds');
 
 class ObjectsBatcher {
   constructor(client) {
@@ -17,8 +17,9 @@ class ObjectsBatcher {
     [this.kind]: this.objects,
   });
 
-  validate = () => {
-    this.validateObjectCount();
+  withKind = kind => {
+    this.kind = kind;
+    return this;
   };
 
   validateObjectCount = () => {
@@ -29,6 +30,19 @@ class ObjectsBatcher {
           'add one with .withObject(obj)',
       ];
     }
+  };
+
+  validateKind = () => {
+    try {
+      validateKind(this.kind);
+    } catch (e) {
+      this.errors = [...this.errors, e.toString()];
+    }
+  };
+
+  validate = () => {
+    this.validateKind();
+    this.validateObjectCount();
   };
 
   do = () => {
