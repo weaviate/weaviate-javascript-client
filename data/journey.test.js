@@ -2,6 +2,7 @@ const weaviate = require('../index');
 
 const thingClassName = 'DataJourneyTestThing';
 const actionClassName = 'DataJourneyTestAction';
+const refSourceClassName = 'DataJourneyTestRefSource';
 
 describe('data', () => {
   const client = weaviate.client({
@@ -40,7 +41,7 @@ describe('data', () => {
       .do()
       .catch(e => {
         expect(e).toEqual(
-            `usage error (422): {"error":[{"message":"invalid thing: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`,
+          `usage error (422): {"error":[{"message":"invalid thing: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`,
         );
       });
   });
@@ -66,6 +67,25 @@ describe('data', () => {
     return client.data
       .creator()
       .withClassName(thingClassName)
+      .withSchema(schema)
+      .withId(id)
+      .withKind(weaviate.KIND_THINGS)
+      .do()
+      .then(res => {
+        expect(res.schema).toEqual(schema);
+        expect(res.id).toEqual(id);
+      })
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('creates another thing', () => {
+    // we need this later for the reference test!
+    const schema = {};
+    const id = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
+
+    return client.data
+      .creator()
+      .withClassName(refSourceClassName)
       .withSchema(schema)
       .withId(id)
       .withKind(weaviate.KIND_THINGS)
@@ -121,7 +141,7 @@ describe('data', () => {
       .getter()
       .do()
       .then(res => {
-        expect(res.things).toHaveLength(2);
+        expect(res.things).toHaveLength(3);
         expect(res.things).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
@@ -145,7 +165,7 @@ describe('data', () => {
       .withUnderscoreVector()
       .do()
       .then(res => {
-        expect(res.things).toHaveLength(2);
+        expect(res.things).toHaveLength(3);
         expect(res.things[0]._vector.length).toBeGreaterThan(10);
         expect(res.things[0]._interpretation).toBeDefined();
         expect(res.things[0]._featureProjection).toBeDefined();
@@ -330,6 +350,26 @@ describe('data', () => {
       .catch(e => fail('it should not have errord: ' + e));
   });
 
+  it('adds a reference to a thing', () => {
+    const sourceId = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
+    const targetId = '1565c06c-463f-466c-9092-5930dbac3887';
+
+    return client.data
+      .referenceCreator()
+      .withKind(weaviate.KIND_THINGS)
+      .withId(sourceId)
+      .withReferenceProperty('refProp')
+      .withReference(
+        client.data
+          .referencePayloadBuilder()
+          .withId(targetId)
+          .withKind(weaviate.KIND_THINGS)
+          .payload(),
+      )
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
   it('waits for es index updates', () => {
     return new Promise((resolve, reject) => {
       // TODO: remove in 1.0.0
@@ -343,7 +383,7 @@ describe('data', () => {
         .getter()
         .do()
         .then(res => {
-          expect(res.things).toHaveLength(1);
+          expect(res.things).toHaveLength(2);
         })
         .catch(e => fail('it should not have errord: ' + e)),
       client.data
@@ -365,11 +405,12 @@ describe('data', () => {
         .withKind(weaviate.KIND_ACTIONS)
         .do(),
       client.schema.classDeleter().withClassName(thingClassName).do(),
+      client.schema.classDeleter().withClassName(refSourceClassName).do(),
     ]);
   });
 });
 
-const setup = client => {
+const setup = async client => {
   const thing = {
     class: thingClassName,
     properties: [
@@ -398,7 +439,7 @@ const setup = client => {
     ],
   };
 
-  return Promise.all([
+  await Promise.all([
     client.schema.classCreator().withClass(thing).do(),
     client.schema
       .classCreator()
@@ -406,4 +447,17 @@ const setup = client => {
       .withKind(weaviate.KIND_ACTIONS)
       .do(),
   ]);
+
+  const refSource = {
+    class: refSourceClassName,
+    properties: [
+      {
+        name: 'refProp',
+        dataType: [thingClassName],
+        cardinality: 'many',
+      },
+    ],
+  };
+
+  return client.schema.classCreator().withClass(refSource).do();
 };
