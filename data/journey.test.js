@@ -46,6 +46,8 @@ describe('data', () => {
       });
   });
 
+  let implicitThingId;
+
   it('creates a new thing object without an explicit id', () => {
     const schema = {stringProp: 'without-id'};
 
@@ -56,6 +58,7 @@ describe('data', () => {
       .do()
       .then(res => {
         expect(res.schema).toEqual(schema);
+        implicitThingId = res.id;
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
@@ -333,23 +336,6 @@ describe('data', () => {
       .catch(e => fail('it should not have errord: ' + e));
   });
 
-  it('deletes a thing', () => {
-    return client.data
-      .deleter()
-      .withId('1565c06c-463f-466c-9092-5930dbac3887')
-      .do()
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('deletes an action', () => {
-    return client.data
-      .deleter()
-      .withKind(weaviate.KIND_ACTIONS)
-      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
-      .do()
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
   it('adds a reference to a thing', () => {
     const sourceId = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
     const targetId = '1565c06c-463f-466c-9092-5930dbac3887';
@@ -366,6 +352,63 @@ describe('data', () => {
           .withKind(weaviate.KIND_THINGS)
           .payload(),
       )
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('replaces all references of a thing', () => {
+    const sourceId = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
+    const targetId = implicitThingId;
+
+    return client.data
+      .referenceReplacer()
+      .withKind(weaviate.KIND_THINGS)
+      .withId(sourceId)
+      .withReferenceProperty('refProp')
+      .withReferences([
+        client.data
+          .referencePayloadBuilder()
+          .withId(targetId)
+          .withKind(weaviate.KIND_THINGS)
+          .payload(),
+      ])
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('deletes a single reference of a thing', () => {
+    const sourceId = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
+    const targetId = implicitThingId;
+
+    return client.data
+      .referenceDeleter()
+      .withKind(weaviate.KIND_THINGS)
+      .withId(sourceId)
+      .withReferenceProperty('refProp')
+      .withReference(
+        client.data
+          .referencePayloadBuilder()
+          .withId(targetId)
+          .withKind(weaviate.KIND_THINGS)
+          .payload(),
+      )
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('deletes a thing', () => {
+    return client.data
+      .deleter()
+      .withId('1565c06c-463f-466c-9092-5930dbac3887')
+      .do()
+      .catch(e => fail('it should not have errord: ' + e));
+  });
+
+  it('deletes an action', () => {
+    return client.data
+      .deleter()
+      .withKind(weaviate.KIND_ACTIONS)
+      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
       .do()
       .catch(e => fail('it should not have errord: ' + e));
   });

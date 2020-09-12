@@ -14,7 +14,7 @@ const client = config => {
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(expectReturnContent));
     },
-    put: (path, payload) => {
+    put: (path, payload, expectReturnContent = true) => {
       return fetch(url(path), {
         method: 'PUT',
         headers: {
@@ -22,7 +22,7 @@ const client = config => {
           'content-type': 'application/json',
         },
         body: JSON.stringify(payload),
-      }).then(makeCheckStatus(true));
+      }).then(makeCheckStatus(expectReturnContent));
     },
     patch: (path, payload) => {
       return fetch(url(path), {
@@ -34,13 +34,14 @@ const client = config => {
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(false));
     },
-    delete: path => {
+    delete: (path, payload) => {
       return fetch(url(path), {
         method: 'DELETE',
         headers: {
           ...config.headers,
           'content-type': 'application/json',
         },
+        body: payload ? JSON.stringify(payload) : undefined,
       }).then(makeCheckStatus(false));
     },
     get: (path, expectReturnContent = true) => {

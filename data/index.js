@@ -6,6 +6,8 @@ const Getter = require('./getter');
 const GetterById = require('./getterById');
 const Deleter = require('./deleter');
 const ReferenceCreator = require('./referenceCreator');
+const ReferenceReplacer = require('./referenceReplacer');
+const ReferenceDeleter = require('./referenceDeleter');
 const ReferencePayloadBuilder = require('./referencePayloadBuilder');
 
 const data = client => {
@@ -18,6 +20,8 @@ const data = client => {
     getterById: () => new GetterById(client),
     deleter: () => new Deleter(client),
     referenceCreator: () => new ReferenceCreator(client),
+    referenceReplacer: () => new ReferenceReplacer(client),
+    referenceDeleter: () => new ReferenceDeleter(client),
     referencePayloadBuilder: () => new ReferencePayloadBuilder(client),
   };
 };
