@@ -4,6 +4,7 @@ const data = require('./data');
 const classifications = require('./classifications');
 const batch = require('./batch');
 const misc = require('./misc');
+const c11y = require('./c11y');
 const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
 
 module.exports = {
@@ -37,6 +38,7 @@ module.exports = {
       classifications: classifications(httpClient),
       batch: batch(httpClient),
       misc: misc(httpClient),
+      c11y: c11y(httpClient),
     };
   },
 

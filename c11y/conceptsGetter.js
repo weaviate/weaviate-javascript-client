@@ -1,13 +1,8 @@
-class Getter {
+class ConceptsGetter {
   constructor(client) {
     this.client = client;
     this.errors = [];
   }
-
-  withId = id => {
-    this.id = id;
-    return this;
-  };
 
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
@@ -18,12 +13,13 @@ class Getter {
     }
   };
 
-  validateId = () => {
-    this.validateIsSet(this.id, 'id', '.withId(id)');
+  withConcept = concept => {
+    this.concept = concept;
+    return this;
   };
 
   validate = () => {
-    this.validateId();
+    this.validateIsSet(this.concept, 'concept', 'withConcept(concept)');
   };
 
   do = () => {
@@ -34,9 +30,9 @@ class Getter {
       );
     }
 
-    const path = `/classifications/${this.id}`;
+    const path = `/c11y/concepts/${this.concept}`;
     return this.client.get(path);
   };
 }
 
-module.exports = Getter;
+module.exports = ConceptsGetter;
