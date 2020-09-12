@@ -3,6 +3,7 @@ const schema = require('./schema');
 const data = require('./data');
 const classifications = require('./classifications');
 const batch = require('./batch');
+const misc = require('./misc');
 const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
 
 module.exports = {
@@ -35,6 +36,7 @@ module.exports = {
       data: data(httpClient),
       classifications: classifications(httpClient),
       batch: batch(httpClient),
+      misc: misc(httpClient),
     };
   },
 
