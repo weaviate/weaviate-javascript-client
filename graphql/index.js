@@ -1,11 +1,9 @@
 const Getter = require('./getter');
 
-const get = client => {
+const graphql = client => {
   return {
-    things: function (className, queryString) {
-      return new Getter('Things', className, queryString).withClient(client);
-    },
+    get: () => new Getter(client),
   };
 };
 
-module.exports = {get};
+module.exports = graphql;

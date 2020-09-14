@@ -1,34 +1,46 @@
 const where = require('./where');
 const explore = require('./explore');
+const {DEFAULT_KIND, validateKind} = require('../kinds');
 
 class Getter {
-  constructor(kind, className, queryString) {
-    this.kind = kind;
-    this.className = className;
-    this.queryString = queryString;
-  }
-
-  withClient(client) {
+  constructor(client) {
     this.client = client;
-    return this;
+    this.kind = DEFAULT_KIND;
   }
 
-  withWhere(whereObj) {
+  withFields = fields => {
+    this.fields = fields;
+    return this;
+  };
+
+  withClassName = className => {
+    this.className = className;
+    return this;
+  };
+
+  withKind = kind => {
+    this.kind = kind;
+    return this;
+  };
+
+  withWhere = whereObj => {
     this.whereString = new where.GraphQLWhere(whereObj).toString();
     return this;
-  }
+  };
 
-  withExplore(exploreObj) {
+  withExplore = exploreObj => {
     this.exploreString = new explore.GraphQLExplore(exploreObj).toString();
     return this;
-  }
+  };
 
-  withLimit(limit) {
+  withLimit = limit => {
     this.limit = limit;
     return this;
-  }
+  };
 
-  do() {
+  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
+
+  do = () => {
     let params = '';
 
     if (this.whereString || this.exploreString || this.limit) {
@@ -50,9 +62,11 @@ class Getter {
     }
 
     return this.client.query(
-      `{Get{${this.kind}{${this.className}${params}{${this.queryString}}}}}`,
+      `{Get{${this.uppercasedKind()}{${this.className}${params}{${
+        this.fields
+      }}}}}`,
     );
-  }
+  };
 }
 
 module.exports = Getter;

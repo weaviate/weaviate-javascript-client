@@ -1,4 +1,4 @@
-const {get} = require('./graphql');
+const graphql = require('./graphql');
 const schema = require('./schema');
 const data = require('./data');
 const classifications = require('./classifications');
@@ -29,10 +29,7 @@ module.exports = {
     });
 
     return {
-      graphql: {
-        get: get(graphqlClient),
-      },
-
+      graphql: graphql(graphqlClient),
       schema: schema(httpClient),
       data: data(httpClient),
       classifications: classifications(httpClient),

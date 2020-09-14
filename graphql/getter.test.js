@@ -1,4 +1,5 @@
-const get = require('./getter').get();
+const Getter = require('./getter');
+const weaviate = require('../index');
 
 test('a simple query without params', () => {
   const mockClient = {
@@ -7,7 +8,11 @@ test('a simple query without params', () => {
 
   const expectedQuery = `{Get{Things{Person{name}}}}`;
 
-  get.things('Person', 'name').withClient(mockClient).do();
+  new Getter(mockClient)
+    .withKind(weaviate.KIND_THINGS)
+    .withClassName('Person')
+    .withFields('name')
+    .do();
 
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
@@ -19,7 +24,12 @@ test('a simple query with a limit', () => {
 
   const expectedQuery = `{Get{Things{Person(limit:7){name}}}}`;
 
-  get.things('Person', 'name').withClient(mockClient).withLimit(7).do();
+  new Getter(mockClient)
+    .withKind(weaviate.KIND_THINGS)
+    .withClassName('Person')
+    .withFields('name')
+    .withLimit(7)
+    .do();
 
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
@@ -35,9 +45,10 @@ describe('where filters', () => {
       `(where:{operator:Equal,valueString:"John Doe",path:["name"]})` +
       `{name}}}}`;
 
-    get
-      .things('Person', 'name')
-      .withClient(mockClient)
+    new Getter(mockClient)
+      .withKind(weaviate.KIND_THINGS)
+      .withClassName('Person')
+      .withFields('name')
       .withWhere({operator: 'Equal', valueString: 'John Doe', path: ['name']})
       .do();
 
@@ -64,9 +75,10 @@ describe('where filters', () => {
       `]})` +
       `{name}}}}`;
 
-    get
-      .things('Person', 'name')
-      .withClient(mockClient)
+    new Getter(mockClient)
+      .withKind(weaviate.KIND_THINGS)
+      .withClassName('Person')
+      .withFields('name')
       .withWhere(nestedWhere)
       .do();
 
@@ -114,9 +126,10 @@ describe('where filters', () => {
     tests.forEach(t => {
       test(t.title, () => {
         expect(() => {
-          get
-            .things('Person', 'name')
-            .withClient(mockClient)
+          new Getter(mockClient)
+            .withKind(weaviate.KIND_THINGS)
+            .withClassName('Person')
+            .withFields('name')
             .withWhere(t.where)
             .do();
         }).toThrow(t.msg);
@@ -134,9 +147,10 @@ describe('explore searchers', () => {
     const expectedQuery =
       `{Get{Things{Person` + `(explore:{concepts:["foo","bar"]})` + `{name}}}}`;
 
-    get
-      .things('Person', 'name')
-      .withClient(mockClient)
+    new Getter(mockClient)
+      .withKind(weaviate.KIND_THINGS)
+      .withClassName('Person')
+      .withFields('name')
       .withExplore({concepts: ['foo', 'bar']})
       .do();
 
@@ -153,9 +167,10 @@ describe('explore searchers', () => {
       `(explore:{concepts:["foo","bar"],certainty:0.7,moveTo:{concepts:["foo"],force:0.7},moveAwayFrom:{concepts:["bar"],force:0.5}})` +
       `{name}}}}`;
 
-    get
-      .things('Person', 'name')
-      .withClient(mockClient)
+    new Getter(mockClient)
+      .withKind(weaviate.KIND_THINGS)
+      .withClassName('Person')
+      .withFields('name')
       .withExplore({
         concepts: ['foo', 'bar'],
         certainty: 0.7,
@@ -214,9 +229,10 @@ describe('explore searchers', () => {
     tests.forEach(t => {
       test(t.title, () => {
         expect(() => {
-          get
-            .things('Person', 'name')
-            .withClient(mockClient)
+          new Getter(mockClient)
+            .withKind(weaviate.KIND_THINGS)
+            .withClassName('Person')
+            .withFields('name')
             .withExplore(t.explore)
             .do();
         }).toThrow(t.msg);
