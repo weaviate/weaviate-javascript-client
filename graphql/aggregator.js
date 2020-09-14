@@ -2,7 +2,7 @@ const where = require('./where');
 const explore = require('./explore');
 const {DEFAULT_KIND, validateKind} = require('../kinds');
 
-class Getter {
+class Aggregator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -33,18 +33,27 @@ class Getter {
     return this;
   };
 
-  withExplore = exploreObj => {
-    try {
-      this.exploreString = new explore.GraphQLExplore(exploreObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
-    }
-    return this;
-  };
-
   withLimit = limit => {
     this.limit = limit;
     return this;
+  };
+
+  withGroupBy = groupBy => {
+    this.groupBy = groupBy;
+    return this;
+  };
+
+  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
+
+  validateGroup = () => {
+    if (!this.group) {
+      // nothing to check if this optional parameter is not set
+      return;
+    }
+
+    if (!Array.isArray(this.group)) {
+      throw new Error('groupBy must be an array');
+    }
   };
 
   validateIsSet = (prop, name, setter) => {
@@ -65,6 +74,7 @@ class Getter {
   };
 
   validate = () => {
+    this.validateGroup();
     this.validateKind();
     this.validateIsSet(
       this.className,
@@ -73,8 +83,6 @@ class Getter {
     );
     this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
   };
-
-  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
 
   do = () => {
     let params = '';
@@ -97,6 +105,10 @@ class Getter {
         args = [...args, `explore:${this.exploreString}`];
       }
 
+      if (this.groupBy) {
+        args = [...args, `groupBy:${JSON.stringrify(this.groupBy)}`];
+      }
+
       if (this.limit) {
         args = [...args, `limit:${this.limit}`];
       }
@@ -105,11 +117,11 @@ class Getter {
     }
 
     return this.client.query(
-      `{Get{${this.uppercasedKind()}{${this.className}${params}{${
+      `{Aggregate{${this.uppercasedKind()}{${this.className}${params}{${
         this.fields
       }}}}}`,
     );
   };
 }
 
-module.exports = Getter;
+module.exports = Aggregator;

@@ -125,14 +125,18 @@ describe('where filters', () => {
 
     tests.forEach(t => {
       test(t.title, () => {
-        expect(() => {
-          new Getter(mockClient)
-            .withKind(weaviate.KIND_THINGS)
-            .withClassName('Person')
-            .withFields('name')
-            .withWhere(t.where)
-            .do();
-        }).toThrow(t.msg);
+        new Getter(mockClient)
+          .withKind(weaviate.KIND_THINGS)
+          .withClassName('Person')
+          .withFields('name')
+          .withWhere(t.where)
+          .do()
+          .then(() => {
+            fail("it should have error'd");
+          })
+          .catch(e => {
+            expect(e.toString()).toContain(t.msg);
+          });
       });
     });
   });
@@ -228,14 +232,16 @@ describe('explore searchers', () => {
 
     tests.forEach(t => {
       test(t.title, () => {
-        expect(() => {
-          new Getter(mockClient)
-            .withKind(weaviate.KIND_THINGS)
-            .withClassName('Person')
-            .withFields('name')
-            .withExplore(t.explore)
-            .do();
-        }).toThrow(t.msg);
+        new Getter(mockClient)
+          .withKind(weaviate.KIND_THINGS)
+          .withClassName('Person')
+          .withFields('name')
+          .withExplore(t.explore)
+          .do()
+          .then(() => fail("it should have error'd"))
+          .catch(e => {
+            expect(e.toString()).toContain(t.msg);
+          });
       });
     });
   });
