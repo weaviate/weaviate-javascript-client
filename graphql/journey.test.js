@@ -1,5 +1,5 @@
 describe('an end2end test against a deployed instance', () => {
-  const client = require('./index.js').client({
+  const client = require('../index.js').client({
     scheme: 'https',
     host: 'demo.dataset.playground.semi.technology',
   });

@@ -1,4 +1,4 @@
-const get = require('./graphql.js').get();
+const get = require('./getter').get();
 
 test('a simple query without params', () => {
   const mockClient = {
