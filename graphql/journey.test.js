@@ -81,4 +81,32 @@ describe('an end2end test against a deployed instance', () => {
       })
       .catch(e => fail("it should not have error'd" + e));
   });
+
+  test('graphql explore with minimal fields', () => {
+    return client.graphql
+      .explore()
+      .withConcepts(['iphone'])
+      .withFields('beacon certainty className')
+      .do()
+      .then(res => {
+        expect(res.data.Explore.length).toBeGreaterThan(5);
+      })
+      .catch(e => fail("it should not have error'd" + e));
+  });
+
+  test('graphql explore with optional fields', () => {
+    return client.graphql
+      .explore()
+      .withConcepts(['iphone'])
+      .withMoveTo({concepts: ['phone'], force: 0.3})
+      .withMoveAwayFrom({concepts: ['computer'], force: 0.3})
+      .withCertainty(0.7)
+      .withFields('beacon certainty className')
+      .withLimit(3)
+      .do()
+      .then(res => {
+        expect(res.data.Explore.length).toEqual(3);
+      })
+      .catch(e => fail("it should not have error'd" + e));
+  });
 });

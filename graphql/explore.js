@@ -3,7 +3,7 @@ class GraphQLExplore {
     this.source = exploreObj;
   }
 
-  toString() {
+  toString(wrap = true) {
     this.parse();
     this.validate();
 
@@ -34,6 +34,9 @@ class GraphQLExplore {
       args = [...args, `moveAwayFrom:{${moveAwayFromArgs.join(',')}}`];
     }
 
+    if (!wrap) {
+      return `${args.join(',')}`;
+    }
     return `{${args.join(',')}}`;
   }
 
