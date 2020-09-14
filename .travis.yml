@@ -1,10 +1,18 @@
 language: node_js
 cache: npm
 node_js:
-  - 14
+- 14
 before_script:
-  - npm install
+- npm install
 script:
-  - ci/run_dependencies.sh
-  - npm test
-  - ci/stop_dependencies.sh
+- ci/run_dependencies.sh
+- npm test
+- ci/stop_dependencies.sh
+deploy:
+  provider: npm
+  email: hello@semi.technology
+  api_key:
+    secure: HIU8FXgoUP6R7rasAAgwx1IfiUJzWyIz5YNw0g1NwAX8Z7NA0dZd3DejxHt+QN1oFouayGispVzT0ZA9IurEpTDLRNyooAEkMmj7vrjOLDmmzA/rTc62oNEW6J1aQmdL3dRK6SKpC2K/4mv/PMoTuYb3izBewWsj5h54TTeGEk+tcEWbIJFcsCyAx5hfnuowWc4QhhLs4nsGGmzo2Jog5JFBg5Y+GHQkeButNgwJu3ys3ky3t2C/xDrymM7r+cX6Sn0jVIJYlf9DUV++pfzLvcbL5YQwGTydxNkD8F+fYK8E0MBuDmLpnMxbXkQIOspmRMKkYQYO4dMJ9o2xo9SyN1Nt4fpqFPZyICpO01wfw/wR0lsz8y5aIfRQFttMJLqNriRimp5qHM7tJO4jz3TYP6Na6Lp24f5Lhm40YisnpuDz9KLU3EI/ObRpIBsyumOrJxdDhP/LTMzwMmW9H3A0GCSoq+uqtE6LpSk0VJ++DiMH9QBrCEgopDUKQvLo7uf42km9M3tki5tK1fWHqTJwisRLNN3VSPGyhPNHOszcuIq2FIKsg7mUzG8aRgV9wQTZ0TGlE3g4FgRtAoooxVJnIiWoBXufyqFPwZmd5+/SYV6bU40ZIcsRckJCLJzyzG1P7eKcXjQJ9tmEtzJpBpodrMKk+nbaS113FeqGotOHcUM=
+  on:
+    tags: true
+    repo: semi-technologies/weaviate-javascript-client
