@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Get the GitHub tag of the latest release
-WEAVIATE_RELEASE_VERSION=$(curl -s https://api.github.com/repos/semi-technologies/weaviate/releases/latest | jq -r '.tag_name')
-echo "Weaviate release: $WEAVIATE_RELEASE_VERSION"
-
-echo "Download the Weaviate configuration file"
-curl -sO https://raw.githubusercontent.com/semi-technologies/weaviate/$WEAVIATE_RELEASE_VERSION/docker-compose/runtime/en/config.yaml
-echo "Download the Weaviate docker-compose file"
-curl -sO https://raw.githubusercontent.com/semi-technologies/weaviate/$WEAVIATE_RELEASE_VERSION/docker-compose/runtime/en/docker-compose.yml
+echo "Download the latest docker-compose file"
+curl -s -o docker-compose.yml https://configuration.semi.technology/docker-compose
 echo "Stop existing session if running"
 docker-compose down
 
