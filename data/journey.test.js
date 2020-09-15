@@ -166,9 +166,10 @@ describe('data', () => {
       .withUnderscoreNearestNeighbors()
       .withUnderscoreFeatureProjection()
       .withUnderscoreVector()
+      .withLimit(2)
       .do()
       .then(res => {
-        expect(res.things).toHaveLength(3);
+        expect(res.things).toHaveLength(2);
         expect(res.things[0]._vector.length).toBeGreaterThan(10);
         expect(res.things[0]._interpretation).toBeDefined();
         expect(res.things[0]._featureProjection).toBeDefined();
