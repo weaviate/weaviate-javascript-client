@@ -1,10 +1,10 @@
-# Weaviate javascript client (BETA) <img alt='Weaviate logo' src='https://raw.githubusercontent.com/semi-technologies/weaviate/19de0956c69b66c5552447e84d016f4fe29d12c9/docs/assets/weaviate-logo.png' width='180' align='right' />
+# Weaviate javascript client  <img alt='Weaviate logo' src='https://raw.githubusercontent.com/semi-technologies/weaviate/19de0956c69b66c5552447e84d016f4fe29d12c9/docs/assets/weaviate-logo.png' width='180' align='right' />
 
 A javascript client for easy interaction with a weaviate instance.
 
 ## Documentation
 
-- [Documentation](https://www.semi.technology/documentation/weaviate/current/client-libs/javascript.html).
+- [Documentation](https://www.semi.technology/documentation/weaviate/current/client-libraries/javascript.html).
 
 ## Support
 
