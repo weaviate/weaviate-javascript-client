@@ -94,7 +94,7 @@ class Aggregator {
       );
     }
 
-    if (this.whereString || this.exploreString || this.limit) {
+    if (this.whereString || this.exploreString || this.limit || this.groupBy) {
       let args = [];
 
       if (this.whereString) {
