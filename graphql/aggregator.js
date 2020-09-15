@@ -46,12 +46,12 @@ class Aggregator {
   uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
 
   validateGroup = () => {
-    if (!this.group) {
+    if (!this.groupBy) {
       // nothing to check if this optional parameter is not set
       return;
     }
 
-    if (!Array.isArray(this.group)) {
+    if (!Array.isArray(this.groupBy)) {
       throw new Error('groupBy must be an array');
     }
   };
@@ -106,7 +106,7 @@ class Aggregator {
       }
 
       if (this.groupBy) {
-        args = [...args, `groupBy:${JSON.stringrify(this.groupBy)}`];
+        args = [...args, `groupBy:${JSON.stringify(this.groupBy)}`];
       }
 
       if (this.limit) {

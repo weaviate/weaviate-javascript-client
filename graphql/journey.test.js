@@ -62,7 +62,8 @@ describe('an end2end test against a deployed instance', () => {
   });
 
   test('graphql aggregate method optional fields', () => {
-    // Note this test is ignoring `.withGroup()` due to
+    // Note this test is ignoring `.withGroupBy()` due to
+    // https://github.com/semi-technologies/weaviate/issues/1238
 
     return client.graphql
       .aggregate()
