@@ -12,14 +12,54 @@ class GraphQLWhere {
       );
     } else {
       // this is an on-value filter
+
+      const valueContent = this.marshalValueContent();
       return (
         `{` +
         `operator:${this.operator},` +
-        `${this.valueType}:${JSON.stringify(this.valueContent)},` +
+        `${this.valueType}:${valueContent},` +
         `path:${JSON.stringify(this.path)}` +
         `}`
       );
     }
+  }
+
+  marshalValueContent() {
+    if (this.valueType == 'valueGeoRange') {
+      return this.marshalValueGeoRange();
+    }
+
+    return JSON.stringify(this.valueContent);
+  }
+
+  marshalValueGeoRange() {
+    let parts = [];
+
+    const gc = this.valueContent.geoCoordinates;
+    if (gc) {
+      let gcParts = [];
+
+      if (gc.latitude) {
+        gcParts = [...gcParts, `latitude:${gc.latitude}`];
+      }
+
+      if (gc.longitude) {
+        gcParts = [...gcParts, `longitude:${gc.longitude}`];
+      }
+      parts = [...parts, `geoCoordinates:{${gcParts.join(',')}}`];
+    }
+
+    const d = this.valueContent.distance;
+    if (d) {
+      let dParts = [];
+      if (d.max) {
+        dParts = [...dParts, `max:${d.max}`];
+      }
+
+      parts = [...parts, `distance:{${dParts.join(',')}}`];
+    }
+
+    return `{${parts.join(',')}}`;
   }
 
   validate() {
@@ -105,4 +145,4 @@ class GraphQLWhere {
   }
 }
 
-module.exports = { GraphQLWhere }
+module.exports = {GraphQLWhere};

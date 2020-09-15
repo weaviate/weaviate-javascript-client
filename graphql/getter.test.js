@@ -55,6 +55,42 @@ describe('where filters', () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
+  // to prevent a regression on
+  // https://github.com/semi-technologies/weaviate-javascript-client/issues/6
+  test('a query with a where filter containing a geo query', () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Things{Person` +
+      `(where:{operator:WithinGeoRange,valueGeoRange:` +
+      `{geoCoordinates:{latitude:51.51,longitude:-0.09},distance:{max:2000}}` +
+      `,path:["name"]})` +
+      `{name}}}}`;
+
+    new Getter(mockClient)
+      .withKind(weaviate.KIND_THINGS)
+      .withClassName('Person')
+      .withFields('name')
+      .withWhere({
+        operator: 'WithinGeoRange',
+        valueGeoRange: {
+          geoCoordinates: {
+            latitude: 51.51,
+            longitude: -0.09,
+          },
+          distance: {
+            max: 2000,
+          },
+        },
+        path: ['name'],
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
   test('a query with a valid nested where filter', () => {
     const mockClient = {
       query: jest.fn(),
