@@ -34,6 +34,23 @@ test('a simple query with a limit', () => {
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
+test('a simple query with a group', () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const expectedQuery = `{Get{Things{Person(group:{type:merge,force:0.7}){name}}}}`;
+
+  new Getter(mockClient)
+    .withKind(weaviate.KIND_THINGS)
+    .withClassName('Person')
+    .withFields('name')
+    .withGroup({type: 'merge', force: 0.7})
+    .do();
+
+  expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+});
+
 describe('where filters', () => {
   test('a query with a valid where filter', () => {
     const mockClient = {

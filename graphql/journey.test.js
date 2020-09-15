@@ -48,6 +48,21 @@ describe('an end2end test against a deployed instance', () => {
     );
   });
 
+  test('graphql get with group', () => {
+    return client.graphql
+      .get()
+      .withClassName('Article')
+      .withFields('title url wordCount')
+      .withGroup({type: 'merge', force: 1.0})
+      .withLimit(7)
+      .do()
+      .then(function (result) {
+        // merging with a force of 1 means we merge everyting into a single
+        // element
+        expect(result.data.Get.Things.Article.length).toBe(1);
+      });
+  });
+
   test('graphql aggregate method with minimal fields', () => {
     return client.graphql
       .aggregate()

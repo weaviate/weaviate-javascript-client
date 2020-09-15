@@ -1,5 +1,6 @@
 const where = require('./where');
 const explore = require('./explore');
+const group = require('./group');
 const {DEFAULT_KIND, validateKind} = require('../kinds');
 
 class Getter {
@@ -21,6 +22,16 @@ class Getter {
 
   withKind = kind => {
     this.kind = kind;
+    return this;
+  };
+
+  withGroup = groupObj => {
+    try {
+      this.groupString = new group.GraphQLGroup(groupObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
     return this;
   };
 
@@ -86,7 +97,12 @@ class Getter {
       );
     }
 
-    if (this.whereString || this.exploreString || this.limit) {
+    if (
+      this.whereString ||
+      this.exploreString ||
+      this.limit ||
+      this.groupString
+    ) {
       let args = [];
 
       if (this.whereString) {
@@ -95,6 +111,10 @@ class Getter {
 
       if (this.exploreString) {
         args = [...args, `explore:${this.exploreString}`];
+      }
+
+      if (this.groupString) {
+        args = [...args, `group:${this.groupString}`];
       }
 
       if (this.limit) {
