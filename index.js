@@ -7,7 +7,7 @@ import misc from './misc/index.js';
 import c11y from './c11y/index.js';
 import {KIND_THINGS, KIND_ACTIONS} from './kinds';
 
-module.exports = {
+const app = {
   client: function (params) {
     // check if the URL is set
     if (!params.host) throw new Error('Missing `host` parameter');
@@ -43,3 +43,6 @@ module.exports = {
   KIND_THINGS,
   KIND_ACTIONS,
 };
+
+export default app;
+module.exports = app;
