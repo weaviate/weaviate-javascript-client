@@ -1,7 +1,7 @@
-const explore = require('./explore');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import explore from './explore';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Explorer {
+export default class Explorer {
   constructor(client) {
     this.client = client;
     this.params = {};
@@ -113,5 +113,3 @@ class Explorer {
     return this.client.query(`{Explore${params}{${this.fields}}}`);
   };
 }
-
-module.exports = Explorer;

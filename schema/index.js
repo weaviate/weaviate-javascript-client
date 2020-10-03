@@ -12,4 +12,4 @@ const schema = client => {
   };
 };
 
-module.exports = schema;
+export default schema;

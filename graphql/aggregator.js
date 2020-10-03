@@ -1,8 +1,8 @@
-const where = require('./where');
-const explore = require('./explore');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import where from './where';
+import explore from './explore';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Aggregator {
+export default class Aggregator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;

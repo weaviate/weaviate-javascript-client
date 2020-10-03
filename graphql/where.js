@@ -1,4 +1,4 @@
-class GraphQLWhere {
+export default class GraphQLWhere {
   constructor(whereObj) {
     this.source = whereObj;
   }
@@ -144,5 +144,3 @@ class GraphQLWhere {
       .join(',');
   }
 }
-
-module.exports = {GraphQLWhere};

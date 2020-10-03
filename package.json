@@ -2,9 +2,10 @@
   "name": "weaviate-client",
   "version": "1.0.0",
   "description": "Javascript client for Weaviate",
-  "main": "index.js",
+  "main": "lib.js",
   "scripts": {
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "build": "rollup -c rollup.config.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,8 @@
   "homepage": "https://github.com/semi-technologies/weaviate-javascript-client#readme",
   "dependencies": {
     "graphql-client": "^2.0.1",
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "rollup": "^2.28.2"
   },
   "devDependencies": {
     "jest": "^26.4.2",

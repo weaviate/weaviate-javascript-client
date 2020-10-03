@@ -1,9 +1,9 @@
-const where = require('./where');
-const explore = require('./explore');
-const group = require('./group');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import where from './where';
+import explore from './explore';
+import group from './group';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Getter {
+export default class Getter {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -131,5 +131,3 @@ class Getter {
     );
   };
 }
-
-module.exports = Getter;

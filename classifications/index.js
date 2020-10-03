@@ -8,4 +8,4 @@ const data = client => {
   };
 };
 
-module.exports = data;
+export default data;
