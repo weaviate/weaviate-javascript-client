@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Validator {
+export default class Validator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -62,5 +62,3 @@ class Validator {
     return this.client.post(path, this.payload(), false).then(() => true);
   };
 }
-
-module.exports = Validator;

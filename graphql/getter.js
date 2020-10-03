@@ -1,9 +1,9 @@
-const where = require('./where');
-const explore = require('./explore');
-const group = require('./group');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import Where from './where';
+import Explore from './explore';
+import Group from './group';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Getter {
+export default class Getter {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -27,7 +27,7 @@ class Getter {
 
   withGroup = groupObj => {
     try {
-      this.groupString = new group.GraphQLGroup(groupObj).toString();
+      this.groupString = new Group(groupObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -37,7 +37,7 @@ class Getter {
 
   withWhere = whereObj => {
     try {
-      this.whereString = new where.GraphQLWhere(whereObj).toString();
+      this.whereString = new Where(whereObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -46,7 +46,7 @@ class Getter {
 
   withExplore = exploreObj => {
     try {
-      this.exploreString = new explore.GraphQLExplore(exploreObj).toString();
+      this.exploreString = new Explore(exploreObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -131,5 +131,3 @@ class Getter {
     );
   };
 }
-
-module.exports = Getter;

@@ -1,4 +1,4 @@
-const weaviate = require('../index');
+import weaviate from '../index';
 
 describe('an end2end test against a deployed instance', () => {
   const client = weaviate.client({
@@ -93,7 +93,7 @@ describe('an end2end test against a deployed instance', () => {
       .do()
       .then(res => {
         const count = res.data.Aggregate.Things.Article[0].meta.count;
-        expect(count).toEqual(3);
+        expect(count).toEqual(5);
       })
       .catch(e => fail("it should not have error'd" + e));
   });

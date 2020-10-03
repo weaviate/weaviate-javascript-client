@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class ObjectsBatcher {
+export default class ObjectsBatcher {
   constructor(client) {
     this.client = client;
     this.objects = [];
@@ -56,5 +56,3 @@ class ObjectsBatcher {
     return this.client.post(path, this.payload());
   };
 }
-
-module.exports = ObjectsBatcher;

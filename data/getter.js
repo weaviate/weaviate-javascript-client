@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Getter {
+export default class Getter {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -62,5 +62,3 @@ class Getter {
     return this.client.get(path);
   };
 }
-
-module.exports = Getter;

@@ -1,9 +1,9 @@
-const LiveChecker = require('./liveChecker');
-const ReadyChecker = require('./readyChecker');
-const MetaGetter = require('./metaGetter');
-const OpenidConfigurationGetter = require('./openidConfigurationGetter');
+import LiveChecker from './liveChecker';
+import ReadyChecker from './readyChecker';
+import MetaGetter from './metaGetter';
+import OpenidConfigurationGetter from './openidConfigurationGetter';
 
-const data = client => {
+const misc = client => {
   return {
     liveChecker: () => new LiveChecker(client),
     readyChecker: () => new ReadyChecker(client),
@@ -12,4 +12,4 @@ const data = client => {
   };
 };
 
-module.exports = data;
+export default misc;

@@ -1,6 +1,6 @@
-const Aggregator = require('./aggregator');
-const Getter = require('./getter');
-const Explorer = require('./explorer');
+import Aggregator from './aggregator';
+import Getter from './getter';
+import Explorer from './explorer';
 
 const graphql = client => {
   return {
@@ -10,4 +10,4 @@ const graphql = client => {
   };
 };
 
-module.exports = graphql;
+export default graphql;

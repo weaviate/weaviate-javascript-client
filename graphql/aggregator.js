@@ -1,8 +1,8 @@
-const where = require('./where');
-const explore = require('./explore');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import Where from './where';
+import explore from './explore';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Aggregator {
+export default class Aggregator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -26,7 +26,7 @@ class Aggregator {
 
   withWhere = whereObj => {
     try {
-      this.whereString = new where.GraphQLWhere(whereObj).toString();
+      this.whereString = new Where(whereObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }

@@ -1,7 +1,7 @@
-const explore = require('./explore');
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import Explore from './explore';
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Explorer {
+export default class Explorer {
   constructor(client) {
     this.client = client;
     this.params = {};
@@ -53,9 +53,7 @@ class Explorer {
 
   buildExploreArgs = () => {
     try {
-      this.exploreString = new explore.GraphQLExplore(this.params).toString(
-        false,
-      );
+      this.exploreString = new Explore(this.params).toString(false);
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -113,5 +111,3 @@ class Explorer {
     return this.client.query(`{Explore${params}{${this.fields}}}`);
   };
 }
-
-module.exports = Explorer;

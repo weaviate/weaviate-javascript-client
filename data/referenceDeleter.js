@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class ReferenceDeleter {
+export default class ReferenceDeleter {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -68,5 +68,3 @@ class ReferenceDeleter {
     return this.client.delete(path, this.payload(), false);
   };
 }
-
-module.exports = ReferenceDeleter;

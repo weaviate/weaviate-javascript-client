@@ -1,4 +1,4 @@
-class GraphQLGroup {
+export default class GraphQLGroup {
   constructor(source) {
     this.source = source;
   }
@@ -18,5 +18,3 @@ class GraphQLGroup {
     return `{${parts.join(',')}}`;
   }
 }
-
-module.exports = {GraphQLGroup};

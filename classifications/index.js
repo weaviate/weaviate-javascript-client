@@ -1,5 +1,5 @@
-const Scheduler = require('./scheduler');
-const Getter = require('./getter');
+import Scheduler from './scheduler';
+import Getter from './getter';
 
 const data = client => {
   return {
@@ -8,4 +8,4 @@ const data = client => {
   };
 };
 
-module.exports = data;
+export default data;

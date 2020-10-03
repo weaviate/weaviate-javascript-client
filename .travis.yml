@@ -8,6 +8,7 @@ script:
 - ci/run_dependencies.sh
 - npm test
 - ci/stop_dependencies.sh
+- npm run build
 deploy:
   provider: npm
   email: hello@semi.technology

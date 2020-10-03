@@ -1,5 +1,5 @@
-const Getter = require('./getter');
-const weaviate = require('../index');
+import Getter from './getter';
+import weaviate from '../index';
 
 test('a simple query without params', () => {
   const mockClient = {

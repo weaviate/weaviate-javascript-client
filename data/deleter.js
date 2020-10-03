@@ -1,10 +1,10 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Deleter {
+export default class Deleter {
   constructor(client) {
     this.client = client;
     this.errors = [];
-    this.kind = DEFAULT_KIND
+    this.kind = DEFAULT_KIND;
   }
 
   withId = id => {
@@ -40,9 +40,9 @@ class Deleter {
   };
 
   validate = () => {
-    this.validateId()
-    this.validateKind()
-  }
+    this.validateId();
+    this.validateKind();
+  };
 
   do = () => {
     if (this.errors.length > 0) {
@@ -55,8 +55,4 @@ class Deleter {
     const path = `/${this.kind}/${this.id}`;
     return this.client.delete(path);
   };
-
-
 }
-
-module.exports = Deleter

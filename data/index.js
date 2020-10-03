@@ -1,14 +1,14 @@
-const Creator = require('./creator');
-const Validator = require('./validator');
-const Updater = require('./updater');
-const Merger = require('./merger');
-const Getter = require('./getter');
-const GetterById = require('./getterById');
-const Deleter = require('./deleter');
-const ReferenceCreator = require('./referenceCreator');
-const ReferenceReplacer = require('./referenceReplacer');
-const ReferenceDeleter = require('./referenceDeleter');
-const ReferencePayloadBuilder = require('./referencePayloadBuilder');
+import Creator from './creator';
+import Validator from './validator';
+import Updater from './updater';
+import Merger from './merger';
+import Getter from './getter';
+import GetterById from './getterById';
+import Deleter from './deleter';
+import ReferenceCreator from './referenceCreator';
+import ReferenceReplacer from './referenceReplacer';
+import ReferenceDeleter from './referenceDeleter';
+import ReferencePayloadBuilder from './referencePayloadBuilder';
 
 const data = client => {
   return {
@@ -26,4 +26,4 @@ const data = client => {
   };
 };
 
-module.exports = data;
+export default data;

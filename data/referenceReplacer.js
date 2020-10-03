@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class ReferenceReplacer {
+export default class ReferenceReplacer {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -67,5 +67,3 @@ class ReferenceReplacer {
     return this.client.put(path, this.payload(), false);
   };
 }
-
-module.exports = ReferenceReplacer;

@@ -1,4 +1,4 @@
-class ReadyChecker {
+export default class ReadyChecker {
   constructor(client) {
     this.client = client;
   }
@@ -10,5 +10,3 @@ class ReadyChecker {
       .catch(() => Promise.resolve(false));
   };
 }
-
-module.exports = ReadyChecker;

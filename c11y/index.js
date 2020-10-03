@@ -1,11 +1,11 @@
-const ExtensionCreator = require('./extensionCreator');
-const ConceptsGetter = require('./conceptsGetter');
+import ExtensionCreator from './extensionCreator';
+import ConceptsGetter from './conceptsGetter';
 
-const data = client => {
+const c11y = client => {
   return {
     conceptsGetter: () => new ConceptsGetter(client),
     extensionCreator: () => new ExtensionCreator(client),
   };
 };
 
-module.exports = data;
+export default c11y;

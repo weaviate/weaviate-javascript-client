@@ -1,11 +1,11 @@
-const graphql = require('./graphql');
-const schema = require('./schema');
-const data = require('./data');
-const classifications = require('./classifications');
-const batch = require('./batch');
-const misc = require('./misc');
-const c11y = require('./c11y');
-const {KIND_THINGS, KIND_ACTIONS} = require('./kinds');
+import graphql from './graphql/index.js';
+import schema from './schema/index.js';
+import data from './data/index.js';
+import classifications from './classifications/index.js';
+import batch from './batch/index.js';
+import misc from './misc/index.js';
+import c11y from './c11y/index.js';
+import {KIND_THINGS, KIND_ACTIONS} from './kinds';
 
 module.exports = {
   client: function (params) {

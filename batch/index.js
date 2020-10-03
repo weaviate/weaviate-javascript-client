@@ -1,8 +1,8 @@
-const ObjectsBatcher = require('./objectsBatcher');
-const ReferencesBatcher = require('./referencesBatcher');
-const ReferencePayloadBuilder = require('./referencePayloadBuilder');
+import ObjectsBatcher from './objectsBatcher';
+import ReferencesBatcher from './referencesBatcher';
+import ReferencePayloadBuilder from './referencePayloadBuilder';
 
-const data = client => {
+const batch = client => {
   return {
     objectsBatcher: () => new ObjectsBatcher(client),
     referencesBatcher: () => new ReferencesBatcher(client),
@@ -10,4 +10,4 @@ const data = client => {
   };
 };
 
-module.exports = data;
+export default batch;

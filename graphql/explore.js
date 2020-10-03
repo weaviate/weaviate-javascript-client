@@ -1,4 +1,4 @@
-class GraphQLExplore {
+export default class GraphQLExplore {
   constructor(exploreObj) {
     this.source = exploreObj;
   }
@@ -135,5 +135,3 @@ class GraphQLExplore {
     this.moveAwayFromForce = target.force;
   }
 }
-
-module.exports = {GraphQLExplore};
