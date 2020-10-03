@@ -1,4 +1,4 @@
-import where from './where';
+import Where from './where';
 import explore from './explore';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
@@ -26,7 +26,7 @@ export default class Aggregator {
 
   withWhere = whereObj => {
     try {
-      this.whereString = new where.GraphQLWhere(whereObj).toString();
+      this.whereString = new Where(whereObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }

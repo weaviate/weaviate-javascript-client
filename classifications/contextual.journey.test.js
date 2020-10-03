@@ -1,4 +1,4 @@
-const weaviate = require('../index');
+import weaviate from '../index';
 
 const targetDessertId = '9f399d3e-45a4-44f4-b0fd-fa291abfb211';
 const targetSavoryId = 'b7a64fbd-7c22-44ac-afbb-8d1432b8061b';
@@ -6,7 +6,6 @@ const unclassifiedOneId = '89024ad4-3434-4daa-bfde-a5c6fc4b7f33';
 const unclassifiedTwoId = 'afed0b20-bc9a-44c0-84af-09bb6214b3b7';
 
 describe('a classification journey', () => {
-
   // this journey test is more minimal compared to the kNN one, as a lot of
   // things that are already tested there, don't need to be tested again.
 
@@ -40,11 +39,10 @@ describe('a classification journey', () => {
 
     it('tears down and cleans up', () => cleanup(client));
   });
-
 });
 
 const setup = async client => {
-  targetClass = {
+  let targetClass = {
     class: 'ContextualClassificationJourneyTarget',
     properties: [
       {

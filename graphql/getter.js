@@ -1,6 +1,6 @@
-import where from './where';
-import explore from './explore';
-import group from './group';
+import Where from './where';
+import Explore from './explore';
+import Group from './group';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Getter {
@@ -27,7 +27,7 @@ export default class Getter {
 
   withGroup = groupObj => {
     try {
-      this.groupString = new group.GraphQLGroup(groupObj).toString();
+      this.groupString = new Group(groupObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -37,7 +37,7 @@ export default class Getter {
 
   withWhere = whereObj => {
     try {
-      this.whereString = new where.GraphQLWhere(whereObj).toString();
+      this.whereString = new Where(whereObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -46,7 +46,7 @@ export default class Getter {
 
   withExplore = exploreObj => {
     try {
-      this.exploreString = new explore.GraphQLExplore(exploreObj).toString();
+      this.exploreString = new Explore(exploreObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }

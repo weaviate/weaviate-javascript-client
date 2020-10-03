@@ -1,4 +1,4 @@
-import explore from './explore';
+import Explore from './explore';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Explorer {
@@ -53,9 +53,7 @@ export default class Explorer {
 
   buildExploreArgs = () => {
     try {
-      this.exploreString = new explore.GraphQLExplore(this.params).toString(
-        false,
-      );
+      this.exploreString = new Explore(this.params).toString(false);
     } catch (e) {
       this.errors = [...this.errors, e];
     }
