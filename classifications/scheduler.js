@@ -1,6 +1,6 @@
-const Getter = require('./getter');
+import Getter from './getter';
 
-class Scheduler {
+export default class Scheduler {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -132,5 +132,3 @@ class Scheduler {
     });
   };
 }
-
-module.exports = Scheduler;

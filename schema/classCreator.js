@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class ClassCreator {
+export default class ClassCreator {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -50,5 +50,3 @@ class ClassCreator {
     return this.client.post(path, this.class);
   };
 }
-
-module.exports = ClassCreator;

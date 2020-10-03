@@ -1,4 +1,4 @@
-class ExtensionCreator {
+export default class ExtensionCreator {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -56,5 +56,3 @@ class ExtensionCreator {
     return this.client.post(path, this.payload());
   };
 }
-
-module.exports = ExtensionCreator;

@@ -1,4 +1,4 @@
-class Getter {
+export default class Getter {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -38,5 +38,3 @@ class Getter {
     return this.client.get(path);
   };
 }
-
-module.exports = Getter;

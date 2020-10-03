@@ -1,5 +1,5 @@
-const ExtensionCreator = require('./extensionCreator');
-const ConceptsGetter = require('./conceptsGetter');
+import ExtensionCreator from './extensionCreator';
+import ConceptsGetter from './conceptsGetter';
 
 const c11y = client => {
   return {
@@ -8,4 +8,4 @@ const c11y = client => {
   };
 };
 
-export default c11y
+export default c11y;

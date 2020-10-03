@@ -1,7 +1,7 @@
-const ClassCreator = require('./classCreator');
-const ClassDeleter = require('./classDeleter');
-const PropertyCreator = require('./propertyCreator');
-const Getter = require('./getter');
+import ClassCreator from './classCreator';
+import ClassDeleter from './classDeleter';
+import PropertyCreator from './propertyCreator';
+import Getter from './getter';
 
 const schema = client => {
   return {
