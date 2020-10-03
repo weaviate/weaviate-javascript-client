@@ -1,9 +1,6 @@
-const {
-  DEFAULT_KIND,
-  validateKind,
-} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Merger {
+export default class Merger {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -73,5 +70,3 @@ class Merger {
     return this.client.patch(path, this.payload());
   };
 }
-
-module.exports = Merger;

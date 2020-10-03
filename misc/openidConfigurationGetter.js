@@ -1,4 +1,4 @@
-class OpenidConfigurationGetterGetter {
+export default class OpenidConfigurationGetterGetter {
   constructor(client) {
     this.client = client;
   }
@@ -18,5 +18,3 @@ class OpenidConfigurationGetterGetter {
     });
   };
 }
-
-module.exports = OpenidConfigurationGetterGetter;

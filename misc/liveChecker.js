@@ -1,4 +1,4 @@
-class LiveChecker {
+export default class LiveChecker {
   constructor(client) {
     this.client = client;
   }
@@ -10,5 +10,3 @@ class LiveChecker {
       .catch(() => Promise.resolve(false));
   };
 }
-
-module.exports = LiveChecker;

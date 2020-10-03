@@ -1,4 +1,4 @@
-class MetaGetter {
+export default class MetaGetter {
   constructor(client) {
     this.client = client;
   }
@@ -7,5 +7,3 @@ class MetaGetter {
     return this.client.get('/meta', true);
   };
 }
-
-module.exports = MetaGetter;

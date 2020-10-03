@@ -1,9 +1,6 @@
-const {
-  DEFAULT_KIND,
-  validateKind,
-} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class Updater {
+export default class Updater {
   constructor(client) {
     this.client = client;
     this.kind = DEFAULT_KIND;
@@ -76,5 +73,3 @@ class Updater {
     return this.client.put(path, this.payload());
   };
 }
-
-module.exports = Updater;

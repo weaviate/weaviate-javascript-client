@@ -1,6 +1,6 @@
-const {DEFAULT_KIND, validateKind} = require('../kinds');
+import {DEFAULT_KIND, validateKind} from '../kinds';
 
-class ReferencePayloadBuilder {
+export default class ReferencePayloadBuilder {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -50,5 +50,3 @@ class ReferencePayloadBuilder {
     };
   };
 }
-
-module.exports = ReferencePayloadBuilder;
