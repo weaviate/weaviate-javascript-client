@@ -3,17 +3,11 @@ import {DEFAULT_KIND, validateKind} from '../kinds';
 export default class ClassCreator {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
   withClass = classObj => {
     this.class = classObj;
-    return this;
-  };
-
-  withKind = kind => {
-    this.kind = kind;
     return this;
   };
 
@@ -26,16 +20,7 @@ export default class ClassCreator {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
-    this.validateKind();
     this.validateClass();
   };
 
@@ -46,7 +31,7 @@ export default class ClassCreator {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/schema/${this.kind}`;
+    const path = `/schema`;
     return this.client.post(path, this.class);
   };
 }
