@@ -1,9 +1,9 @@
-import ClassCreator from './classCreator';
-import ClassDeleter from './classDeleter';
-import PropertyCreator from './propertyCreator';
-import Getter from './getter';
+import ClassCreator from "./classCreator";
+import ClassDeleter from "./classDeleter";
+import PropertyCreator from "./propertyCreator";
+import Getter from "./getter";
 
-const schema = client => {
+const schema = (client) => {
   return {
     classCreator: () => new ClassCreator(client),
     classDeleter: () => new ClassDeleter(client),

@@ -1,38 +1,38 @@
-const weaviate = require('../index');
+const weaviate = require("../index");
 
-describe('schema', () => {
+describe("schema", () => {
   const client = weaviate.client({
-    scheme: 'http',
-    host: 'localhost:8080',
+    scheme: "http",
+    host: "localhost:8080",
   });
 
-  it('creates a thing class (implicitly)', () => {
+  it("creates a thing class (implicitly)", () => {
     const classObj = {
-      class: 'MyThingClass',
+      class: "MyThingClass",
       properties: [
         {
-          dataType: ['string'],
-          name: 'stringProp',
+          dataType: ["string"],
+          name: "stringProp",
         },
       ],
-      vectorIndexType: 'hnsw',
-      vectorizer: 'text2vec-contextionary',
+      vectorIndexType: "hnsw",
+      vectorizer: "text2vec-contextionary",
     };
 
     return client.schema
       .classCreator()
       .withClass(classObj)
       .do()
-      .then(res => {
+      .then((res) => {
         expect(res).toEqual(classObj);
       });
   });
 
-  it('extends the thing class with a new property', () => {
-    const className = 'MyThingClass';
+  it("extends the thing class with a new property", () => {
+    const className = "MyThingClass";
     const prop = {
-      dataType: ['string'],
-      name: 'anotherProp',
+      dataType: ["string"],
+      name: "anotherProp",
     };
 
     return client.schema
@@ -40,46 +40,46 @@ describe('schema', () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      .then(res => {
+      .then((res) => {
         expect(res).toEqual(prop);
       });
   });
 
-  it('retrieves the schema and it matches the expectations', () => {
+  it("retrieves the schema and it matches the expectations", () => {
     return client.schema
       .getter()
       .do()
-      .then(res => {
+      .then((res) => {
         expect(res).toEqual({
-            classes: [
-              {
-                class: 'MyThingClass',
-                properties: [
-                  {
-                    dataType: ['string'],
-                    name: 'stringProp',
-                  },
-                  {
-                    dataType: ['string'],
-                    name: 'anotherProp',
-                  },
-                ],
-      vectorIndexType: 'hnsw',
-      vectorizer: 'text2vec-contextionary',
-              },
-            ],
+          classes: [
+            {
+              class: "MyThingClass",
+              properties: [
+                {
+                  dataType: ["string"],
+                  name: "stringProp",
+                },
+                {
+                  dataType: ["string"],
+                  name: "anotherProp",
+                },
+              ],
+              vectorIndexType: "hnsw",
+              vectorizer: "text2vec-contextionary",
+            },
+          ],
         });
       });
   });
 
-  it('deletes an existing class', () => {
-    const className = 'MyThingClass';
+  it("deletes an existing class", () => {
+    const className = "MyThingClass";
 
     return client.schema
       .classDeleter()
       .withClassName(className)
       .do()
-      .then(res => {
+      .then((res) => {
         expect(res).toEqual(undefined);
       });
   });
