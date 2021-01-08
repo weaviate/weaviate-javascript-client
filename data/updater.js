@@ -4,17 +4,17 @@ export default class Updater {
     this.errors = [];
   }
 
-  withProperties = properties => {
+  withProperties = (properties) => {
     this.properties = properties;
     return this;
   };
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
     return this;
   };
 
-  withClassName = className => {
+  withClassName = (className) => {
     this.className = className;
     return this;
   };
@@ -27,7 +27,7 @@ export default class Updater {
     ) {
       this.errors = [
         ...this.errors,
-        'className must be set - set with withId(id)',
+        "className must be set - set with withId(id)",
       ];
     }
   };
@@ -36,7 +36,7 @@ export default class Updater {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
       this.errors = [
         ...this.errors,
-        'id must be set - initialize with updater(id)',
+        "id must be set - initialize with updater(id)",
       ];
     }
   };
@@ -57,7 +57,7 @@ export default class Updater {
 
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
     const path = `/objects/${this.id}`;

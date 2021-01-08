@@ -4,7 +4,7 @@ export default class ReferencePayloadBuilder {
     this.errors = [];
   }
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
     return this;
   };
@@ -19,13 +19,13 @@ export default class ReferencePayloadBuilder {
   };
 
   validate = () => {
-    this.validateIsSet(this.id, 'id', '.withId(id)');
+    this.validateIsSet(this.id, "id", ".withId(id)");
   };
 
   payload = () => {
     this.validate();
     if (this.errors.length > 0) {
-      throw new Error(this.errors.join(', '));
+      throw new Error(this.errors.join(", "));
     }
 
     return {

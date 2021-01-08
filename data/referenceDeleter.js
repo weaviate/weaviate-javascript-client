@@ -4,17 +4,17 @@ export default class ReferenceDeleter {
     this.errors = [];
   }
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
     return this;
   };
 
-  withReference = ref => {
+  withReference = (ref) => {
     this.reference = ref;
     return this;
   };
 
-  withReferenceProperty = refProp => {
+  withReferenceProperty = (refProp) => {
     this.refProp = refProp;
     return this;
   };
@@ -29,12 +29,12 @@ export default class ReferenceDeleter {
   };
 
   validate = () => {
-    this.validateIsSet(this.id, 'id', '.withId(id)');
-    this.validateIsSet(this.reference, 'reference', '.withReference(ref)');
+    this.validateIsSet(this.id, "id", ".withId(id)");
+    this.validateIsSet(this.reference, "reference", ".withReference(ref)");
     this.validateIsSet(
       this.refProp,
-      'referenceProperty',
-      '.withReferenceProperty(refProp)',
+      "referenceProperty",
+      ".withReferenceProperty(refProp)"
     );
   };
 
@@ -44,7 +44,7 @@ export default class ReferenceDeleter {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
     const path = `/objects/${this.id}/references/${this.refProp}`;
