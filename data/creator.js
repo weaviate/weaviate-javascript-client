@@ -1,9 +1,6 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class Creator {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
@@ -12,19 +9,13 @@ export default class Creator {
     return this;
   };
 
-  withSchema = schema => {
-    this.schema = schema;
+  withProperties = properties => {
+    this.properties = properties;
     return this;
   };
 
   withId = id => {
     this.id = id;
-    return this;
-  };
-
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
     return this;
   };
 
@@ -42,7 +33,7 @@ export default class Creator {
   };
 
   payload = () => ({
-    schema: this.schema,
+    properties: this.properties,
     class: this.className,
     id: this.id,
   });
@@ -58,7 +49,7 @@ export default class Creator {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}`;
+    const path = `/objects`;
     return this.client.post(path, this.payload());
   };
 }

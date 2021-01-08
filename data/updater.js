@@ -1,14 +1,11 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class Updater {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
-  withSchema = schema => {
-    this.schema = schema;
+  withProperties = properties => {
+    this.properties = properties;
     return this;
   };
 
@@ -19,12 +16,6 @@ export default class Updater {
 
   withClassName = className => {
     this.className = className;
-    return this;
-  };
-
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
     return this;
   };
 
@@ -51,7 +42,7 @@ export default class Updater {
   };
 
   payload = () => ({
-    schema: this.schema,
+    properties: this.properties,
     class: this.className,
     id: this.id,
   });
@@ -69,7 +60,7 @@ export default class Updater {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}/${this.id}`;
+    const path = `/objects/${this.id}`;
     return this.client.put(path, this.payload());
   };
 }

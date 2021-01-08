@@ -1,42 +1,24 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class Getter {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
-    this.underscores = [];
+    this.additionals = [];
   }
-
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
-    return this;
-  };
 
   withLimit = limit => {
     this.limit = limit;
     return this;
   };
 
-  extendUnderscores = prop => {
-    this.underscores = [...this.underscores, prop];
+  extendAdditionals = prop => {
+    this.additionals = [...this.additionals, prop];
     return this;
   };
 
-  withUnderscoreClassification = () =>
-    this.extendUnderscores('_classification');
+  withAdditional= (additionalFlag) =>
+    this.extendAdditionals(additionalFlag);
 
-  withUnderscoreInterpretation = () =>
-    this.extendUnderscores('_interpretation');
-
-  withUnderscoreNearestNeighbors = () =>
-    this.extendUnderscores('_nearestNeighbors');
-
-  withUnderscoreFeatureProjection = () =>
-    this.extendUnderscores('_featureProjection');
-
-  withUnderscoreVector = () => this.extendUnderscores('_vector');
+  withVector = () => this.extendAdditionals('vector');
 
   do = () => {
     if (this.errors.length > 0) {
@@ -44,11 +26,11 @@ export default class Getter {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    let path = `/${this.kind}`;
+    let path = `/objects`;
 
     let params = [];
-    if (this.underscores.length > 0) {
-      params = [...params, `include=${this.underscores.join(',')}`];
+    if (this.additionals.length > 0) {
+      params = [...params, `include=${this.additionals.join(',')}`];
     }
 
     if (this.limit) {

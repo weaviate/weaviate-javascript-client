@@ -1,19 +1,12 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class ReferenceReplacer {
   constructor(client) {
     this.client = client;
     this.errors = [];
-    this.kind = DEFAULT_KIND;
   }
 
   withId = id => {
     this.id = id;
-    return this;
-  };
-
-  withKind = kind => {
-    this.kind = kind;
     return this;
   };
 
@@ -36,16 +29,7 @@ export default class ReferenceReplacer {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
-    this.validateKind();
     this.validateIsSet(this.id, 'id', '.withId(id)');
     this.validateIsSet(
       this.refProp,
@@ -63,7 +47,7 @@ export default class ReferenceReplacer {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}/${this.id}/references/${this.refProp}`;
+    const path = `/objects/${this.id}/references/${this.refProp}`;
     return this.client.put(path, this.payload(), false);
   };
 }

@@ -1,14 +1,12 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Merger {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
-  withSchema = schema => {
-    this.schema = schema;
+  withProperties = properties => {
+    this.properties = properties;
     return this;
   };
 
@@ -19,12 +17,6 @@ export default class Merger {
 
   withId = id => {
     this.id = id;
-    return this;
-  };
-
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
     return this;
   };
 
@@ -48,7 +40,7 @@ export default class Merger {
   };
 
   payload = () => ({
-    schema: this.schema,
+    properties: this.properties,
     class: this.className,
     id: this.id,
   });
@@ -66,7 +58,7 @@ export default class Merger {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/${this.kind}/${this.id}`;
+    const path = `/objects/${this.id}`;
     return this.client.patch(path, this.payload());
   };
 }

@@ -1,7 +1,6 @@
 const weaviate = require('../index');
 
 const thingClassName = 'DataJourneyTestThing';
-const actionClassName = 'DataJourneyTestAction';
 const refSourceClassName = 'DataJourneyTestRefSource';
 
 describe('data', () => {
@@ -16,13 +15,13 @@ describe('data', () => {
   });
 
   it('validates a valid thing', () => {
-    const schema = {stringProp: 'without-id'};
+    const properties = {stringProp: 'without-id'};
 
     return client.data
       .validator()
       .withId('11992f06-2eac-4f0b-973f-7d230d3bdbaf')
       .withClassName(thingClassName)
-      .withSchema(schema)
+      .withProperties(properties)
       .do()
       .then(res => {
         expect(res).toEqual(true);
@@ -30,18 +29,18 @@ describe('data', () => {
       .catch(e => fail('it should not have errord: ' + e));
   });
 
-  it('(validator) errors on an invalid valid thing', () => {
-    const schema = {stringProp: 234}; // number is invalid
+  it('(validator) errors on an invalid valid object', () => {
+    const properties = {stringProp: 234}; // number is invalid
 
     return client.data
       .validator()
       .withId('11992f06-2eac-4f0b-973f-7d230d3bdbaf')
       .withClassName(thingClassName)
-      .withSchema(schema)
+      .withProperties(properties)
       .do()
       .catch(e => {
         expect(e).toEqual(
-          `usage error (422): {"error":[{"message":"invalid thing: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`,
+          `usage error (422): {"error":[{"message":"invalid object: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`,
         );
       });
   });
@@ -49,33 +48,32 @@ describe('data', () => {
   let implicitThingId;
 
   it('creates a new thing object without an explicit id', () => {
-    const schema = {stringProp: 'without-id'};
+    const properties = {stringProp: 'without-id'};
 
     return client.data
       .creator()
       .withClassName(thingClassName)
-      .withSchema(schema)
+      .withProperties(properties)
       .do()
       .then(res => {
-        expect(res.schema).toEqual(schema);
+        expect(res.properties).toEqual(properties);
         implicitThingId = res.id;
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
 
   it('creates a new thing object with an explicit id', () => {
-    const schema = {stringProp: 'with-id'};
+    const properties = {stringProp: 'with-id'};
     const id = '1565c06c-463f-466c-9092-5930dbac3887';
 
     return client.data
       .creator()
       .withClassName(thingClassName)
-      .withSchema(schema)
+      .withProperties(properties)
       .withId(id)
-      .withKind(weaviate.KIND_THINGS)
       .do()
       .then(res => {
-        expect(res.schema).toEqual(schema);
+        expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
       .catch(e => fail('it should not have errord: ' + e));
@@ -83,36 +81,17 @@ describe('data', () => {
 
   it('creates another thing', () => {
     // we need this later for the reference test!
-    const schema = {};
+    const properties = {};
     const id = '599a0c64-5ed5-4d30-978b-6c9c45516db1';
 
     return client.data
       .creator()
       .withClassName(refSourceClassName)
-      .withSchema(schema)
+      .withProperties(properties)
       .withId(id)
-      .withKind(weaviate.KIND_THINGS)
       .do()
       .then(res => {
-        expect(res.schema).toEqual(schema);
-        expect(res.id).toEqual(id);
-      })
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('creates a new action object with an explicit id', () => {
-    const schema = {stringProp: 'this-is-the-action'};
-    const id = '40d2f93a-8f55-4561-8636-7c759f89ef13';
-
-    return client.data
-      .creator()
-      .withClassName(actionClassName)
-      .withSchema(schema)
-      .withId(id)
-      .withKind(weaviate.KIND_ACTIONS)
-      .do()
-      .then(res => {
-        expect(res.schema).toEqual(schema);
+        expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
       .catch(e => fail('it should not have errord: ' + e));
@@ -144,58 +123,40 @@ describe('data', () => {
       .getter()
       .do()
       .then(res => {
-        expect(res.things).toHaveLength(3);
-        expect(res.things).toEqual(
+        expect(res.objects).toHaveLength(3);
+        expect(res.objects).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               id: '1565c06c-463f-466c-9092-5930dbac3887',
-              schema: {stringProp: 'with-id'},
+              properties: {stringProp: 'with-id'},
             }),
-            expect.objectContaining({schema: {stringProp: 'without-id'}}),
+            expect.objectContaining({properties: {stringProp: 'without-id'}}),
           ]),
         );
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
 
-  it('gets all things with all optional _underscore params', () => {
+  it('gets all things with all optional _additional params', () => {
     return client.data
       .getter()
-      .withUnderscoreClassification()
-      .withUnderscoreInterpretation()
-      .withUnderscoreNearestNeighbors()
-      .withUnderscoreFeatureProjection()
-      .withUnderscoreVector()
+      .withAdditional('classification')
+      .withAdditional('interpretation')
+      .withAdditional('nearestNeighbors')
+      .withAdditional('featureProjection')
+      .withVector()
       .withLimit(2)
       .do()
       .then(res => {
-        expect(res.things).toHaveLength(2);
-        expect(res.things[0]._vector.length).toBeGreaterThan(10);
-        expect(res.things[0]._interpretation).toBeDefined();
-        expect(res.things[0]._featureProjection).toBeDefined();
-        expect(res.things[0]._nearestNeighbors).toBeDefined();
+        expect(res.objects).toHaveLength(2);
+        expect(res.objects[0].vector.length).toBeGreaterThan(10);
+        expect(res.objects[0].additional.interpretation).toBeDefined();
+        expect(res.objects[0].additional.featureProjection).toBeDefined();
+        expect(res.objects[0].additional.nearestNeighbors).toBeDefined();
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
       })
       .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('gets all actions', () => {
-    return client.data
-      .getter()
-      .withKind(weaviate.KIND_ACTIONS)
-      .do()
-      .then(res => {
-        expect(res.actions).toHaveLength(1);
-        expect(res.actions).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: '40d2f93a-8f55-4561-8636-7c759f89ef13',
-              schema: {stringProp: 'this-is-the-action'},
-            }),
-          ]),
-        );
-      });
   });
 
   it('gets one thing by id', () => {
@@ -207,45 +168,28 @@ describe('data', () => {
         expect(res).toEqual(
           expect.objectContaining({
             id: '1565c06c-463f-466c-9092-5930dbac3887',
-            schema: {stringProp: 'with-id'},
+            properties: {stringProp: 'with-id'},
           }),
         );
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
 
-  it('gets one thing by id with all optional underscore props', () => {
+  it('gets one thing by id with all optional additional props', () => {
     return client.data
       .getterById()
       .withId('1565c06c-463f-466c-9092-5930dbac3887')
-      .withUnderscoreClassification()
-      .withUnderscoreInterpretation()
-      .withUnderscoreNearestNeighbors()
-      .withUnderscoreVector()
+      .withAdditional('classification')
+      .withAdditional('interpretation')
+      .withAdditional('nearestNeighbors')
+      .withVector()
       .do()
       .then(res => {
-        expect(res._vector.length).toBeGreaterThan(10);
-        expect(res._interpretation).toBeDefined();
-        expect(res._nearestNeighbors).toBeDefined();
+        expect(res.vector.length).toBeGreaterThan(10);
+        expect(res.additional.interpretation).toBeDefined();
+        expect(res.additional.nearestNeighbors).toBeDefined();
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
-      })
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('gets one action by id', () => {
-    return client.data
-      .getterById()
-      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
-      .withKind(weaviate.KIND_ACTIONS)
-      .do()
-      .then(res => {
-        expect(res).toEqual(
-          expect.objectContaining({
-            id: '40d2f93a-8f55-4561-8636-7c759f89ef13',
-            schema: {stringProp: 'this-is-the-action'},
-          }),
-        );
       })
       .catch(e => fail('it should not have errord: ' + e));
   });
@@ -272,45 +216,18 @@ describe('data', () => {
       .do()
       .then(res => {
         // alter the schema
-        const schema = res.schema;
-        schema.stringProp = 'thing-updated';
+        const properties = res.properties;
+        properties.stringProp = 'thing-updated';
         return client.data
           .updater()
           .withId(id)
           .withClassName(thingClassName)
-          .withSchema(schema)
+          .withProperties(properties)
           .do();
       })
       .then(res => {
-        expect(res.schema).toEqual({
+        expect(res.properties).toEqual({
           stringProp: 'thing-updated',
-        });
-      })
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('updates an action', () => {
-    const id = '40d2f93a-8f55-4561-8636-7c759f89ef13';
-    return client.data
-      .getterById()
-      .withId(id)
-      .withKind(weaviate.KIND_ACTIONS)
-      .do()
-      .then(res => {
-        // alter the schema
-        const schema = res.schema;
-        schema.stringProp = 'action-updated';
-        return client.data
-          .updater()
-          .withId(id)
-          .withClassName(actionClassName)
-          .withKind(weaviate.KIND_ACTIONS)
-          .withSchema(schema)
-          .do();
-      })
-      .then(res => {
-        expect(res.schema).toEqual({
-          stringProp: 'action-updated',
         });
       })
       .catch(e => fail('it should not have errord: ' + e));
@@ -324,14 +241,13 @@ describe('data', () => {
       .do()
       .then(res => {
         // alter the schema
-        const schema = res.schema;
-        schema.intProp = 7;
+        const properties = res.properties;
+        properties.intProp = 7;
         return client.data
           .merger()
           .withId(id)
-          .withKind(weaviate.KIND_THINGS)
           .withClassName(thingClassName)
-          .withSchema(schema)
+          .withProperties(properties)
           .do();
       })
       .catch(e => fail('it should not have errord: ' + e));
@@ -343,14 +259,12 @@ describe('data', () => {
 
     return client.data
       .referenceCreator()
-      .withKind(weaviate.KIND_THINGS)
       .withId(sourceId)
       .withReferenceProperty('refProp')
       .withReference(
         client.data
           .referencePayloadBuilder()
           .withId(targetId)
-          .withKind(weaviate.KIND_THINGS)
           .payload(),
       )
       .do()
@@ -363,14 +277,12 @@ describe('data', () => {
 
     return client.data
       .referenceReplacer()
-      .withKind(weaviate.KIND_THINGS)
       .withId(sourceId)
       .withReferenceProperty('refProp')
       .withReferences([
         client.data
           .referencePayloadBuilder()
           .withId(targetId)
-          .withKind(weaviate.KIND_THINGS)
           .payload(),
       ])
       .do()
@@ -383,14 +295,12 @@ describe('data', () => {
 
     return client.data
       .referenceDeleter()
-      .withKind(weaviate.KIND_THINGS)
       .withId(sourceId)
       .withReferenceProperty('refProp')
       .withReference(
         client.data
           .referencePayloadBuilder()
           .withId(targetId)
-          .withKind(weaviate.KIND_THINGS)
           .payload(),
       )
       .do()
@@ -401,15 +311,6 @@ describe('data', () => {
     return client.data
       .deleter()
       .withId('1565c06c-463f-466c-9092-5930dbac3887')
-      .do()
-      .catch(e => fail('it should not have errord: ' + e));
-  });
-
-  it('deletes an action', () => {
-    return client.data
-      .deleter()
-      .withKind(weaviate.KIND_ACTIONS)
-      .withId('40d2f93a-8f55-4561-8636-7c759f89ef13')
       .do()
       .catch(e => fail('it should not have errord: ' + e));
   });
@@ -427,15 +328,7 @@ describe('data', () => {
         .getter()
         .do()
         .then(res => {
-          expect(res.things).toHaveLength(2);
-        })
-        .catch(e => fail('it should not have errord: ' + e)),
-      client.data
-        .getter()
-        .withKind(weaviate.KIND_ACTIONS)
-        .do()
-        .then(res => {
-          expect(res.actions).toHaveLength(0);
+          expect(res.objects).toHaveLength(2);
         })
         .catch(e => fail('it should not have errord: ' + e)),
     ]);
@@ -443,11 +336,6 @@ describe('data', () => {
 
   it('tears down and cleans up', () => {
     return Promise.all([
-      client.schema
-        .classDeleter()
-        .withClassName(actionClassName)
-        .withKind(weaviate.KIND_ACTIONS)
-        .do(),
       client.schema.classDeleter().withClassName(thingClassName).do(),
       client.schema.classDeleter().withClassName(refSourceClassName).do(),
     ]);
@@ -469,27 +357,8 @@ const setup = async client => {
     ],
   };
 
-  const action = {
-    class: actionClassName,
-    properties: [
-      {
-        name: 'stringProp',
-        dataType: ['string'],
-      },
-      {
-        name: 'intProp',
-        dataType: ['int'],
-      },
-    ],
-  };
-
   await Promise.all([
     client.schema.classCreator().withClass(thing).do(),
-    client.schema
-      .classCreator()
-      .withClass(action)
-      .withKind(weaviate.KIND_ACTIONS)
-      .do(),
   ]);
 
   const refSource = {
