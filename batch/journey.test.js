@@ -1,7 +1,7 @@
 const weaviate = require('../index');
 
 const thingClassName = 'BatchJourneyTestThing';
-const actionClassName = 'BatchJourneyTestAction';
+const otherThingClassName = 'BatchJourneyTestOtherThing';
 
 const thingIds = [
   'c25365bd-276b-4d88-9d8f-9e924701aa89',
@@ -10,7 +10,7 @@ const thingIds = [
   '5f4b0aa2-0704-4529-919f-c1f614e685f4',
 ];
 
-const actionIds = [
+const otherThingIds = [
   '5b354a0f-fe66-4fe7-ad62-4db72ddab815',
   '8727fa2b-610a-4a5c-af26-e558943f71c7',
 ];
@@ -29,12 +29,12 @@ describe('batch importing', () => {
         {
           class: thingClassName,
           id: thingIds[0],
-          schema: {stringProp: 'foo'},
+          properties: {stringProp: 'foo'},
         },
         {
           class: thingClassName,
           id: thingIds[1],
-          schema: {stringProp: 'bar'},
+          properties: {stringProp: 'bar'},
         },
       ];
 
@@ -56,12 +56,10 @@ describe('batch importing', () => {
         return Promise.all([
           client.data
             .getterById()
-            .withKind(weaviate.KIND_THINGS)
             .withId(thingIds[0])
             .do(),
           client.data
             .getterById()
-            .withKind(weaviate.KIND_THINGS)
             .withId(thingIds[1])
             .do(),
         ]).catch(e => fail("it should not have error'd " + e));
@@ -74,13 +72,13 @@ describe('batch importing', () => {
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[2])
-          .withSchema({stringProp: 'foo'})
+          .withProperties({stringProp: 'foo'})
           .payload(), // note the .payload(), not .do()!
         client.data
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[3])
-          .withSchema({stringProp: 'foo'})
+          .withProperties({stringProp: 'foo'})
           .payload(), // note the .payload(), not .do()!
       ];
 
@@ -102,12 +100,10 @@ describe('batch importing', () => {
         return Promise.all([
           client.data
             .getterById()
-            .withKind(weaviate.KIND_THINGS)
             .withId(thingIds[2])
             .do(),
           client.data
             .getterById()
-            .withKind(weaviate.KIND_THINGS)
             .withId(thingIds[3])
             .do(),
         ]).catch(e => fail("it should not have error'd " + e));
@@ -115,25 +111,24 @@ describe('batch importing', () => {
     });
   });
 
-  describe('import action objects', () => {
+  describe('import other thing objects', () => {
     describe('hand assembling the objects', () => {
       const toImport = [
         {
-          class: actionClassName,
-          id: actionIds[0],
-          schema: {stringProp: 'foo'},
+          class: otherThingClassName,
+          id: otherThingIds[0],
+          properties: {stringProp: 'foo'},
         },
         {
-          class: actionClassName,
-          id: actionIds[1],
-          schema: {stringProp: 'bar'},
+          class: otherThingClassName,
+          id: otherThingIds[1],
+          properties: {stringProp: 'bar'},
         },
       ];
 
       it('imports them', () => {
         client.batch
           .objectsBatcher()
-          .withKind(weaviate.KIND_ACTIONS)
           .withObject(toImport[0])
           .withObject(toImport[1])
           .do()
@@ -149,12 +144,10 @@ describe('batch importing', () => {
         return Promise.all([
           client.data
             .getterById()
-            .withKind(weaviate.KIND_ACTIONS)
             .withId(toImport[0].id)
             .do(),
           client.data
             .getterById()
-            .withKind(weaviate.KIND_ACTIONS)
             .withId(toImport[1].id)
             .do(),
         ]).catch(e => fail("it should not have error'd " + e));
@@ -162,52 +155,60 @@ describe('batch importing', () => {
     });
   });
 
-  describe('batch reference between the thing and action objects', () => {
+  describe('batch reference between the thing and otherThing objects', () => {
     it('imports the refs with raw objects', () => {
-      client.batch
+      return client.batch
         .referencesBatcher()
         .withReference({
           from:
-            `weaviate://localhost/things/${thingClassName}/` +
+            `weaviate://localhost/${thingClassName}/` +
             `${thingIds[0]}/refProp`,
-          to: `weaviate://localhost/actions/${actionIds[0]}`,
+          to: `weaviate://localhost/${otherThingIds[0]}`,
         })
         .withReference({
           from:
-            `weaviate://localhost/things/${thingClassName}/` +
+            `weaviate://localhost/${thingClassName}/` +
             `${thingIds[1]}/refProp`,
-          to: `weaviate://localhost/actions/${actionIds[1]}`,
+          to: `weaviate://localhost/${otherThingIds[1]}`,
         })
         .do()
+        .then(res => {
+          res.forEach(elem => {
+            expect(elem.result.errors).toBeUndefined()
+          })
+
+        })
         .catch(e => fail("it should not have error'd " + e));
     });
 
     it('imports more refs with a builder pattern', () => {
-      client.batch
+      return client.batch
         .referencesBatcher()
         .withReference(
           client.batch
             .referencePayloadBuilder()
-            .withFromKind(weaviate.KIND_THINGS)
             .withFromClassName(thingClassName)
             .withFromRefProp('refProp')
             .withFromId(thingIds[2])
-            .withToKind(weaviate.KIND_ACTIONS)
-            .withToId(actionIds[0])
+            .withToId(otherThingIds[0])
             .payload(),
         )
         .withReference(
           client.batch
             .referencePayloadBuilder()
-            .withFromKind(weaviate.KIND_THINGS)
             .withFromClassName(thingClassName)
             .withFromRefProp('refProp')
             .withFromId(thingIds[3])
-            .withToKind(weaviate.KIND_ACTIONS)
-            .withToId(actionIds[1])
+            .withToId(otherThingIds[1])
             .payload(),
         )
         .do()
+        .then(res => {
+          res.forEach(elem => {
+            expect(elem.result.errors).toBeUndefined()
+          })
+
+        })
         .catch(e => fail("it should not have error'd " + e));
     });
 
@@ -219,42 +220,38 @@ describe('batch importing', () => {
       return Promise.all([
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[0])
           .do()
           .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[0]}`,
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[0]}`,
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[1])
           .do()
           .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[1]}`,
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[1]}`,
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[2])
           .do()
           .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[0]}`,
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[0]}`,
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[3])
           .do()
           .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[1]}`,
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[1]}`,
             );
           }),
       ]).catch(e => fail("it should not have error'd " + e));
@@ -281,9 +278,8 @@ const setup = async client => {
       .do(),
     client.schema
       .classCreator()
-      .withKind(weaviate.KIND_ACTIONS)
       .withClass({
-        class: actionClassName,
+        class: otherThingClassName,
         properties: [
           {
             name: 'stringProp',
@@ -294,13 +290,13 @@ const setup = async client => {
       .do(),
   ]);
 
-  // now set a link from thing to action class, so we can batch import
+  // now set a link from thing to otherThing class, so we can batch import
   // references
 
   return client.schema
     .propertyCreator()
     .withClassName(thingClassName)
-    .withProperty({name: 'refProp', dataType: [actionClassName]})
+    .withProperty({name: 'refProp', dataType: [otherThingClassName]})
     .do();
 };
 
@@ -311,7 +307,6 @@ const cleanup = client =>
     client.schema.classDeleter().withClassName(thingClassName).do(),
     client.schema
       .classDeleter()
-      .withKind(weaviate.KIND_ACTIONS)
-      .withClassName(actionClassName)
+      .withClassName(otherThingClassName)
       .do(),
   ]);

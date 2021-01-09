@@ -1,11 +1,8 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class ReferencesBatcher {
   constructor(client) {
     this.client = client;
     this.references = [];
     this.errors = [];
-    this.kind = DEFAULT_KIND;
   }
 
   withReference = obj => {
@@ -36,7 +33,7 @@ export default class ReferencesBatcher {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/batching/references`;
+    const path = `/batch/references`;
     return this.client.post(path, this.payload());
   };
 }

@@ -1,11 +1,8 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class ObjectsBatcher {
   constructor(client) {
     this.client = client;
     this.objects = [];
     this.errors = [];
-    this.kind = DEFAULT_KIND;
   }
 
   withObject = obj => {
@@ -14,13 +11,8 @@ export default class ObjectsBatcher {
   };
 
   payload = () => ({
-    [this.kind]: this.objects,
+    'objects': this.objects,
   });
-
-  withKind = kind => {
-    this.kind = kind;
-    return this;
-  };
 
   validateObjectCount = () => {
     if (this.objects.length == 0) {
@@ -32,16 +24,7 @@ export default class ObjectsBatcher {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
-    this.validateKind();
     this.validateObjectCount();
   };
 
@@ -52,7 +35,7 @@ export default class ObjectsBatcher {
         new Error('invalid usage: ' + this.errors.join(', ')),
       );
     }
-    const path = `/batching/${this.kind}`;
+    const path = `/batch/objects`;
     return this.client.post(path, this.payload());
   };
 }

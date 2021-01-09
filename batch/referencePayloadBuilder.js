@@ -1,22 +1,8 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class ReferencesBatcher {
   constructor(client) {
     this.client = client;
     this.errors = [];
-    this.fromKind = DEFAULT_KIND;
-    this.toKind = DEFAULT_KIND;
   }
-
-  withFromKind = kind => {
-    this.fromKind = kind;
-    return this;
-  };
-
-  withToKind = kind => {
-    this.toKind = kind;
-    return this;
-  };
 
   withFromId = id => {
     this.fromId = id;
@@ -47,28 +33,7 @@ export default class ReferencesBatcher {
     }
   };
 
-  validateKinds = () => {
-    try {
-      validateKind(this.fromKind);
-    } catch (e) {
-      this.errors = [
-        ...this.errors,
-        newError('invalid fromKind: ' + e.toString()),
-      ];
-    }
-
-    try {
-      validateKind(this.toKind);
-    } catch (e) {
-      this.errors = [
-        ...this.errors,
-        new Error('invalid toKind: ' + e.toString()),
-      ];
-    }
-  };
-
   validate = () => {
-    this.validateKinds();
     this.validateIsSet(this.fromId, 'fromId', '.withFromId(id)');
     this.validateIsSet(this.toId, 'toId', '.withToId(id)');
     this.validateIsSet(
@@ -91,9 +56,9 @@ export default class ReferencesBatcher {
 
     return {
       from:
-        `weaviate://localhost/${this.fromKind}/${this.fromClassName}` +
+        `weaviate://localhost/${this.fromClassName}` +
         `/${this.fromId}/${this.fromRefProp}`,
-      to: `weaviate://localhost/${this.toKind}/${this.toId}`,
+      to: `weaviate://localhost/${this.toId}`,
     };
   };
 }
