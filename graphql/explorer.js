@@ -1,4 +1,4 @@
-import Explore from './explore';
+import NearText from './nearText';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Explorer {
@@ -51,9 +51,9 @@ export default class Explorer {
     }
   };
 
-  buildExploreArgs = () => {
+  buildNearTextArgs = () => {
     try {
-      this.exploreString = new Explore(this.params).toString(false);
+      this.nearTextString = new NearText(this.params).toString(false);
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -88,7 +88,7 @@ export default class Explorer {
   do = () => {
     let params = '';
 
-    this.buildExploreArgs();
+    this.buildNearTextArgs();
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
@@ -98,8 +98,8 @@ export default class Explorer {
 
     let args = [];
 
-    if (this.exploreString) {
-      args = [...args, `${this.exploreString}`];
+    if (this.nearTextString) {
+      args = [...args, `${this.nearTextString}`];
     }
 
     if (this.limit) {

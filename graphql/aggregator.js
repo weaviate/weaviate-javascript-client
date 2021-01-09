@@ -1,5 +1,4 @@
 import Where from './where';
-import explore from './explore';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Aggregator {
@@ -94,15 +93,11 @@ export default class Aggregator {
       );
     }
 
-    if (this.whereString || this.exploreString || this.limit || this.groupBy) {
+    if (this.whereString || this.limit || this.groupBy) {
       let args = [];
 
       if (this.whereString) {
         args = [...args, `where:${this.whereString}`];
-      }
-
-      if (this.exploreString) {
-        args = [...args, `explore:${this.exploreString}`];
       }
 
       if (this.groupBy) {

@@ -2,8 +2,13 @@ import weaviate from '../index';
 
 describe('an end2end test against a deployed instance', () => {
   const client = weaviate.client({
-    scheme: 'https',
-    host: 'demo.dataset.playground.semi.technology',
+    scheme: "http",
+    host: "localhost:8080",
+  });
+
+  it("creates a schema class", () => {
+    // this is just test setup, not part of what we want to test here
+    return setup(client);
   });
 
   test('graphql get method with minimal fields', () => {
@@ -125,4 +130,41 @@ describe('an end2end test against a deployed instance', () => {
       })
       .catch(e => fail("it should not have error'd" + e));
   });
+
+  it("tears down and cleans up", () => {
+    return Promise.all([
+      client.schema.classDeleter().withClassName('Article').do(),
+    ]);
+  });
 });
+
+const setup = async (client) => {
+  const thing = {
+    class: thingClassName,
+    properties: [
+      {
+        name: "stringProp",
+        dataType: ["string"],
+      },
+      {
+        name: "intProp",
+        dataType: ["int"],
+      },
+    ],
+  };
+
+  await Promise.all([client.schema.classCreator().withClass(thing).do()]);
+
+  const refSource = {
+    class: refSourceClassName,
+    properties: [
+      {
+        name: "refProp",
+        dataType: [thingClassName],
+        cardinality: "many",
+      },
+    ],
+  };
+
+  return client.schema.classCreator().withClass(refSource).do();
+};
