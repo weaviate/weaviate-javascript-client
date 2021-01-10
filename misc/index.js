@@ -1,9 +1,9 @@
-import LiveChecker from './liveChecker';
-import ReadyChecker from './readyChecker';
-import MetaGetter from './metaGetter';
-import OpenidConfigurationGetter from './openidConfigurationGetter';
+import LiveChecker from "./liveChecker";
+import ReadyChecker from "./readyChecker";
+import MetaGetter from "./metaGetter";
+import OpenidConfigurationGetter from "./openidConfigurationGetter";
 
-const misc = client => {
+const misc = (client) => {
   return {
     liveChecker: () => new LiveChecker(client),
     readyChecker: () => new ReadyChecker(client),

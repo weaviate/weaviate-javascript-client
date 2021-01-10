@@ -4,17 +4,17 @@ export default class ExtensionCreator {
     this.errors = [];
   }
 
-  withConcept = concept => {
+  withConcept = (concept) => {
     this.concept = concept;
     return this;
   };
 
-  withDefinition = definition => {
+  withDefinition = (definition) => {
     this.definition = definition;
     return this;
   };
 
-  withWeight = weight => {
+  withWeight = (weight) => {
     this.weight = weight;
     return this;
   };
@@ -29,13 +29,13 @@ export default class ExtensionCreator {
   };
 
   validate = () => {
-    this.validateIsSet(this.concept, 'concept', 'withConcept(concept)');
+    this.validateIsSet(this.concept, "concept", "withConcept(concept)");
     this.validateIsSet(
       this.definition,
-      'definition',
-      'withDefinition(definition)',
+      "definition",
+      "withDefinition(definition)"
     );
-    this.validateIsSet(this.weight, 'weight', 'withWeight(weight)');
+    this.validateIsSet(this.weight, "weight", "withWeight(weight)");
   };
 
   payload = () => ({
@@ -48,11 +48,11 @@ export default class ExtensionCreator {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
-    const path = `/c11y/extensions/`;
+    const path = `/modules/text2vec-contextionary/extensions`;
     return this.client.post(path, this.payload());
   };
 }
