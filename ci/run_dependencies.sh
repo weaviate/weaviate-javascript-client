@@ -1,9 +1,8 @@
 #!/bin/bash
 
-echo "Download the latest docker-compose file"
-curl -s -o docker-compose.yml https://configuration.semi.technology/docker-compose
 echo "Stop existing session if running"
 docker-compose down
+rm -rf weaviate-data || true
 
 echo "Run Docker compose"
 docker-compose up -d
