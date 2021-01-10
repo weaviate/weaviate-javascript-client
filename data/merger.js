@@ -1,30 +1,21 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class Merger {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
-  withSchema = schema => {
-    this.schema = schema;
+  withProperties = (properties) => {
+    this.properties = properties;
     return this;
   };
 
-  withClassName = className => {
+  withClassName = (className) => {
     this.className = className;
     return this;
   };
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
-    return this;
-  };
-
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
     return this;
   };
 
@@ -36,19 +27,19 @@ export default class Merger {
     ) {
       this.errors = [
         ...this.errors,
-        'className must be set - set with withClassName(className)',
+        "className must be set - set with withClassName(className)",
       ];
     }
   };
 
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
-      this.errors = [...this.errors, 'id must be set - set with withId(id)'];
+      this.errors = [...this.errors, "id must be set - set with withId(id)"];
     }
   };
 
   payload = () => ({
-    schema: this.schema,
+    properties: this.properties,
     class: this.className,
     id: this.id,
   });
@@ -63,10 +54,10 @@ export default class Merger {
 
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/${this.kind}/${this.id}`;
+    const path = `/objects/${this.id}`;
     return this.client.patch(path, this.payload());
   };
 }

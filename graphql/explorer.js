@@ -1,5 +1,6 @@
-import Explore from './explore';
-import {DEFAULT_KIND, validateKind} from '../kinds';
+import NearText from "./nearText";
+import NearVector from "./nearVector";
+import { DEFAULT_KIND, validateKind } from "../kinds";
 
 export default class Explorer {
   constructor(client) {
@@ -8,37 +9,33 @@ export default class Explorer {
     this.errors = [];
   }
 
-  withFields = fields => {
+  withFields = (fields) => {
     this.fields = fields;
     return this;
   };
 
-  withLimit = limit => {
+  withLimit = (limit) => {
     this.limit = limit;
     return this;
   };
 
-  withConcepts = concepts => {
-    this.params.concepts = concepts;
+  withNearText = (nearTextObj) => {
+    try {
+      this.nearTextString = new NearText(nearTextObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
     return this;
   };
 
-  withMoveTo = moveTo => {
-    this.params.moveTo = moveTo;
+  withNearVector = (nearVectorObj) => {
+    try {
+      this.nearVectorString = new NearVector(nearVectorObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
     return this;
   };
-
-  withMoveAwayFrom = moveAwayFrom => {
-    this.params.moveAwayFrom = moveAwayFrom;
-    return this;
-  };
-
-  withCertainty = certainty => {
-    this.params.certainty = certainty;
-    return this;
-  };
-
-  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
 
   validateGroup = () => {
     if (!this.group) {
@@ -47,15 +44,7 @@ export default class Explorer {
     }
 
     if (!Array.isArray(this.group)) {
-      throw new Error('groupBy must be an array');
-    }
-  };
-
-  buildExploreArgs = () => {
-    try {
-      this.exploreString = new Explore(this.params).toString(false);
-    } catch (e) {
-      this.errors = [...this.errors, e];
+      throw new Error("groupBy must be an array");
     }
   };
 
@@ -77,36 +66,33 @@ export default class Explorer {
   };
 
   validate = () => {
-    this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
-    this.validateIsSet(
-      this.params.concepts,
-      'concepts',
-      '.withConcepts(concepts)',
-    );
+    this.validateIsSet(this.fields, "fields", ".withFields(fields)");
   };
 
   do = () => {
-    let params = '';
+    let params = "";
 
-    this.buildExploreArgs();
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
     let args = [];
 
-    if (this.exploreString) {
-      args = [...args, `${this.exploreString}`];
+    if (this.nearTextString) {
+      args = [...args, `nearText:${this.nearTextString}`];
     }
 
+    if (this.nearVectorString) {
+      args = [...args, `nearVector:${this.nearVectorString}`];
+    }
     if (this.limit) {
       args = [...args, `limit:${this.limit}`];
     }
 
-    params = `(${args.join(',')})`;
+    params = `(${args.join(",")})`;
 
     return this.client.query(`{Explore${params}{${this.fields}}}`);
   };

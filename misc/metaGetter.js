@@ -4,6 +4,6 @@ export default class MetaGetter {
   }
 
   do = () => {
-    return this.client.get('/meta', true);
+    return this.client.get("/meta", true);
   };
 }

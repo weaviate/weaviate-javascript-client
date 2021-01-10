@@ -13,24 +13,24 @@ export default class ConceptsGetter {
     }
   };
 
-  withConcept = concept => {
+  withConcept = (concept) => {
     this.concept = concept;
     return this;
   };
 
   validate = () => {
-    this.validateIsSet(this.concept, 'concept', 'withConcept(concept)');
+    this.validateIsSet(this.concept, "concept", "withConcept(concept)");
   };
 
   do = () => {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
-    const path = `/c11y/concepts/${this.concept}`;
+    const path = `/modules/text2vec-contextionary/concepts/${this.concept}`;
     return this.client.get(path);
   };
 }

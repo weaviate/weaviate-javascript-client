@@ -25,7 +25,7 @@ export default class GraphQLWhere {
   }
 
   marshalValueContent() {
-    if (this.valueType == 'valueGeoRange') {
+    if (this.valueType == "valueGeoRange") {
       return this.marshalValueGeoRange();
     }
 
@@ -46,7 +46,7 @@ export default class GraphQLWhere {
       if (gc.longitude) {
         gcParts = [...gcParts, `longitude:${gc.longitude}`];
       }
-      parts = [...parts, `geoCoordinates:{${gcParts.join(',')}}`];
+      parts = [...parts, `geoCoordinates:{${gcParts.join(",")}}`];
     }
 
     const d = this.valueContent.distance;
@@ -56,24 +56,24 @@ export default class GraphQLWhere {
         dParts = [...dParts, `max:${d.max}`];
       }
 
-      parts = [...parts, `distance:{${dParts.join(',')}}`];
+      parts = [...parts, `distance:{${dParts.join(",")}}`];
     }
 
-    return `{${parts.join(',')}}`;
+    return `{${parts.join(",")}}`;
   }
 
   validate() {
     if (!this.operator) {
-      throw new Error('where filter: operator cannot be empty');
+      throw new Error("where filter: operator cannot be empty");
     }
 
     if (!this.operands) {
       if (!this.valueType) {
-        throw new Error('where filter: value<Type> cannot be empty');
+        throw new Error("where filter: value<Type> cannot be empty");
       }
 
       if (!this.path) {
-        throw new Error('where filter: path cannot be empty');
+        throw new Error("where filter: path cannot be empty");
       }
     }
   }
@@ -81,17 +81,17 @@ export default class GraphQLWhere {
   parse() {
     for (let key in this.source) {
       switch (key) {
-        case 'operator':
+        case "operator":
           this.parseOperator(this.source[key]);
           break;
-        case 'operands':
+        case "operands":
           this.parseOperands(this.source[key]);
           break;
-        case 'path':
+        case "path":
           this.parsePath(this.source[key]);
           break;
         default:
-          if (key.indexOf('value') != 0) {
+          if (key.indexOf("value") != 0) {
             throw new Error("where filter: unrecognized key '" + key + "'");
           }
           this.parseValue(key, this.source[key]);
@@ -100,8 +100,8 @@ export default class GraphQLWhere {
   }
 
   parseOperator(op) {
-    if (typeof op !== 'string') {
-      throw new Error('where filter: operator must be a string');
+    if (typeof op !== "string") {
+      throw new Error("where filter: operator must be a string");
     }
 
     this.operator = op;
@@ -109,7 +109,7 @@ export default class GraphQLWhere {
 
   parsePath(path) {
     if (!Array.isArray(path)) {
-      throw new Error('where filter: path must be an array');
+      throw new Error("where filter: path must be an array");
     }
 
     this.path = path;
@@ -117,13 +117,13 @@ export default class GraphQLWhere {
 
   parseValue(key, value) {
     switch (key) {
-      case 'valueString':
-      case 'valueText':
-      case 'valueInt':
-      case 'valueNumber':
-      case 'valueDate':
-      case 'valueBoolean':
-      case 'valueGeoRange':
+      case "valueString":
+      case "valueText":
+      case "valueInt":
+      case "valueNumber":
+      case "valueDate":
+      case "valueBoolean":
+      case "valueGeoRange":
         break;
       default:
         throw new Error("where filter: unrecognized value prop '" + key + "'");
@@ -134,13 +134,13 @@ export default class GraphQLWhere {
 
   parseOperands(ops) {
     if (!Array.isArray(ops)) {
-      throw new Error('where filter: operands must be an array');
+      throw new Error("where filter: operands must be an array");
     }
 
     this.operands = ops
-      .map(element => {
+      .map((element) => {
         return new GraphQLWhere(element).toString();
       })
-      .join(',');
+      .join(",");
   }
 }

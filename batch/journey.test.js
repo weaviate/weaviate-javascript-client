@@ -1,270 +1,247 @@
-const weaviate = require('../index');
+const weaviate = require("../index");
 
-const thingClassName = 'BatchJourneyTestThing';
-const actionClassName = 'BatchJourneyTestAction';
+const thingClassName = "BatchJourneyTestThing";
+const otherThingClassName = "BatchJourneyTestOtherThing";
 
 const thingIds = [
-  'c25365bd-276b-4d88-9d8f-9e924701aa89',
-  'e0754de5-1458-4814-b21f-382a77b5d64b',
-  '5c345f46-c3c4-4f42-8ad6-65c6c60840b4',
-  '5f4b0aa2-0704-4529-919f-c1f614e685f4',
+  "c25365bd-276b-4d88-9d8f-9e924701aa89",
+  "e0754de5-1458-4814-b21f-382a77b5d64b",
+  "5c345f46-c3c4-4f42-8ad6-65c6c60840b4",
+  "5f4b0aa2-0704-4529-919f-c1f614e685f4",
 ];
 
-const actionIds = [
-  '5b354a0f-fe66-4fe7-ad62-4db72ddab815',
-  '8727fa2b-610a-4a5c-af26-e558943f71c7',
+const otherThingIds = [
+  "5b354a0f-fe66-4fe7-ad62-4db72ddab815",
+  "8727fa2b-610a-4a5c-af26-e558943f71c7",
 ];
 
-describe('batch importing', () => {
+describe("batch importing", () => {
   const client = weaviate.client({
-    scheme: 'http',
-    host: 'localhost:8080',
+    scheme: "http",
+    host: "localhost:8080",
   });
 
-  it('sets up', () => setup(client));
+  it("sets up", () => setup(client));
 
-  describe('import thing objects', () => {
-    describe('hand assembling the objects', () => {
+  describe("import thing objects", () => {
+    describe("hand assembling the objects", () => {
       const toImport = [
         {
           class: thingClassName,
           id: thingIds[0],
-          schema: {stringProp: 'foo'},
+          properties: { stringProp: "foo" },
         },
         {
           class: thingClassName,
           id: thingIds[1],
-          schema: {stringProp: 'bar'},
+          properties: { stringProp: "bar" },
         },
       ];
 
-      it('imports them', () => {
+      it("imports them", () => {
         client.batch
           .objectsBatcher()
           .withObject(toImport[0])
           .withObject(toImport[1])
           .do()
           .then()
-          .catch(e => fail("it should not have error'd " + e));
+          .catch((e) => fail("it should not have error'd " + e));
       });
 
-      it('waits for es index refresh', () => {
-        return new Promise(resolve => setTimeout(resolve, 1000));
+      it("waits for es index refresh", () => {
+        return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
-      it('verifies they are now queryable', () => {
+      it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_THINGS)
-            .withId(thingIds[0])
-            .do(),
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_THINGS)
-            .withId(thingIds[1])
-            .do(),
-        ]).catch(e => fail("it should not have error'd " + e));
+          client.data.getterById().withId(thingIds[0]).do(),
+          client.data.getterById().withId(thingIds[1]).do(),
+        ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
 
-    describe('using the thing builder to assemble the objects', () => {
+    describe("using the thing builder to assemble the objects", () => {
       const toImport = [
         client.data
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[2])
-          .withSchema({stringProp: 'foo'})
+          .withProperties({ stringProp: "foo" })
           .payload(), // note the .payload(), not .do()!
         client.data
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[3])
-          .withSchema({stringProp: 'foo'})
+          .withProperties({ stringProp: "foo" })
           .payload(), // note the .payload(), not .do()!
       ];
 
-      it('imports them', () => {
+      it("imports them", () => {
         client.batch
           .objectsBatcher()
           .withObject(toImport[0])
           .withObject(toImport[1])
           .do()
           .then()
-          .catch(e => fail("it should not have error'd " + e));
+          .catch((e) => fail("it should not have error'd " + e));
       });
 
-      it('waits for es index refresh', () => {
-        return new Promise(resolve => setTimeout(resolve, 1000));
+      it("waits for es index refresh", () => {
+        return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
-      it('verifies they are now queryable', () => {
+      it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_THINGS)
-            .withId(thingIds[2])
-            .do(),
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_THINGS)
-            .withId(thingIds[3])
-            .do(),
-        ]).catch(e => fail("it should not have error'd " + e));
+          client.data.getterById().withId(thingIds[2]).do(),
+          client.data.getterById().withId(thingIds[3]).do(),
+        ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
   });
 
-  describe('import action objects', () => {
-    describe('hand assembling the objects', () => {
+  describe("import other thing objects", () => {
+    describe("hand assembling the objects", () => {
       const toImport = [
         {
-          class: actionClassName,
-          id: actionIds[0],
-          schema: {stringProp: 'foo'},
+          class: otherThingClassName,
+          id: otherThingIds[0],
+          properties: { stringProp: "foo" },
         },
         {
-          class: actionClassName,
-          id: actionIds[1],
-          schema: {stringProp: 'bar'},
+          class: otherThingClassName,
+          id: otherThingIds[1],
+          properties: { stringProp: "bar" },
         },
       ];
 
-      it('imports them', () => {
+      it("imports them", () => {
         client.batch
           .objectsBatcher()
-          .withKind(weaviate.KIND_ACTIONS)
           .withObject(toImport[0])
           .withObject(toImport[1])
           .do()
           .then()
-          .catch(e => fail("it should not have error'd " + e));
+          .catch((e) => fail("it should not have error'd " + e));
       });
 
-      it('waits for es index refresh', () => {
-        return new Promise(resolve => setTimeout(resolve, 1000));
+      it("waits for es index refresh", () => {
+        return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
-      it('verifies they are now queryable', () => {
+      it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_ACTIONS)
-            .withId(toImport[0].id)
-            .do(),
-          client.data
-            .getterById()
-            .withKind(weaviate.KIND_ACTIONS)
-            .withId(toImport[1].id)
-            .do(),
-        ]).catch(e => fail("it should not have error'd " + e));
+          client.data.getterById().withId(toImport[0].id).do(),
+          client.data.getterById().withId(toImport[1].id).do(),
+        ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
   });
 
-  describe('batch reference between the thing and action objects', () => {
-    it('imports the refs with raw objects', () => {
-      client.batch
+  describe("batch reference between the thing and otherThing objects", () => {
+    it("imports the refs with raw objects", () => {
+      return client.batch
         .referencesBatcher()
         .withReference({
           from:
-            `weaviate://localhost/things/${thingClassName}/` +
+            `weaviate://localhost/${thingClassName}/` +
             `${thingIds[0]}/refProp`,
-          to: `weaviate://localhost/actions/${actionIds[0]}`,
+          to: `weaviate://localhost/${otherThingIds[0]}`,
         })
         .withReference({
           from:
-            `weaviate://localhost/things/${thingClassName}/` +
+            `weaviate://localhost/${thingClassName}/` +
             `${thingIds[1]}/refProp`,
-          to: `weaviate://localhost/actions/${actionIds[1]}`,
+          to: `weaviate://localhost/${otherThingIds[1]}`,
         })
         .do()
-        .catch(e => fail("it should not have error'd " + e));
+        .then((res) => {
+          res.forEach((elem) => {
+            expect(elem.result.errors).toBeUndefined();
+          });
+        })
+        .catch((e) => fail("it should not have error'd " + e));
     });
 
-    it('imports more refs with a builder pattern', () => {
-      client.batch
+    it("imports more refs with a builder pattern", () => {
+      return client.batch
         .referencesBatcher()
         .withReference(
           client.batch
             .referencePayloadBuilder()
-            .withFromKind(weaviate.KIND_THINGS)
             .withFromClassName(thingClassName)
-            .withFromRefProp('refProp')
+            .withFromRefProp("refProp")
             .withFromId(thingIds[2])
-            .withToKind(weaviate.KIND_ACTIONS)
-            .withToId(actionIds[0])
-            .payload(),
+            .withToId(otherThingIds[0])
+            .payload()
         )
         .withReference(
           client.batch
             .referencePayloadBuilder()
-            .withFromKind(weaviate.KIND_THINGS)
             .withFromClassName(thingClassName)
-            .withFromRefProp('refProp')
+            .withFromRefProp("refProp")
             .withFromId(thingIds[3])
-            .withToKind(weaviate.KIND_ACTIONS)
-            .withToId(actionIds[1])
-            .payload(),
+            .withToId(otherThingIds[1])
+            .payload()
         )
         .do()
-        .catch(e => fail("it should not have error'd " + e));
+        .then((res) => {
+          res.forEach((elem) => {
+            expect(elem.result.errors).toBeUndefined();
+          });
+        })
+        .catch((e) => fail("it should not have error'd " + e));
     });
 
-    it('waits for es index refresh', () => {
-      return new Promise(resolve => setTimeout(resolve, 1000));
+    it("waits for es index refresh", () => {
+      return new Promise((resolve) => setTimeout(resolve, 1000));
     });
 
-    it('verifies the refs are now set', () => {
+    it("verifies the refs are now set", () => {
       return Promise.all([
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[0])
           .do()
-          .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[0]}`,
+          .then((res) => {
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[0]}`
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[1])
           .do()
-          .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[1]}`,
+          .then((res) => {
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[1]}`
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[2])
           .do()
-          .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[0]}`,
+          .then((res) => {
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[0]}`
             );
           }),
         client.data
           .getterById()
-          .withKind(weaviate.KIND_THINGS)
           .withId(thingIds[3])
           .do()
-          .then(res => {
-            expect(res.schema.refProp[0].beacon).toEqual(
-              `weaviate://localhost/actions/${actionIds[1]}`,
+          .then((res) => {
+            expect(res.properties.refProp[0].beacon).toEqual(
+              `weaviate://localhost/${otherThingIds[1]}`
             );
           }),
-      ]).catch(e => fail("it should not have error'd " + e));
+      ]).catch((e) => fail("it should not have error'd " + e));
     });
   });
 
-  it('tears down and cleans up', () => cleanup(client));
+  it("tears down and cleans up", () => cleanup(client));
 });
 
-const setup = async client => {
+const setup = async (client) => {
   // first import the classes
   await Promise.all([
     client.schema
@@ -273,45 +250,40 @@ const setup = async client => {
         class: thingClassName,
         properties: [
           {
-            name: 'stringProp',
-            dataType: ['string'],
+            name: "stringProp",
+            dataType: ["string"],
           },
         ],
       })
       .do(),
     client.schema
       .classCreator()
-      .withKind(weaviate.KIND_ACTIONS)
       .withClass({
-        class: actionClassName,
+        class: otherThingClassName,
         properties: [
           {
-            name: 'stringProp',
-            dataType: ['string'],
+            name: "stringProp",
+            dataType: ["string"],
           },
         ],
       })
       .do(),
   ]);
 
-  // now set a link from thing to action class, so we can batch import
+  // now set a link from thing to otherThing class, so we can batch import
   // references
 
   return client.schema
     .propertyCreator()
     .withClassName(thingClassName)
-    .withProperty({name: 'refProp', dataType: [actionClassName]})
+    .withProperty({ name: "refProp", dataType: [otherThingClassName] })
     .do();
 };
 
 //
 
-const cleanup = client =>
+const cleanup = (client) =>
   Promise.all([
     client.schema.classDeleter().withClassName(thingClassName).do(),
-    client.schema
-      .classDeleter()
-      .withKind(weaviate.KIND_ACTIONS)
-      .withClassName(actionClassName)
-      .do(),
+    client.schema.classDeleter().withClassName(otherThingClassName).do(),
   ]);

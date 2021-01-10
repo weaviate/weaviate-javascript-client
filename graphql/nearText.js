@@ -1,6 +1,6 @@
-export default class GraphQLExplore {
-  constructor(exploreObj) {
-    this.source = exploreObj;
+export default class GraphQLNearText {
+  constructor(nearTextObj) {
+    this.source = nearTextObj;
   }
 
   toString(wrap = true) {
@@ -18,7 +18,7 @@ export default class GraphQLExplore {
       if (this.moveToForce) {
         moveToArgs = [...moveToArgs, `force:${this.moveToForce}`];
       }
-      args = [...args, `moveTo:{${moveToArgs.join(',')}}`];
+      args = [...args, `moveTo:{${moveToArgs.join(",")}}`];
     }
 
     if (this.moveAwayFrom) {
@@ -31,24 +31,24 @@ export default class GraphQLExplore {
           `force:${this.moveAwayFromForce}`,
         ];
       }
-      args = [...args, `moveAwayFrom:{${moveAwayFromArgs.join(',')}}`];
+      args = [...args, `moveAwayFrom:{${moveAwayFromArgs.join(",")}}`];
     }
 
     if (!wrap) {
-      return `${args.join(',')}`;
+      return `${args.join(",")}`;
     }
-    return `{${args.join(',')}}`;
+    return `{${args.join(",")}}`;
   }
 
   validate() {
     if (!this.concepts) {
-      throw new Error('explore filter: concepts cannot be empty');
+      throw new Error("nearText filter: concepts cannot be empty");
     }
 
     if (this.moveTo) {
       if (!this.moveToForce || !this.moveToConcepts) {
         throw new Error(
-          "explore filter: moveTo must have fields 'concepts' and 'force'",
+          "nearText filter: moveTo must have fields 'concepts' and 'force'"
         );
       }
     }
@@ -56,7 +56,7 @@ export default class GraphQLExplore {
     if (this.moveAwayFrom) {
       if (!this.moveAwayFromForce || !this.moveAwayFromConcepts) {
         throw new Error(
-          "explore filter: moveAwayFrom must have fields 'concepts' and 'force'",
+          "nearText filter: moveAwayFrom must have fields 'concepts' and 'force'"
         );
       }
     }
@@ -65,51 +65,51 @@ export default class GraphQLExplore {
   parse() {
     for (let key in this.source) {
       switch (key) {
-        case 'concepts':
+        case "concepts":
           this.parseConcepts(this.source[key]);
           break;
-        case 'certainty':
+        case "certainty":
           this.parseCertainty(this.source[key]);
           break;
-        case 'moveTo':
+        case "moveTo":
           this.parseMoveTo(this.source[key]);
           break;
-        case 'moveAwayFrom':
+        case "moveAwayFrom":
           this.parseMoveAwayFrom(this.source[key]);
           break;
         default:
-          throw new Error("explore filter: unrecognized key '" + key + "'");
+          throw new Error("nearText filter: unrecognized key '" + key + "'");
       }
     }
   }
 
   parseConcepts(concepts) {
     if (!Array.isArray(concepts)) {
-      throw new Error('explore filter: concepts must be an array');
+      throw new Error("nearText filter: concepts must be an array");
     }
 
     this.concepts = concepts;
   }
 
   parseCertainty(cert) {
-    if (typeof cert !== 'number') {
-      throw new Error('explore filter: certainty must be a number');
+    if (typeof cert !== "number") {
+      throw new Error("nearText filter: certainty must be a number");
     }
 
     this.certainty = cert;
   }
 
   parseMoveTo(target) {
-    if (typeof target !== 'object') {
-      throw new Error('explore filter: moveTo must be object');
+    if (typeof target !== "object") {
+      throw new Error("nearText filter: moveTo must be object");
     }
 
     if (!Array.isArray(target.concepts)) {
-      throw new Error('explore filter: moveTo.concepts must be an array');
+      throw new Error("nearText filter: moveTo.concepts must be an array");
     }
 
-    if (target.force && typeof target.force != 'number') {
-      throw new Error('explore filter: moveTo.force must be a number');
+    if (target.force && typeof target.force != "number") {
+      throw new Error("nearText filter: moveTo.force must be a number");
     }
 
     this.moveTo = true;
@@ -118,16 +118,18 @@ export default class GraphQLExplore {
   }
 
   parseMoveAwayFrom(target) {
-    if (typeof target !== 'object') {
-      throw new Error('explore filter: moveAwayFrom must be object');
+    if (typeof target !== "object") {
+      throw new Error("nearText filter: moveAwayFrom must be object");
     }
 
     if (!Array.isArray(target.concepts)) {
-      throw new Error('explore filter: moveAwayFrom.concepts must be an array');
+      throw new Error(
+        "nearText filter: moveAwayFrom.concepts must be an array"
+      );
     }
 
-    if (target.force && typeof target.force != 'number') {
-      throw new Error('explore filter: moveAwayFrom.force must be a number');
+    if (target.force && typeof target.force != "number") {
+      throw new Error("nearText filter: moveAwayFrom.force must be a number");
     }
 
     this.moveAwayFrom = true;

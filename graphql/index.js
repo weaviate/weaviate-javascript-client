@@ -1,8 +1,8 @@
-import Aggregator from './aggregator';
-import Getter from './getter';
-import Explorer from './explorer';
+import Aggregator from "./aggregator";
+import Getter from "./getter";
+import Explorer from "./explorer";
 
-const graphql = client => {
+const graphql = (client) => {
   return {
     get: () => new Getter(client),
     aggregate: () => new Aggregator(client),

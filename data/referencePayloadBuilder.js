@@ -1,19 +1,11 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class ReferencePayloadBuilder {
   constructor(client) {
     this.client = client;
     this.errors = [];
-    this.kind = DEFAULT_KIND;
   }
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
-    return this;
-  };
-
-  withKind = kind => {
-    this.kind = kind;
     return this;
   };
 
@@ -26,27 +18,18 @@ export default class ReferencePayloadBuilder {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
-    this.validateKind();
-    this.validateIsSet(this.id, 'id', '.withId(id)');
+    this.validateIsSet(this.id, "id", ".withId(id)");
   };
 
   payload = () => {
     this.validate();
     if (this.errors.length > 0) {
-      throw new Error(this.errors.join(', '));
+      throw new Error(this.errors.join(", "));
     }
 
     return {
-      beacon: `weaviate://localhost/${this.kind}/${this.id}`,
+      beacon: `weaviate://localhost/${this.id}`,
     };
   };
 }

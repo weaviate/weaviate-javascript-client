@@ -1,48 +1,48 @@
-import weaviate from '../index';
+import weaviate from "../index";
 
-const targetDessertId = 'cd54852a-209d-423b-bf1c-884468215237';
-const targetSavoryId = 'e5da0127-327e-4184-85b8-7b9d1af4a850';
-const unclassifiedOneId = '8bde517e-01a7-47c9-8db6-d09a2e8d3db7';
-const unclassifiedTwoId = '39a04208-b6b6-4df4-9aba-caed9e0df2c3';
+const targetDessertId = "cd54852a-209d-423b-bf1c-884468215237";
+const targetSavoryId = "e5da0127-327e-4184-85b8-7b9d1af4a850";
+const unclassifiedOneId = "8bde517e-01a7-47c9-8db6-d09a2e8d3db7";
+const unclassifiedTwoId = "39a04208-b6b6-4df4-9aba-caed9e0df2c3";
 
-describe('a classification journey', () => {
-  describe('knn - manually polling the status', () => {
+describe("a classification journey", () => {
+  describe("knn - manually polling the status", () => {
     const client = weaviate.client({
-      scheme: 'http',
-      host: 'localhost:8080',
+      scheme: "http",
+      host: "localhost:8080",
     });
 
-    it('setups the schema and data', () => setup(client));
+    it("setups the schema and data", () => setup(client));
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    it('triggers a classification without waiting', () => {
+    it("triggers a classification without waiting", () => {
       return client.classifications
         .scheduler()
-        .withType('knn')
-        .withK(3)
-        .withClassName('ClassificationJourneySource')
-        .withClassifyProperties(['toTarget'])
-        .withBasedOnProperties(['description'])
+        .withType("knn")
+        .withSettings({ k: 3 })
+        .withClassName("ClassificationJourneySource")
+        .withClassifyProperties(["toTarget"])
+        .withBasedOnProperties(["description"])
         .do()
-        .then(res => {
+        .then((res) => {
           expect(res.id).toBeDefined();
           id = res.id;
         })
-        .catch(e => fail('it should not have errord: ' + e));
+        .catch((e) => fail("it should not have errord: " + e));
     });
 
-    it('is now running', () => {
+    it("is now running", () => {
       return client.classifications
         .getter()
         .withId(id)
         .do()
-        .then(res => {
-          expect(res.status).toEqual('running');
+        .then((res) => {
+          expect(res.status).toEqual("running");
         });
     });
 
-    it('eventually turns to completed', () => {
+    it("eventually turns to completed", () => {
       const timeout = 5 * 1000;
 
       return new Promise((resolve, reject) => {
@@ -52,15 +52,15 @@ describe('a classification journey', () => {
             .getter()
             .withId(id)
             .do()
-            .then(res => {
-              res.status == 'completed' && resolve();
+            .then((res) => {
+              res.status == "completed" && resolve();
             });
         }, 500);
-      }).catch(() => fail('timed out'));
+      }).catch(() => fail("timed out"));
     });
 
-    it('waits for es index updates to have refreshed', () => {
-      return new Promise(resolve => setTimeout(resolve, 1200));
+    it("waits for es index updates to have refreshed", () => {
+      return new Promise((resolve) => setTimeout(resolve, 1200));
     });
 
     // removed as the classification results - not affecting the client itself-
@@ -90,39 +90,39 @@ describe('a classification journey', () => {
     //   ]);
     // });
 
-    it('tears down and cleans up', () => cleanup(client));
+    it("tears down and cleans up", () => cleanup(client));
   });
 
   describe("knn - using the client's wait method", () => {
     const client = weaviate.client({
-      scheme: 'http',
-      host: 'localhost:8080',
+      scheme: "http",
+      host: "localhost:8080",
     });
 
-    it('setups the schema and data', () => setup(client));
+    it("setups the schema and data", () => setup(client));
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    it('triggers a classification without waiting', async () => {
+    it("triggers a classification without waiting", async () => {
       return client.classifications
         .scheduler()
-        .withType('knn')
-        .withK(3)
-        .withClassName('ClassificationJourneySource')
-        .withClassifyProperties(['toTarget'])
-        .withBasedOnProperties(['description'])
+        .withType("knn")
+        .withSettings({ k: 3 })
+        .withClassName("ClassificationJourneySource")
+        .withClassifyProperties(["toTarget"])
+        .withBasedOnProperties(["description"])
         .withWaitForCompletion()
         .withWaitTimeout(60 * 1000)
         .do()
-        .then(res => {
-          expect(res.status).toEqual('completed');
+        .then((res) => {
+          expect(res.status).toEqual("completed");
           id = res.id;
         })
-        .catch(e => fail('it should not have errord: ' + e));
+        .catch((e) => fail("it should not have errord: " + e));
     });
 
-    it('waits for es index updates to have refreshed', () => {
-      return new Promise(resolve => setTimeout(resolve, 1200));
+    it("waits for es index updates to have refreshed", () => {
+      return new Promise((resolve) => setTimeout(resolve, 1200));
     });
 
     // removed as the classification results - not affecting the client itself-
@@ -152,52 +152,56 @@ describe('a classification journey', () => {
     //   ]);
     // });
 
-    it('tears down and cleans up', () => cleanup(client));
+    it("tears down and cleans up", () => cleanup(client));
   });
 
-  describe('knn - running into a timeout', () => {
+  describe("knn - running into a timeout", () => {
     const client = weaviate.client({
-      scheme: 'http',
-      host: 'localhost:8080',
+      scheme: "http",
+      host: "localhost:8080",
     });
 
-    it('setups the schema and data', () => setup(client));
+    it("setups the schema and data", () => setup(client));
 
-    it('fails a classification with an impossibly small timeout', () => {
+    it("fails a classification with an impossibly small timeout", () => {
       return client.classifications
         .scheduler()
-        .withType('knn')
-        .withK(3)
-        .withClassName('ClassificationJourneySource')
-        .withClassifyProperties(['toTarget'])
-        .withBasedOnProperties(['description'])
+        .withType("knn")
+        .withSettings({ k: 3 })
+        .withClassName("ClassificationJourneySource")
+        .withClassifyProperties(["toTarget"])
+        .withBasedOnProperties(["description"])
         .withWaitForCompletion()
         .withWaitTimeout(1) // that's going to be difficult ;-)
         .do()
-        .then(res => {
+        .then((res) => {
           fail("it should have error'd");
         })
-        .catch(e => {
+        .catch((e) => {
           expect(e).toEqual(
             new Error(
               "classification didn't finish within configured timeout, " +
-                'set larger timeout with .withWaitTimeout(timeout)',
-            ),
+                "set larger timeout with .withWaitTimeout(timeout)"
+            )
           );
         });
     });
 
-    it('tears down and cleans up', () => cleanup(client));
+    it("wait with tear down until the classification actually finishes", () => {
+      return new Promise((resolve) => setTimeout(resolve, 1000));
+    });
+
+    it("tears down and cleans up", () => cleanup(client));
   });
 });
 
-const setup = async client => {
+const setup = async (client) => {
   let targetClass = {
-    class: 'ClassificationJourneyTarget',
+    class: "ClassificationJourneyTarget",
     properties: [
       {
-        name: 'name',
-        dataType: ['string'],
+        name: "name",
+        dataType: ["string"],
       },
     ],
   };
@@ -205,15 +209,15 @@ const setup = async client => {
   await client.schema.classCreator().withClass(targetClass).do();
 
   targetClass = {
-    class: 'ClassificationJourneySource',
+    class: "ClassificationJourneySource",
     properties: [
       {
-        name: 'description',
-        dataType: ['text'],
+        name: "description",
+        dataType: ["text"],
       },
       {
-        name: 'toTarget',
-        dataType: ['ClassificationJourneyTarget'],
+        name: "toTarget",
+        dataType: ["ClassificationJourneyTarget"],
       },
     ],
   };
@@ -221,78 +225,68 @@ const setup = async client => {
   await client.schema.classCreator().withClass(targetClass).do();
 
   // import targets
-  await Promise.all([
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneyTarget')
-      .withSchema({name: 'Dessert'})
-      .withId(targetDessertId)
-      .do(),
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneyTarget')
-      .withSchema({name: 'Savory'})
-      .withId(targetSavoryId)
-      .do(),
-  ]);
+  await client.data
+    .creator()
+    .withClassName("ClassificationJourneyTarget")
+    .withProperties({ name: "Dessert" })
+    .withId(targetDessertId)
+    .do();
 
+  await client.data
+    .creator()
+    .withClassName("ClassificationJourneyTarget")
+    .withProperties({ name: "Savory" })
+    .withId(targetSavoryId)
+    .do();
   // import training data
-  await Promise.all([
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'Lots of Sugar, Cream and Flour. Maybe Eggs.',
-        toTarget: [{beacon: beaconTo(targetDessertId)}],
-      })
-      .do(),
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'French Fries and Sausage',
-        toTarget: [{beacon: beaconTo(targetSavoryId)}],
-      })
-      .do(),
-  ]);
+
+  await client.data
+    .creator()
+    .withClassName("ClassificationJourneySource")
+    .withProperties({
+      description: "Lots of Sugar, Cream and Flour. Maybe Eggs.",
+      toTarget: [{ beacon: beaconTo(targetDessertId) }],
+    })
+    .do();
+  await client.data
+    .creator()
+    .withClassName("ClassificationJourneySource")
+    .withProperties({
+      description: "French Fries and Sausage",
+      toTarget: [{ beacon: beaconTo(targetSavoryId) }],
+    })
+    .do();
 
   // import to-be-classifieds
-  await Promise.all([
-    client.data
-      .creator()
-      .withId(unclassifiedOneId)
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'This sweet cake contains sugar.',
-      })
-      .do(),
-    client.data
-      .creator()
-      .withId(unclassifiedTwoId)
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'Potatoes and fried fish',
-      })
-      .do(),
-  ]);
-
-  // wait for elasticsearch index refresh
-  // TODO: remove in 1.0.0
-
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await client.data
+    .creator()
+    .withId(unclassifiedOneId)
+    .withClassName("ClassificationJourneySource")
+    .withProperties({
+      description: "This sweet cake contains sugar.",
+    })
+    .do();
+  await client.data
+    .creator()
+    .withId(unclassifiedTwoId)
+    .withClassName("ClassificationJourneySource")
+    .withProperties({
+      description: "Potatoes and fried fish",
+    })
+    .do();
 };
 
-const cleanup = client => {
+const cleanup = (client) => {
   return Promise.all([
     client.schema
       .classDeleter()
-      .withClassName('ClassificationJourneySource')
+      .withClassName("ClassificationJourneySource")
       .do(),
     client.schema
       .classDeleter()
-      .withClassName('ClassificationJourneyTarget')
+      .withClassName("ClassificationJourneyTarget")
       .do(),
   ]);
 };
 
-const beaconTo = target => `weaviate://localhost/things/${target}`;
+const beaconTo = (target) => `weaviate://localhost/${target}`;

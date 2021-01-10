@@ -1,8 +1,8 @@
-import ObjectsBatcher from './objectsBatcher';
-import ReferencesBatcher from './referencesBatcher';
-import ReferencePayloadBuilder from './referencePayloadBuilder';
+import ObjectsBatcher from "./objectsBatcher";
+import ReferencesBatcher from "./referencesBatcher";
+import ReferencePayloadBuilder from "./referencePayloadBuilder";
 
-const batch = client => {
+const batch = (client) => {
   return {
     objectsBatcher: () => new ObjectsBatcher(client),
     referencesBatcher: () => new ReferencesBatcher(client),

@@ -4,7 +4,7 @@ export default class Getter {
     this.errors = [];
   }
 
-  withId = id => {
+  withId = (id) => {
     this.id = id;
     return this;
   };
@@ -19,7 +19,7 @@ export default class Getter {
   };
 
   validateId = () => {
-    this.validateIsSet(this.id, 'id', '.withId(id)');
+    this.validateIsSet(this.id, "id", ".withId(id)");
   };
 
   validate = () => {
@@ -30,7 +30,7 @@ export default class Getter {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 

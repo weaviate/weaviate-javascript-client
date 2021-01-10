@@ -1,48 +1,34 @@
-import {DEFAULT_KIND, validateKind} from '../kinds';
-
 export default class GetterById {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
-    this.underscores = [];
+    this.additionals = [];
   }
 
-  withKind = kind => {
-    validateKind(kind);
-    this.kind = kind;
-    return this;
-  };
-
-  withId = id => {
+  withId = (id) => {
     this.id = id;
     return this;
   };
 
-  extendUnderscores = prop => {
-    this.underscores = [...this.underscores, prop];
+  extendAdditionals = (prop) => {
+    this.additionals = [...this.additionals, prop];
     return this;
   };
 
-  withUnderscoreClassification = () =>
-    this.extendUnderscores('_classification');
+  extendAdditionals = (prop) => {
+    this.additionals = [...this.additionals, prop];
+    return this;
+  };
 
-  withUnderscoreInterpretation = () =>
-    this.extendUnderscores('_interpretation');
+  withAdditional = (additionalFlag) => this.extendAdditionals(additionalFlag);
 
-  withUnderscoreNearestNeighbors = () =>
-    this.extendUnderscores('_nearestNeighbors');
-
-  withUnderscoreFeatureProjection = () =>
-    this.extendUnderscores('_featureProjection');
-
-  withUnderscoreVector = () => this.extendUnderscores('_vector');
+  withVector = () => this.extendAdditionals("vector");
 
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
       this.errors = [
         ...this.errors,
-        'id must be set - initialize with getterById(id)',
+        "id must be set - initialize with getterById(id)",
       ];
     }
   };
@@ -55,13 +41,13 @@ export default class GetterById {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
-    let path = `/${this.kind}/${this.id}`;
-    if (this.underscores.length > 0) {
-      path += `?include=${this.underscores.join(',')}`;
+    let path = `/objects/${this.id}`;
+    if (this.additionals.length > 0) {
+      path += `?include=${this.additionals.join(",")}`;
     }
     return this.client.get(path);
   };

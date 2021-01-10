@@ -1,31 +1,25 @@
-import Where from './where';
-import Explore from './explore';
-import Group from './group';
-import {DEFAULT_KIND, validateKind} from '../kinds';
+import Where from "./where";
+import NearText from "./nearText";
+import NearVector from "./nearVector";
+import Group from "./group";
 
 export default class Getter {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
-  withFields = fields => {
+  withFields = (fields) => {
     this.fields = fields;
     return this;
   };
 
-  withClassName = className => {
+  withClassName = (className) => {
     this.className = className;
     return this;
   };
 
-  withKind = kind => {
-    this.kind = kind;
-    return this;
-  };
-
-  withGroup = groupObj => {
+  withGroup = (groupObj) => {
     try {
       this.groupString = new Group(groupObj).toString();
     } catch (e) {
@@ -35,7 +29,7 @@ export default class Getter {
     return this;
   };
 
-  withWhere = whereObj => {
+  withWhere = (whereObj) => {
     try {
       this.whereString = new Where(whereObj).toString();
     } catch (e) {
@@ -44,16 +38,25 @@ export default class Getter {
     return this;
   };
 
-  withExplore = exploreObj => {
+  withNearText = (nearTextObj) => {
     try {
-      this.exploreString = new Explore(exploreObj).toString();
+      this.nearTextString = new NearText(nearTextObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
     return this;
   };
 
-  withLimit = limit => {
+  withNearVector = (nearVectorObj) => {
+    try {
+      this.nearVectorString = new NearVector(nearVectorObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
+  withLimit = (limit) => {
     this.limit = limit;
     return this;
   };
@@ -67,39 +70,29 @@ export default class Getter {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
-    this.validateKind();
     this.validateIsSet(
       this.className,
-      'className',
-      '.withClassName(className)',
+      "className",
+      ".withClassName(className)"
     );
-    this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
+    this.validateIsSet(this.fields, "fields", ".withFields(fields)");
   };
 
-  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
-
   do = () => {
-    let params = '';
+    let params = "";
 
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
     if (
       this.whereString ||
-      this.exploreString ||
+      this.nearTextString ||
+      this.nearVectorString ||
       this.limit ||
       this.groupString
     ) {
@@ -109,8 +102,12 @@ export default class Getter {
         args = [...args, `where:${this.whereString}`];
       }
 
-      if (this.exploreString) {
-        args = [...args, `explore:${this.exploreString}`];
+      if (this.nearTextString) {
+        args = [...args, `nearText:${this.nearTextString}`];
+      }
+
+      if (this.nearVectorString) {
+        args = [...args, `nearVector:${this.nearVectorString}`];
       }
 
       if (this.groupString) {
@@ -121,13 +118,11 @@ export default class Getter {
         args = [...args, `limit:${this.limit}`];
       }
 
-      params = `(${args.join(',')})`;
+      params = `(${args.join(",")})`;
     }
 
     return this.client.query(
-      `{Get{${this.uppercasedKind()}{${this.className}${params}{${
-        this.fields
-      }}}}}`,
+      `{Get{${this.className}${params}{${this.fields}}}}`
     );
   };
 }
