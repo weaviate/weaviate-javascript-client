@@ -1,61 +1,61 @@
-const fetch = require('isomorphic-fetch');
+const fetch = require("isomorphic-fetch");
 
-const client = config => {
+const client = (config) => {
   const url = makeUrl(config.baseUri);
 
   return {
     post: (path, payload, expectReturnContent = true) => {
       return fetch(url(path), {
-        method: 'POST',
+        method: "POST",
         headers: {
           ...config.headers,
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(expectReturnContent));
     },
     put: (path, payload, expectReturnContent = true) => {
       return fetch(url(path), {
-        method: 'PUT',
+        method: "PUT",
         headers: {
           ...config.headers,
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(expectReturnContent));
     },
     patch: (path, payload) => {
       return fetch(url(path), {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
           ...config.headers,
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(false));
     },
     delete: (path, payload) => {
       return fetch(url(path), {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
           ...config.headers,
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         body: payload ? JSON.stringify(payload) : undefined,
       }).then(makeCheckStatus(false));
     },
     get: (path, expectReturnContent = true) => {
       return fetch(url(path), {
-        method: 'GET',
+        method: "GET",
         headers: {
           ...config.headers,
         },
       }).then(makeCheckStatus(expectReturnContent));
     },
-    getRaw: path => {
+    getRaw: (path) => {
       // getRaw does not handle the status leaving this to the caller
       return fetch(url(path), {
-        method: 'GET',
+        method: "GET",
         headers: {
           ...config.headers,
         },
@@ -64,21 +64,21 @@ const client = config => {
   };
 };
 
-const makeUrl = basePath => path => basePath + path;
+const makeUrl = (basePath) => (path) => basePath + path;
 
-const makeCheckStatus = expectResponseBody => res => {
+const makeCheckStatus = (expectResponseBody) => (res) => {
   if (res.status >= 400 && res.status < 500) {
-    return res.json().then(err => {
+    return res.json().then((err) => {
       return Promise.reject(
-        `usage error (${res.status}): ${JSON.stringify(err)}`,
+        `usage error (${res.status}): ${JSON.stringify(err)}`
       );
     });
   }
 
   if (res.status >= 500) {
-    return res.json().then(err => {
+    return res.json().then((err) => {
       return Promise.reject(
-        `usage error (${res.status}): ${JSON.stringify(err)}`,
+        `usage error (${res.status}): ${JSON.stringify(err)}`
       );
     });
   }

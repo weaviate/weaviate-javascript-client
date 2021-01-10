@@ -1,4 +1,4 @@
-# Weaviate javascript client  <img alt='Weaviate logo' src='https://raw.githubusercontent.com/semi-technologies/weaviate/19de0956c69b66c5552447e84d016f4fe29d12c9/docs/assets/weaviate-logo.png' width='180' align='right' />
+# Weaviate javascript client <img alt='Weaviate logo' src='https://raw.githubusercontent.com/semi-technologies/weaviate/19de0956c69b66c5552447e84d016f4fe29d12c9/docs/assets/weaviate-logo.png' width='180' align='right' />
 
 A javascript client for easy interaction with a weaviate instance.
 
@@ -17,6 +17,6 @@ A javascript client for easy interaction with a weaviate instance.
 
 ## Build Status
 
-| Branch   | Status        |
-| -------- |:-------------:|
-| Master   | [![Build Status](https://travis-ci.com/semi-technologies/weaviate-javascript-client.svg?token=1qdvi3hJanQcWdqEstmy&branch=master)](https://travis-ci.com/semi-technologies/weaviate-javascript-client)
+| Branch |                                                                                                 Status                                                                                                 |
+| ------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Master | [![Build Status](https://travis-ci.com/semi-technologies/weaviate-javascript-client.svg?token=1qdvi3hJanQcWdqEstmy&branch=master)](https://travis-ci.com/semi-technologies/weaviate-javascript-client) |
