@@ -11,7 +11,7 @@ export default class ObjectsBatcher {
   };
 
   payload = () => ({
-    'objects': this.objects,
+    objects: this.objects,
   });
 
   validateObjectCount = () => {

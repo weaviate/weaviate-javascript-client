@@ -19,23 +19,27 @@ describe('a classification journey', () => {
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    it('triggers a classification without waiting', async () => {
-      return client.classifications
-        .scheduler()
-        .withType('contextual')
-        .withClassName('ContextualClassificationJourneySource')
-        .withClassifyProperties(['toTarget'])
-        .withBasedOnProperties(['description'])
-        .withWaitForCompletion()
-        .withWaitTimeout(60 * 1000)
-        .do()
-        .then(res => {
-          expect(res.status).toEqual('completed');
-          expect(res.type).toEqual('contextual');
-          id = res.id;
-        })
-        .catch(e => fail('it should not have errord: ' + e));
-    });
+    it(
+      'triggers a classification with waiting',
+      async () => {
+        return client.classifications
+          .scheduler()
+          .withType('text2vec-contextionary-contextual')
+          .withClassName('ContextualClassificationJourneySource')
+          .withClassifyProperties(['toTarget'])
+          .withBasedOnProperties(['description'])
+          .withWaitForCompletion()
+          .withWaitTimeout(60 * 1000)
+          .do()
+          .then(res => {
+            expect(res.status).toEqual('completed');
+            expect(res.type).toEqual('text2vec-contextionary-contextual');
+            id = res.id;
+          })
+          .catch(e => fail('it should not have errord: ' + e));
+      },
+      60 * 1000, // jest timeout
+    );
 
     it('tears down and cleans up', () => cleanup(client));
   });
@@ -75,13 +79,13 @@ const setup = async client => {
     client.data
       .creator()
       .withClassName('ContextualClassificationJourneyTarget')
-      .withSchema({name: 'Dessert'})
+      .withProperties({name: 'Dessert'})
       .withId(targetDessertId)
       .do(),
     client.data
       .creator()
       .withClassName('ContextualClassificationJourneyTarget')
-      .withSchema({name: 'Savory'})
+      .withProperties({name: 'Savory'})
       .withId(targetSavoryId)
       .do(),
   ]);
@@ -92,7 +96,7 @@ const setup = async client => {
       .creator()
       .withId(unclassifiedOneId)
       .withClassName('ContextualClassificationJourneySource')
-      .withSchema({
+      .withProperties({
         description: 'This sweet cake contains sugar.',
       })
       .do(),
@@ -100,16 +104,11 @@ const setup = async client => {
       .creator()
       .withId(unclassifiedTwoId)
       .withClassName('ContextualClassificationJourneySource')
-      .withSchema({
+      .withProperties({
         description: 'Potatoes and fried fish',
       })
       .do(),
   ]);
-
-  // wait for elasticsearch index refresh
-  // TODO: remove in 1.0.0
-
-  await new Promise(resolve => setTimeout(resolve, 1000));
 };
 
 const cleanup = client => {

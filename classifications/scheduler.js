@@ -13,8 +13,8 @@ export default class Scheduler {
     return this;
   };
 
-  withK = k => {
-    this.k = k;
+  withSettings = settings => {
+    this.settings = settings;
     return this;
   };
 
@@ -84,7 +84,7 @@ export default class Scheduler {
 
   payload = () => ({
     type: this.type,
-    k: this.k,
+    settings: this.settings,
     class: this.className,
     classifyProperties: this.classifyProperties,
     basedOnProperties: this.basedOnProperties,

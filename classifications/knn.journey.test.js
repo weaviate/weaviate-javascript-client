@@ -20,7 +20,7 @@ describe('a classification journey', () => {
       return client.classifications
         .scheduler()
         .withType('knn')
-        .withK(3)
+        .withSettings({k: 3})
         .withClassName('ClassificationJourneySource')
         .withClassifyProperties(['toTarget'])
         .withBasedOnProperties(['description'])
@@ -107,7 +107,7 @@ describe('a classification journey', () => {
       return client.classifications
         .scheduler()
         .withType('knn')
-        .withK(3)
+        .withSettings({k: 3})
         .withClassName('ClassificationJourneySource')
         .withClassifyProperties(['toTarget'])
         .withBasedOnProperties(['description'])
@@ -167,7 +167,7 @@ describe('a classification journey', () => {
       return client.classifications
         .scheduler()
         .withType('knn')
-        .withK(3)
+        .withSettings({k: 3})
         .withClassName('ClassificationJourneySource')
         .withClassifyProperties(['toTarget'])
         .withBasedOnProperties(['description'])
@@ -185,6 +185,10 @@ describe('a classification journey', () => {
             ),
           );
         });
+    });
+
+    it('wait with tear down until the classification actually finishes', () => {
+      return new Promise(resolve => setTimeout(resolve, 1000));
     });
 
     it('tears down and cleans up', () => cleanup(client));
@@ -221,65 +225,55 @@ const setup = async client => {
   await client.schema.classCreator().withClass(targetClass).do();
 
   // import targets
-  await Promise.all([
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneyTarget')
-      .withSchema({name: 'Dessert'})
-      .withId(targetDessertId)
-      .do(),
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneyTarget')
-      .withSchema({name: 'Savory'})
-      .withId(targetSavoryId)
-      .do(),
-  ]);
+  await client.data
+    .creator()
+    .withClassName('ClassificationJourneyTarget')
+    .withProperties({name: 'Dessert'})
+    .withId(targetDessertId)
+    .do();
 
+  await client.data
+    .creator()
+    .withClassName('ClassificationJourneyTarget')
+    .withProperties({name: 'Savory'})
+    .withId(targetSavoryId)
+    .do();
   // import training data
-  await Promise.all([
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'Lots of Sugar, Cream and Flour. Maybe Eggs.',
-        toTarget: [{beacon: beaconTo(targetDessertId)}],
-      })
-      .do(),
-    client.data
-      .creator()
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'French Fries and Sausage',
-        toTarget: [{beacon: beaconTo(targetSavoryId)}],
-      })
-      .do(),
-  ]);
+
+  await client.data
+    .creator()
+    .withClassName('ClassificationJourneySource')
+    .withProperties({
+      description: 'Lots of Sugar, Cream and Flour. Maybe Eggs.',
+      toTarget: [{beacon: beaconTo(targetDessertId)}],
+    })
+    .do();
+  await client.data
+    .creator()
+    .withClassName('ClassificationJourneySource')
+    .withProperties({
+      description: 'French Fries and Sausage',
+      toTarget: [{beacon: beaconTo(targetSavoryId)}],
+    })
+    .do();
 
   // import to-be-classifieds
-  await Promise.all([
-    client.data
-      .creator()
-      .withId(unclassifiedOneId)
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'This sweet cake contains sugar.',
-      })
-      .do(),
-    client.data
-      .creator()
-      .withId(unclassifiedTwoId)
-      .withClassName('ClassificationJourneySource')
-      .withSchema({
-        description: 'Potatoes and fried fish',
-      })
-      .do(),
-  ]);
-
-  // wait for elasticsearch index refresh
-  // TODO: remove in 1.0.0
-
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await client.data
+    .creator()
+    .withId(unclassifiedOneId)
+    .withClassName('ClassificationJourneySource')
+    .withProperties({
+      description: 'This sweet cake contains sugar.',
+    })
+    .do();
+  await client.data
+    .creator()
+    .withId(unclassifiedTwoId)
+    .withClassName('ClassificationJourneySource')
+    .withProperties({
+      description: 'Potatoes and fried fish',
+    })
+    .do();
 };
 
 const cleanup = client => {
@@ -295,4 +289,4 @@ const cleanup = client => {
   ]);
 };
 
-const beaconTo = target => `weaviate://localhost/things/${target}`;
+const beaconTo = target => `weaviate://localhost/${target}`;
