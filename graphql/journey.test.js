@@ -1,12 +1,12 @@
 import weaviate from '../index';
 
-describe('an end2end test against a deployed instance', () => {
+describe('the graphql journey', () => {
   const client = weaviate.client({
-    scheme: "http",
-    host: "localhost:8080",
+    scheme: 'http',
+    host: 'localhost:8080',
   });
 
-  it("creates a schema class", () => {
+  it('creates a schema class', () => {
     // this is just test setup, not part of what we want to test here
     return setup(client);
   });
@@ -18,39 +18,31 @@ describe('an end2end test against a deployed instance', () => {
       .withFields('title url wordCount')
       .do()
       .then(function (result) {
-        expect(result.data.Get.Things.Article.length).toBeGreaterThan(0);
+        expect(result.data.Get.Article.length).toEqual(3);
       });
   });
 
   test('graphql get method with optional fields', () => {
-    return (
-      client.graphql
-        .get()
-        .withClassName('Article')
-        // .withKind is optional, would default to Things anyway
-        .withKind(weaviate.KIND_THINGS)
-        .withFields('title url wordCount')
-        .withExplore({concepts: ['news'], certainty: 0.1})
-        .withWhere({
-          operator: 'GreaterThanEqual',
-          path: ['wordCount'],
-          valueInt: 50,
-        })
-        .withLimit(7)
-        .do()
-        .then(function (result) {
-          expect(result.data.Get.Things.Article.length).toBe(7);
-          expect(
-            result.data.Get.Things.Article[0]['title'].length,
-          ).toBeGreaterThan(0);
-          expect(
-            result.data.Get.Things.Article[0]['url'].length,
-          ).toBeGreaterThan(0);
-          expect(
-            result.data.Get.Things.Article[0]['wordCount'],
-          ).toBeGreaterThanOrEqual(50);
-        })
-    );
+    return client.graphql
+      .get()
+      .withClassName('Article')
+      .withFields('title url wordCount')
+      .withNearText({concepts: ['news'], certainty: 0.1})
+      .withWhere({
+        operator: 'GreaterThanEqual',
+        path: ['wordCount'],
+        valueInt: 50,
+      })
+      .withLimit(7)
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBeLessThan(3);
+        expect(result.data.Get.Article[0]['title'].length).toBeGreaterThan(0);
+        expect(result.data.Get.Article[0]['url'].length).toBeGreaterThan(0);
+        expect(result.data.Get.Article[0]['wordCount']).toBeGreaterThanOrEqual(
+          50,
+        );
+      });
   });
 
   test('graphql get with group', () => {
@@ -64,7 +56,7 @@ describe('an end2end test against a deployed instance', () => {
       .then(function (result) {
         // merging with a force of 1 means we merge everyting into a single
         // element
-        expect(result.data.Get.Things.Article.length).toBe(1);
+        expect(result.data.Get.Article.length).toBe(1);
       });
   });
 
@@ -75,8 +67,8 @@ describe('an end2end test against a deployed instance', () => {
       .withFields('meta { count }')
       .do()
       .then(res => {
-        const count = res.data.Aggregate.Things.Article[0].meta.count;
-        expect(count).toBeGreaterThan(1000);
+        const count = res.data.Aggregate.Article[0].meta.count;
+        expect(count).toEqual(3);
       })
       .catch(e => fail("it should not have error'd" + e));
   });
@@ -97,8 +89,8 @@ describe('an end2end test against a deployed instance', () => {
       .withFields('meta { count }')
       .do()
       .then(res => {
-        const count = res.data.Aggregate.Things.Article[0].meta.count;
-        expect(count).toEqual(5);
+        const count = res.data.Aggregate.Article[0].meta.count;
+        expect(count).toEqual(1);
       })
       .catch(e => fail("it should not have error'd" + e));
   });
@@ -106,11 +98,11 @@ describe('an end2end test against a deployed instance', () => {
   test('graphql explore with minimal fields', () => {
     return client.graphql
       .explore()
-      .withConcepts(['iphone'])
+      .withNearText({concepts: ['iphone']})
       .withFields('beacon certainty className')
       .do()
       .then(res => {
-        expect(res.data.Explore.length).toBeGreaterThan(5);
+        expect(res.data.Explore.length).toBeGreaterThan(0);
       })
       .catch(e => fail("it should not have error'd" + e));
   });
@@ -118,53 +110,77 @@ describe('an end2end test against a deployed instance', () => {
   test('graphql explore with optional fields', () => {
     return client.graphql
       .explore()
-      .withConcepts(['iphone'])
-      .withMoveTo({concepts: ['phone'], force: 0.3})
-      .withMoveAwayFrom({concepts: ['computer'], force: 0.3})
-      .withCertainty(0.7)
+      .withNearText({concepts: ['iphone']})
       .withFields('beacon certainty className')
-      .withLimit(3)
+      .withLimit(1)
       .do()
       .then(res => {
-        expect(res.data.Explore.length).toEqual(3);
+        expect(res.data.Explore.length).toEqual(1);
       })
       .catch(e => fail("it should not have error'd" + e));
   });
 
-  it("tears down and cleans up", () => {
+  it('tears down and cleans up', () => {
     return Promise.all([
       client.schema.classDeleter().withClassName('Article').do(),
     ]);
   });
 });
 
-const setup = async (client) => {
+const setup = async client => {
   const thing = {
-    class: thingClassName,
+    class: 'Article',
     properties: [
       {
-        name: "stringProp",
-        dataType: ["string"],
+        name: 'title',
+        dataType: ['text'],
       },
       {
-        name: "intProp",
-        dataType: ["int"],
+        name: 'url',
+        dataType: ['string'],
+      },
+      {
+        name: 'wordCount',
+        dataType: ['int'],
       },
     ],
   };
 
   await Promise.all([client.schema.classCreator().withClass(thing).do()]);
 
-  const refSource = {
-    class: refSourceClassName,
-    properties: [
-      {
-        name: "refProp",
-        dataType: [thingClassName],
-        cardinality: "many",
+  const toImport = [
+    {
+      class: 'Article',
+      properties: {
+        wordCount: 60,
+        url: 'http://articles.local/my-article-1',
+        title: 'Article 1',
       },
-    ],
-  };
+    },
+    {
+      class: 'Article',
+      properties: {
+        wordCount: 40,
+        url: 'http://articles.local/my-article-2',
+        title: 'Article 2',
+      },
+    },
+    {
+      class: 'Article',
+      properties: {
+        wordCount: 600,
+        url: 'http://articles.local/my-article-3',
+        title: 'Article about Apple',
+      },
+    },
+  ];
 
-  return client.schema.classCreator().withClass(refSource).do();
+  let batch = client.batch.objectsBatcher();
+
+  toImport.forEach(elem => {
+    batch = batch.withObject(elem);
+  });
+
+  await batch.do();
+  return new Promise(resolve => setTimeout(resolve, 1000));
 };

@@ -1,4 +1,5 @@
 import NearText from './nearText';
+import NearVector from './nearVector';
 import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Explorer {
@@ -18,27 +19,23 @@ export default class Explorer {
     return this;
   };
 
-  withConcepts = concepts => {
-    this.params.concepts = concepts;
+  withNearText = nearTextObj => {
+    try {
+      this.nearTextString = new NearText(nearTextObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
     return this;
   };
 
-  withMoveTo = moveTo => {
-    this.params.moveTo = moveTo;
+  withNearVector = nearVectorObj => {
+    try {
+      this.nearVectorString = new NearVector(nearVectorObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
     return this;
   };
-
-  withMoveAwayFrom = moveAwayFrom => {
-    this.params.moveAwayFrom = moveAwayFrom;
-    return this;
-  };
-
-  withCertainty = certainty => {
-    this.params.certainty = certainty;
-    return this;
-  };
-
-  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
 
   validateGroup = () => {
     if (!this.group) {
@@ -48,14 +45,6 @@ export default class Explorer {
 
     if (!Array.isArray(this.group)) {
       throw new Error('groupBy must be an array');
-    }
-  };
-
-  buildNearTextArgs = () => {
-    try {
-      this.nearTextString = new NearText(this.params).toString(false);
-    } catch (e) {
-      this.errors = [...this.errors, e];
     }
   };
 
@@ -78,17 +67,11 @@ export default class Explorer {
 
   validate = () => {
     this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
-    this.validateIsSet(
-      this.params.concepts,
-      'concepts',
-      '.withConcepts(concepts)',
-    );
   };
 
   do = () => {
     let params = '';
 
-    this.buildNearTextArgs();
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
@@ -99,9 +82,12 @@ export default class Explorer {
     let args = [];
 
     if (this.nearTextString) {
-      args = [...args, `${this.nearTextString}`];
+      args = [...args, `nearText:${this.nearTextString}`];
     }
 
+    if (this.nearVectorString) {
+      args = [...args, `nearVector:${this.nearVectorString}`];
+    }
     if (this.limit) {
       args = [...args, `limit:${this.limit}`];
     }

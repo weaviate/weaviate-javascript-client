@@ -1,10 +1,8 @@
 import Where from './where';
-import {DEFAULT_KIND, validateKind} from '../kinds';
 
 export default class Aggregator {
   constructor(client) {
     this.client = client;
-    this.kind = DEFAULT_KIND;
     this.errors = [];
   }
 
@@ -15,11 +13,6 @@ export default class Aggregator {
 
   withClassName = className => {
     this.className = className;
-    return this;
-  };
-
-  withKind = kind => {
-    this.kind = kind;
     return this;
   };
 
@@ -42,8 +35,6 @@ export default class Aggregator {
     return this;
   };
 
-  uppercasedKind = () => this.kind.charAt(0).toUpperCase() + this.kind.slice(1);
-
   validateGroup = () => {
     if (!this.groupBy) {
       // nothing to check if this optional parameter is not set
@@ -64,17 +55,8 @@ export default class Aggregator {
     }
   };
 
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
-    }
-  };
-
   validate = () => {
     this.validateGroup();
-    this.validateKind();
     this.validateIsSet(
       this.className,
       'className',
@@ -112,9 +94,7 @@ export default class Aggregator {
     }
 
     return this.client.query(
-      `{Aggregate{${this.uppercasedKind()}{${this.className}${params}{${
-        this.fields
-      }}}}}`,
+      `{Aggregate{${this.className}${params}{${this.fields}}}}`,
     );
   };
 }
