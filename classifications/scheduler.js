@@ -1,4 +1,4 @@
-import Getter from './getter';
+import Getter from "./getter";
 
 export default class Scheduler {
   constructor(client) {
@@ -8,27 +8,27 @@ export default class Scheduler {
     this.waitForCompletion = false;
   }
 
-  withType = type => {
+  withType = (type) => {
     this.type = type;
     return this;
   };
 
-  withSettings = settings => {
+  withSettings = (settings) => {
     this.settings = settings;
     return this;
   };
 
-  withClassName = className => {
+  withClassName = (className) => {
     this.className = className;
     return this;
   };
 
-  withClassifyProperties = props => {
+  withClassifyProperties = (props) => {
     this.classifyProperties = props;
     return this;
   };
 
-  withBasedOnProperties = props => {
+  withBasedOnProperties = (props) => {
     this.basedOnProperties = props;
     return this;
   };
@@ -38,7 +38,7 @@ export default class Scheduler {
     return this;
   };
 
-  withWaitTimeout = timeout => {
+  withWaitTimeout = (timeout) => {
     this.waitTimeout = timeout;
     return this;
   };
@@ -55,24 +55,24 @@ export default class Scheduler {
   validateClassName = () => {
     this.validateIsSet(
       this.className,
-      'className',
-      '.withClassName(className)',
+      "className",
+      ".withClassName(className)"
     );
   };
 
   validateBasedOnProperties = () => {
     this.validateIsSet(
       this.basedOnProperties,
-      'basedOnProperties',
-      '.withBasedOnProperties(basedOnProperties)',
+      "basedOnProperties",
+      ".withBasedOnProperties(basedOnProperties)"
     );
   };
 
   validateClassifyProperties = () => {
     this.validateIsSet(
       this.classifyProperties,
-      'classifyProperties',
-      '.withClassifyProperties(classifyProperties)',
+      "classifyProperties",
+      ".withClassifyProperties(classifyProperties)"
     );
   };
 
@@ -90,25 +90,25 @@ export default class Scheduler {
     basedOnProperties: this.basedOnProperties,
   });
 
-  pollForCompletion = id => {
+  pollForCompletion = (id) => {
     return new Promise((resolve, reject) => {
       setTimeout(
         () =>
           reject(
             new Error(
               "classification didn't finish within configured timeout, " +
-                'set larger timeout with .withWaitTimeout(timeout)',
-            ),
+                "set larger timeout with .withWaitTimeout(timeout)"
+            )
           ),
-        this.waitTimeout,
+        this.waitTimeout
       );
 
       setInterval(() => {
         new Getter(this.client)
           .withId(id)
           .do()
-          .then(res => {
-            res.status == 'completed' && resolve(res);
+          .then((res) => {
+            res.status == "completed" && resolve(res);
           });
       }, 500);
     });
@@ -117,13 +117,13 @@ export default class Scheduler {
   do = () => {
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
     this.validate();
 
     const path = `/classifications`;
-    return this.client.post(path, this.payload()).then(res => {
+    return this.client.post(path, this.payload()).then((res) => {
       if (!this.waitForCompletion) {
         return Promise.resolve(res);
       }

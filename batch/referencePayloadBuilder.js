@@ -4,22 +4,22 @@ export default class ReferencesBatcher {
     this.errors = [];
   }
 
-  withFromId = id => {
+  withFromId = (id) => {
     this.fromId = id;
     return this;
   };
 
-  withToId = id => {
+  withToId = (id) => {
     this.toId = id;
     return this;
   };
 
-  withFromClassName = className => {
+  withFromClassName = (className) => {
     this.fromClassName = className;
     return this;
   };
 
-  withFromRefProp = refProp => {
+  withFromRefProp = (refProp) => {
     this.fromRefProp = refProp;
     return this;
   };
@@ -34,24 +34,24 @@ export default class ReferencesBatcher {
   };
 
   validate = () => {
-    this.validateIsSet(this.fromId, 'fromId', '.withFromId(id)');
-    this.validateIsSet(this.toId, 'toId', '.withToId(id)');
+    this.validateIsSet(this.fromId, "fromId", ".withFromId(id)");
+    this.validateIsSet(this.toId, "toId", ".withToId(id)");
     this.validateIsSet(
       this.fromClassName,
-      'fromClassName',
-      '.withFromClassName(className)',
+      "fromClassName",
+      ".withFromClassName(className)"
     );
     this.validateIsSet(
       this.fromRefProp,
-      'fromRefProp',
-      '.withFromRefProp(refProp)',
+      "fromRefProp",
+      ".withFromRefProp(refProp)"
     );
   };
 
   payload = () => {
     this.validate();
     if (this.errors.length > 0) {
-      throw new Error(this.errors.join(', '));
+      throw new Error(this.errors.join(", "));
     }
 
     return {

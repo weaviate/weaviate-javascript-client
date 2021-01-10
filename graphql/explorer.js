@@ -1,6 +1,6 @@
-import NearText from './nearText';
-import NearVector from './nearVector';
-import {DEFAULT_KIND, validateKind} from '../kinds';
+import NearText from "./nearText";
+import NearVector from "./nearVector";
+import { DEFAULT_KIND, validateKind } from "../kinds";
 
 export default class Explorer {
   constructor(client) {
@@ -9,17 +9,17 @@ export default class Explorer {
     this.errors = [];
   }
 
-  withFields = fields => {
+  withFields = (fields) => {
     this.fields = fields;
     return this;
   };
 
-  withLimit = limit => {
+  withLimit = (limit) => {
     this.limit = limit;
     return this;
   };
 
-  withNearText = nearTextObj => {
+  withNearText = (nearTextObj) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
     } catch (e) {
@@ -28,7 +28,7 @@ export default class Explorer {
     return this;
   };
 
-  withNearVector = nearVectorObj => {
+  withNearVector = (nearVectorObj) => {
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
     } catch (e) {
@@ -44,7 +44,7 @@ export default class Explorer {
     }
 
     if (!Array.isArray(this.group)) {
-      throw new Error('groupBy must be an array');
+      throw new Error("groupBy must be an array");
     }
   };
 
@@ -66,16 +66,16 @@ export default class Explorer {
   };
 
   validate = () => {
-    this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
+    this.validateIsSet(this.fields, "fields", ".withFields(fields)");
   };
 
   do = () => {
-    let params = '';
+    let params = "";
 
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
@@ -92,7 +92,7 @@ export default class Explorer {
       args = [...args, `limit:${this.limit}`];
     }
 
-    params = `(${args.join(',')})`;
+    params = `(${args.join(",")})`;
 
     return this.client.query(`{Explore${params}{${this.fields}}}`);
   };

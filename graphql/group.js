@@ -15,6 +15,6 @@ export default class GraphQLGroup {
       parts = [...parts, `force:${this.source.force}`];
     }
 
-    return `{${parts.join(',')}}`;
+    return `{${parts.join(",")}}`;
   }
 }

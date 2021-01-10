@@ -1,7 +1,7 @@
-import Where from './where';
-import NearText from './nearText';
-import NearVector from './nearVector';
-import Group from './group';
+import Where from "./where";
+import NearText from "./nearText";
+import NearVector from "./nearVector";
+import Group from "./group";
 
 export default class Getter {
   constructor(client) {
@@ -9,17 +9,17 @@ export default class Getter {
     this.errors = [];
   }
 
-  withFields = fields => {
+  withFields = (fields) => {
     this.fields = fields;
     return this;
   };
 
-  withClassName = className => {
+  withClassName = (className) => {
     this.className = className;
     return this;
   };
 
-  withGroup = groupObj => {
+  withGroup = (groupObj) => {
     try {
       this.groupString = new Group(groupObj).toString();
     } catch (e) {
@@ -29,7 +29,7 @@ export default class Getter {
     return this;
   };
 
-  withWhere = whereObj => {
+  withWhere = (whereObj) => {
     try {
       this.whereString = new Where(whereObj).toString();
     } catch (e) {
@@ -38,7 +38,7 @@ export default class Getter {
     return this;
   };
 
-  withNearText = nearTextObj => {
+  withNearText = (nearTextObj) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
     } catch (e) {
@@ -47,7 +47,7 @@ export default class Getter {
     return this;
   };
 
-  withNearVector = nearVectorObj => {
+  withNearVector = (nearVectorObj) => {
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
     } catch (e) {
@@ -56,7 +56,7 @@ export default class Getter {
     return this;
   };
 
-  withLimit = limit => {
+  withLimit = (limit) => {
     this.limit = limit;
     return this;
   };
@@ -73,19 +73,19 @@ export default class Getter {
   validate = () => {
     this.validateIsSet(
       this.className,
-      'className',
-      '.withClassName(className)',
+      "className",
+      ".withClassName(className)"
     );
-    this.validateIsSet(this.fields, 'fields', '.withFields(fields)');
+    this.validateIsSet(this.fields, "fields", ".withFields(fields)");
   };
 
   do = () => {
-    let params = '';
+    let params = "";
 
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
 
@@ -118,13 +118,11 @@ export default class Getter {
         args = [...args, `limit:${this.limit}`];
       }
 
-      params = `(${args.join(',')})`;
+      params = `(${args.join(",")})`;
     }
 
     return this.client.query(
-      `{Get{${this.className}${params}{${
-        this.fields
-      }}}}`,
+      `{Get{${this.className}${params}{${this.fields}}}}`
     );
   };
 }

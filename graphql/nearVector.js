@@ -14,24 +14,24 @@ export default class GraphQLNearVector {
     }
 
     if (!wrap) {
-      return `${args.join(',')}`;
+      return `${args.join(",")}`;
     }
-    return `{${args.join(',')}}`;
+    return `{${args.join(",")}}`;
   }
 
   validate() {
     if (!this.vector) {
-      throw new Error('nearVector filter: vector cannot be empty');
+      throw new Error("nearVector filter: vector cannot be empty");
     }
   }
 
   parse() {
     for (let key in this.source) {
       switch (key) {
-        case 'vector':
+        case "vector":
           this.parseVector(this.source[key]);
           break;
-        case 'certainty':
+        case "certainty":
           this.parseCertainty(this.source[key]);
           break;
         default:
@@ -42,21 +42,21 @@ export default class GraphQLNearVector {
 
   parseVector(vector) {
     if (!Array.isArray(vector)) {
-      throw new Error('nearVector filter: vector must be an array');
+      throw new Error("nearVector filter: vector must be an array");
     }
 
-    vector.forEach(elem => {
-      if (typeof elem !== 'number') {
-        throw new Error('nearVector filter: vector elements must be a number');
+    vector.forEach((elem) => {
+      if (typeof elem !== "number") {
+        throw new Error("nearVector filter: vector elements must be a number");
       }
-    })
+    });
 
     this.vector = vector;
   }
 
   parseCertainty(cert) {
-    if (typeof cert !== 'number') {
-      throw new Error('nearVector filter: certainty must be a number');
+    if (typeof cert !== "number") {
+      throw new Error("nearVector filter: certainty must be a number");
     }
 
     this.certainty = cert;

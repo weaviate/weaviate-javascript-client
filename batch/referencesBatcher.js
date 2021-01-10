@@ -5,7 +5,7 @@ export default class ReferencesBatcher {
     this.errors = [];
   }
 
-  withReference = obj => {
+  withReference = (obj) => {
     this.references = [...this.references, obj];
     return this;
   };
@@ -16,8 +16,8 @@ export default class ReferencesBatcher {
     if (this.references.length == 0) {
       this.errors = [
         ...this.errors,
-        'need at least one reference to send a request, ' +
-          'add one with .withReference(obj)',
+        "need at least one reference to send a request, " +
+          "add one with .withReference(obj)",
       ];
     }
   };
@@ -30,7 +30,7 @@ export default class ReferencesBatcher {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
     const path = `/batch/references`;

@@ -5,7 +5,7 @@ export default class ObjectsBatcher {
     this.errors = [];
   }
 
-  withObject = obj => {
+  withObject = (obj) => {
     this.objects = [...this.objects, obj];
     return this;
   };
@@ -18,8 +18,8 @@ export default class ObjectsBatcher {
     if (this.objects.length == 0) {
       this.errors = [
         ...this.errors,
-        'need at least one object to send a request, ' +
-          'add one with .withObject(obj)',
+        "need at least one object to send a request, " +
+          "add one with .withObject(obj)",
       ];
     }
   };
@@ -32,7 +32,7 @@ export default class ObjectsBatcher {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error('invalid usage: ' + this.errors.join(', ')),
+        new Error("invalid usage: " + this.errors.join(", "))
       );
     }
     const path = `/batch/objects`;

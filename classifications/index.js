@@ -1,7 +1,7 @@
-import Scheduler from './scheduler';
-import Getter from './getter';
+import Scheduler from "./scheduler";
+import Getter from "./getter";
 
-const data = client => {
+const data = (client) => {
   return {
     scheduler: () => new Scheduler(client),
     getter: () => new Getter(client),
