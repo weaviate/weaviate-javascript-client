@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   weaviate:
-    image: semitechnologies/weaviate:1.0.0-rc0
+    image: semitechnologies/weaviate:1.0.0-rc1
     restart: on-failure:0
     ports:
      - "8080:8080"
