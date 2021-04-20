@@ -1,6 +1,7 @@
 import Where from "./where";
 import NearText from "./nearText";
 import NearVector from "./nearVector";
+import NearObject from "./nearObject";
 import Group from "./group";
 
 export default class Getter {
@@ -41,6 +42,15 @@ export default class Getter {
   withNearText = (nearTextObj) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
+  withNearObject = (nearObjectObj) => {
+    try {
+      this.nearObjectString = new NearObject(nearObjectObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -92,6 +102,7 @@ export default class Getter {
     if (
       this.whereString ||
       this.nearTextString ||
+      this.nearObjectString ||
       this.nearVectorString ||
       this.limit ||
       this.groupString
@@ -104,6 +115,10 @@ export default class Getter {
 
       if (this.nearTextString) {
         args = [...args, `nearText:${this.nearTextString}`];
+      }
+
+      if (this.nearObjectString) {
+        args = [...args, `nearObject:${this.nearObjectString}`];
       }
 
       if (this.nearVectorString) {

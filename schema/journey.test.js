@@ -8,15 +8,36 @@ describe("schema", () => {
 
   it("creates a thing class (implicitly)", () => {
     const classObj = {
-      class: "MyThingClass",
+      class: 'MyThingClass',
       properties: [
         {
           dataType: ["string"],
-          name: "stringProp",
-        },
+          name: 'stringProp',
+          moduleConfig: {
+            'text2vec-contextionary': {
+              skip: false,
+              vectorizePropertyName: false
+            }
+          }
+        }
       ],
-      vectorIndexType: "hnsw",
-      vectorizer: "text2vec-contextionary",
+      vectorIndexType: 'hnsw',
+      vectorizer: 'text2vec-contextionary',
+      vectorIndexConfig: {
+        cleanupIntervalSeconds: 300,
+        maxConnections: 64,
+        efConstruction: 128,
+        vectorCacheMaxObjects: 500000
+      },
+      invertedIndexConfig: {
+        cleanupIntervalSeconds: 60
+      },
+      moduleConfig: { 
+        'text2vec-contextionary': 
+        { 
+          vectorizeClassName: true
+        }
+      }
     };
 
     return client.schema
@@ -58,6 +79,12 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "stringProp",
+                  moduleConfig: {
+                    'text2vec-contextionary': {
+                      skip: false,
+                      vectorizePropertyName: false
+                    }
+                  }
                 },
                 {
                   dataType: ["string"],
@@ -66,6 +93,21 @@ describe("schema", () => {
               ],
               vectorIndexType: "hnsw",
               vectorizer: "text2vec-contextionary",
+              vectorIndexConfig: {
+                cleanupIntervalSeconds: 300,
+                maxConnections: 64,
+                efConstruction: 128,
+                vectorCacheMaxObjects: 500000
+              },
+              invertedIndexConfig: {
+                cleanupIntervalSeconds: 60
+              },
+              moduleConfig: { 
+                'text2vec-contextionary': 
+                { 
+                  vectorizeClassName: true
+                }
+              }
             },
           ],
         });

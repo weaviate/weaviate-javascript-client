@@ -1,5 +1,6 @@
 import NearText from "./nearText";
 import NearVector from "./nearVector";
+import NearObject from "./nearObject";
 import { DEFAULT_KIND, validateKind } from "../kinds";
 
 export default class Explorer {
@@ -22,6 +23,15 @@ export default class Explorer {
   withNearText = (nearTextObj) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
+  withNearObject = (nearObjectObj) => {
+    try {
+      this.nearObjectString = new NearObject(nearObjectObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -83,6 +93,10 @@ export default class Explorer {
 
     if (this.nearTextString) {
       args = [...args, `nearText:${this.nearTextString}`];
+    }
+
+    if (this.nearObjectString) {
+      args = [...args, `nearObject:${this.nearObjectString}`];
     }
 
     if (this.nearVectorString) {

@@ -120,6 +120,18 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e));
   });
 
+  test("graphql explore with nearObject field", () => {
+    return client.graphql
+      .explore()
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee" })
+      .withFields("beacon certainty className")
+      .do()
+      .then((res) => {
+        expect(res.data.Explore.length).toBeGreaterThan(0);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
   it("tears down and cleans up", () => {
     return Promise.all([
       client.schema.classDeleter().withClassName("Article").do(),
@@ -150,6 +162,7 @@ const setup = async (client) => {
 
   const toImport = [
     {
+      id: "abefd256-8574-442b-9293-9205193737ee",
       class: "Article",
       properties: {
         wordCount: 60,
