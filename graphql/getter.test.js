@@ -370,3 +370,103 @@ describe("nearVector searchers", () => {
     });
   });
 });
+
+describe("nearObject searchers", () => {
+  test("a query with a valid nearObject with id", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearObject:{id:"some-uuid"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearObject({ id: "some-uuid" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearObject with beacon", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearObject:{beacon:"weaviate/some-uuid"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearObject({ beacon: "weaviate/some-uuid" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearObject with all params", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearObject:{id:"some-uuid",beacon:"weaviate/some-uuid",certainty:0.7})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearObject({
+        id: "some-uuid",
+        beacon: "weaviate/some-uuid",
+        certainty: 0.7
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  describe("queries with invalid nearObject searchers", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const tests = [
+      {
+        title: "an empty nearObject",
+        nearObject: {},
+        msg: "nearObject filter: id or beacon needs to be set",
+      },
+      {
+        title: "id of wrong type",
+        nearObject: { id: {} },
+        msg: "nearObject filter: id must be a string",
+      },
+      {
+        title: "beacon of wrong type",
+        nearObject: { beacon: {} },
+        msg: "nearObject filter: beacon must be a string",
+      },
+      {
+        title: "certainty of wrong type",
+        nearObject: { id: "foo", certainty: "foo" },
+        msg: "nearObject filter: certainty must be a number",
+      }
+    ];
+
+    tests.forEach((t) => {
+      test(t.title, () => {
+        new Getter(mockClient)
+          .withClassName("Person")
+          .withFields("name")
+          .withNearObject(t.nearObject)
+          .do()
+          .then(() => fail("it should have error'd"))
+          .catch((e) => {
+            expect(e.toString()).toContain(t.msg);
+          });
+      });
+    });
+  });
+});
