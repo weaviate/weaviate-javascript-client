@@ -470,3 +470,103 @@ describe("nearObject searchers", () => {
     });
   });
 });
+
+describe("ask searchers", () => {
+  test("a query with a valid ask with question", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with question and properties", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"]})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?", properties: ["prop1", "prop2"] })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with all params", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],certainty:0.8})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({
+        question: "What is Weaviate?",
+        properties: ["prop1", "prop2"],
+        certainty: 0.8,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  describe("queries with invalid ask searchers", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const tests = [
+      {
+        title: "an empty ask",
+        ask: {},
+        msg: "ask filter: question needs to be set",
+      },
+      {
+        title: "question of wrong type",
+        ask: { question: {} },
+        msg: "ask filter: question must be a string",
+      },
+      {
+        title: "properties of wrong type",
+        ask: { properties: {} },
+        msg: "ask filter: properties must be an array",
+      },
+      {
+        title: "certainty of wrong type",
+        ask: { question: "foo", certainty: "foo" },
+        msg: "ask filter: certainty must be a number",
+      }
+    ];
+
+    tests.forEach((t) => {
+      test(t.title, () => {
+        new Getter(mockClient)
+          .withClassName("Person")
+          .withFields("name")
+          .withAsk(t.ask)
+          .do()
+          .then(() => fail("it should have error'd"))
+          .catch((e) => {
+            expect(e.toString()).toContain(t.msg);
+          });
+      });
+    });
+  });
+});
