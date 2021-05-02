@@ -2,6 +2,7 @@ import Where from "./where";
 import NearText from "./nearText";
 import NearVector from "./nearVector";
 import NearObject from "./nearObject";
+import NearImage from "./nearImage";
 import Ask from "./ask";
 import Group from "./group";
 
@@ -67,6 +68,15 @@ export default class Getter {
     return this;
   };
 
+  withNearImage = (nearImageObj) => {
+    try {
+      this.nearImageString = new NearImage(nearImageObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
   withNearVector = (nearVectorObj) => {
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
@@ -115,6 +125,7 @@ export default class Getter {
       this.nearObjectString ||
       this.nearVectorString ||
       this.askString ||
+      this.nearImageString ||
       this.limit ||
       this.groupString
     ) {
@@ -134,6 +145,10 @@ export default class Getter {
 
       if (this.askString) {
         args = [...args, `ask:${this.askString}`];
+      }
+
+      if (this.nearImageString) {
+        args = [...args, `nearImage:${this.nearImageString}`];
       }
 
       if (this.nearVectorString) {
