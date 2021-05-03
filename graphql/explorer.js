@@ -1,6 +1,7 @@
 import NearText from "./nearText";
 import NearVector from "./nearVector";
 import NearObject from "./nearObject";
+import NearImage from "./nearImage";
 import Ask from "./ask";
 import { DEFAULT_KIND, validateKind } from "../kinds";
 
@@ -42,6 +43,15 @@ export default class Explorer {
   withAsk = (askObj) => {
     try {
       this.askString = new Ask(askObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
+  withNearImage = (nearImageObj) => {
+    try {
+      this.nearImageString = new NearImage(nearImageObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
@@ -110,12 +120,17 @@ export default class Explorer {
     }
 
     if (this.askString) {
-      args = [...args, `ask:${this.nearObjectString}`];
+      args = [...args, `ask:${this.askString}`];
+    }
+
+    if (this.nearImageString) {
+      args = [...args, `nearImage:${this.nearImageString}`];
     }
 
     if (this.nearVectorString) {
       args = [...args, `nearVector:${this.nearVectorString}`];
     }
+
     if (this.limit) {
       args = [...args, `limit:${this.limit}`];
     }

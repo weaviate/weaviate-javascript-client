@@ -570,3 +570,97 @@ describe("ask searchers", () => {
     });
   });
 });
+
+describe("nearImage searchers", () => {
+  test("a query with a valid nearImage with image", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearImage:{image:"iVBORw0KGgoAAAANS"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearImage({ image: "iVBORw0KGgoAAAANS" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearImage with all params", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearImage:{image:"iVBORw0KGgoAAAANS",certainty:0.8})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearImage({
+        image: "iVBORw0KGgoAAAANS",
+        certainty: 0.8,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearImage with base64 encoded image", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearImage:{image:"iVBORw0KGgoAAAANS"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearImage({ image: "data:image/png;base64,iVBORw0KGgoAAAANS" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  describe("queries with invalid nearImage searchers", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const tests = [
+      {
+        title: "an empty nearImage",
+        nearImage: {},
+        msg: "nearImage filter: image or imageBlob must be present",
+      },
+      {
+        title: "image of wrong type",
+        nearImage: { image: {} },
+        msg: "nearImage filter: image must be a string",
+      },
+      {
+        title: "certainty of wrong type",
+        nearImage: { image: "foo", certainty: "foo" },
+        msg: "nearImage filter: certainty must be a number",
+      }
+    ];
+
+    tests.forEach((t) => {
+      test(t.title, () => {
+        new Getter(mockClient)
+          .withClassName("Person")
+          .withFields("name")
+          .withNearImage(t.nearImage)
+          .do()
+          .then(() => fail("it should have error'd"))
+          .catch((e) => {
+            expect(e.toString()).toContain(t.msg);
+          });
+      });
+    });
+  });
+});
