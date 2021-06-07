@@ -1,6 +1,6 @@
 {
   "name": "weaviate-client",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Javascript client for Weaviate",
   "main": "lib.js",
   "scripts": {
