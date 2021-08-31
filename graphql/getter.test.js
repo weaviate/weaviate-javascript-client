@@ -227,6 +227,48 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
+  test("with optional parameters and autocorrect", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],certainty:0.7,moveTo:{concepts:["foo"],force:0.7},moveAwayFrom:{concepts:["bar"],force:0.5},autocorrect:true})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        certainty: 0.7,
+        moveTo: { concepts: ["foo"], force: 0.7 },
+        moveAwayFrom: { concepts: ["bar"], force: 0.5 },
+        autocorrect: true,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearText and autocorrect set to false", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearText:{concepts:["foo","bar"],autocorrect:false})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({ concepts: ["foo", "bar"], autocorrect: false })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
   describe("queries with invalid nearText searchers", () => {
     const mockClient = {
       query: jest.fn(),
@@ -268,6 +310,11 @@ describe("nearText searchers", () => {
         nearText: { concepts: ["foo"], moveAwayFrom: { concepts: ["foo"] } },
         msg:
           "nearText filter: moveAwayFrom must have fields 'concepts' and 'force'",
+      },
+      {
+        title: "autocorrect of wrong type",
+        nearText: { concepts: ["foo"], autocorrect: "foo" },
+        msg: "nearText filter: autocorrect must be a boolean",
       },
     ];
 
@@ -506,7 +553,7 @@ describe("ask searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("a query with a valid ask with all params", () => {
+  test("a query with a valid ask with question, properties, certainty", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -522,6 +569,62 @@ describe("ask searchers", () => {
         properties: ["prop1", "prop2"],
         certainty: 0.8,
       })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with all params", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],certainty:0.8,autocorrect:true})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({
+        question: "What is Weaviate?",
+        properties: ["prop1", "prop2"],
+        certainty: 0.8,
+        autocorrect: true,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with question and autocorrect", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",autocorrect:true})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?", autocorrect: true })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with question and autocorrect set to false", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",autocorrect:false})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?", autocorrect: false })
       .do();
 
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
@@ -552,6 +655,11 @@ describe("ask searchers", () => {
         title: "certainty of wrong type",
         ask: { question: "foo", certainty: "foo" },
         msg: "ask filter: certainty must be a number",
+      },
+      {
+        title: "autocorrect of wrong type",
+        ask: { question: "foo", autocorrect: "foo" },
+        msg: "ask filter: autocorrect must be a boolean",
       }
     ];
 

@@ -34,6 +34,10 @@ export default class GraphQLNearText {
       args = [...args, `moveAwayFrom:{${moveAwayFromArgs.join(",")}}`];
     }
 
+    if (this.autocorrect !== undefined) {
+      args = [...args, `autocorrect:${this.autocorrect}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -76,6 +80,9 @@ export default class GraphQLNearText {
           break;
         case "moveAwayFrom":
           this.parseMoveAwayFrom(this.source[key]);
+          break;
+        case "autocorrect":
+          this.parseAutocorrect(this.source[key]);
           break;
         default:
           throw new Error("nearText filter: unrecognized key '" + key + "'");
@@ -135,5 +142,13 @@ export default class GraphQLNearText {
     this.moveAwayFrom = true;
     this.moveAwayFromConcepts = target.concepts;
     this.moveAwayFromForce = target.force;
+  }
+
+  parseAutocorrect(autocorrect) {
+    if (typeof autocorrect !== "boolean") {
+      throw new Error("nearText filter: autocorrect must be a boolean");
+    }
+
+    this.autocorrect = autocorrect;
   }
 }

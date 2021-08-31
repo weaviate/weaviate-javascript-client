@@ -21,6 +21,10 @@ export default class GraphQLAsk {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.autocorrect !== undefined) {
+      args = [...args, `autocorrect:${this.autocorrect}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -44,6 +48,9 @@ export default class GraphQLAsk {
           break;
         case "certainty":
           this.parseCertainty(this.source[key]);
+          break;
+        case "autocorrect":
+          this.parseAutocorrect(this.source[key]);
           break;
         default:
           throw new Error("ask filter: unrecognized key '" + key + "'");
@@ -73,5 +80,13 @@ export default class GraphQLAsk {
     }
 
     this.certainty = cert;
+  }
+
+  parseAutocorrect(autocorrect) {
+    if (typeof autocorrect !== "boolean") {
+      throw new Error("ask filter: autocorrect must be a boolean");
+    }
+
+    this.autocorrect = autocorrect;
   }
 }
