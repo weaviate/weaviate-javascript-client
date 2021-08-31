@@ -25,7 +25,9 @@ describe("schema", () => {
       vectorizer: 'text2vec-contextionary',
       vectorIndexConfig: {
         cleanupIntervalSeconds: 300,
+        ef: -1,
         maxConnections: 64,
+        skip: false,
         efConstruction: 128,
         vectorCacheMaxObjects: 500000
       },
@@ -95,7 +97,9 @@ describe("schema", () => {
               vectorizer: "text2vec-contextionary",
               vectorIndexConfig: {
                 cleanupIntervalSeconds: 300,
+                ef: -1,
                 maxConnections: 64,
+                skip: false,
                 efConstruction: 128,
                 vectorCacheMaxObjects: 500000
               },

@@ -32,13 +32,13 @@ describe("a classification journey", () => {
         .catch((e) => fail("it should not have errord: " + e));
     });
 
-    it("is now running", () => {
+    it("is now completed", () => {
       return client.classifications
         .getter()
         .withId(id)
         .do()
         .then((res) => {
-          expect(res.status).toEqual("running");
+          expect(res.status).toEqual("completed");
         });
     });
 
