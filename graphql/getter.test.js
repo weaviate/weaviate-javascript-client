@@ -29,6 +29,23 @@ test("a simple query with a limit", () => {
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
+test("a simple query with a limit and offset", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const expectedQuery = `{Get{Person(limit:7,offset:2){name}}}`;
+
+  new Getter(mockClient)
+    .withClassName("Person")
+    .withFields("name")
+    .withOffset(2)
+    .withLimit(7)
+    .do();
+
+  expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+});
+
 test("a simple query with a group", () => {
   const mockClient = {
     query: jest.fn(),
