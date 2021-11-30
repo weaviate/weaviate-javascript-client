@@ -91,6 +91,11 @@ export default class Getter {
     return this;
   };
 
+  withOffset = (offset) => {
+    this.offset = offset;
+    return this;
+  };
+
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
@@ -127,6 +132,7 @@ export default class Getter {
       this.askString ||
       this.nearImageString ||
       this.limit ||
+      this.offset ||
       this.groupString
     ) {
       let args = [];
@@ -161,6 +167,10 @@ export default class Getter {
 
       if (this.limit) {
         args = [...args, `limit:${this.limit}`];
+      }
+
+      if (this.offset) {
+        args = [...args, `offset:${this.offset}`];
       }
 
       params = `(${args.join(",")})`;
