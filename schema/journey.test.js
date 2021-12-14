@@ -29,7 +29,8 @@ describe("schema", () => {
         maxConnections: 64,
         skip: false,
         efConstruction: 128,
-        vectorCacheMaxObjects: 500000
+        vectorCacheMaxObjects: 500000,
+        flatSearchCutoff: 40000
       },
       invertedIndexConfig: {
         cleanupIntervalSeconds: 60
@@ -39,7 +40,17 @@ describe("schema", () => {
         { 
           vectorizeClassName: true
         }
-      }
+      },
+      shardingConfig: {
+        actualCount: 1,
+        actualVirtualCount: 128,
+        desiredCount: 1,
+        desiredVirtualCount: 128,
+        function: "murmur3",
+        key: "_id",
+        strategy: "hash",
+        virtualPerPhysical: 128,
+      },
     };
 
     return client.schema
@@ -101,7 +112,8 @@ describe("schema", () => {
                 maxConnections: 64,
                 skip: false,
                 efConstruction: 128,
-                vectorCacheMaxObjects: 500000
+                vectorCacheMaxObjects: 500000,
+                flatSearchCutoff: 40000
               },
               invertedIndexConfig: {
                 cleanupIntervalSeconds: 60
@@ -111,7 +123,17 @@ describe("schema", () => {
                 { 
                   vectorizeClassName: true
                 }
-              }
+              },
+              shardingConfig: {
+                actualCount: 1,
+                actualVirtualCount: 128,
+                desiredCount: 1,
+                desiredVirtualCount: 128,
+                function: "murmur3",
+                key: "_id",
+                strategy: "hash",
+                virtualPerPhysical: 128,
+              },
             },
           ],
         });

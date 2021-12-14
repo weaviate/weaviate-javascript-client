@@ -2,6 +2,7 @@ const weaviate = require("../index");
 
 const thingClassName = "DataJourneyTestThing";
 const refSourceClassName = "DataJourneyTestRefSource";
+const classCustomVectorClassName = "ClassCustomVector";
 
 describe("data", () => {
   const client = weaviate.client({
@@ -327,10 +328,54 @@ describe("data", () => {
     ]);
   });
 
+  it("creates a new class with custom vector and explicit id", () => {
+    const properties = { foo: "bar" };
+    const id = "aaaac06c-463f-466c-9092-5930dbac3887";
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    return client.data
+      .creator()
+      .withClassName(classCustomVectorClassName)
+      .withProperties(properties)
+      .withVector(vector)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.vector).toEqual(vector);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("verifies that class with custom vector has been created", () => {
+    const id = "aaaac06c-463f-466c-9092-5930dbac3887";
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    return client.data
+      .getterById()
+      .withId(id)
+      .withVector()
+      .do()
+      .then((res) => {
+        expect(res.vector).toEqual(vector);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("deletes a class with custom vector", () => {
+    return client.data
+      .deleter()
+      .withId("aaaac06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
   it("tears down and cleans up", () => {
     return Promise.all([
       client.schema.classDeleter().withClassName(thingClassName).do(),
       client.schema.classDeleter().withClassName(refSourceClassName).do(),
+      client.schema.classDeleter().withClassName(classCustomVectorClassName).do(),
     ]);
   });
 });
@@ -351,6 +396,19 @@ const setup = async (client) => {
   };
 
   await Promise.all([client.schema.classCreator().withClass(thing).do()]);
+
+  const classCustomVector = {
+    class: classCustomVectorClassName,
+    vectorizer: "none",
+    properties: [
+      {
+        name: "foo",
+        dataType: ["string"],
+      },
+    ],
+  };
+
+  await Promise.all([client.schema.classCreator().withClass(classCustomVector).do()]);
 
   const refSource = {
     class: refSourceClassName,
