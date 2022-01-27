@@ -4,6 +4,11 @@ export default class Creator {
     this.errors = [];
   }
 
+  withVector = (vector) => {
+    this.vector = vector;
+    return this;
+  };
+
   withClassName = (className) => {
     this.className = className;
     return this;
@@ -33,6 +38,7 @@ export default class Creator {
   };
 
   payload = () => ({
+    vector: this.vector,
     properties: this.properties,
     class: this.className,
     id: this.id,
