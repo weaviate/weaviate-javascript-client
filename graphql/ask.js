@@ -25,6 +25,10 @@ export default class GraphQLAsk {
       args = [...args, `autocorrect:${this.autocorrect}`];
     }
 
+    if (this.rerank !== undefined) {
+      args = [...args, `rerank:${this.rerank}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -51,6 +55,9 @@ export default class GraphQLAsk {
           break;
         case "autocorrect":
           this.parseAutocorrect(this.source[key]);
+          break;
+        case "rerank":
+          this.parseRerank(this.source[key]);
           break;
         default:
           throw new Error("ask filter: unrecognized key '" + key + "'");
@@ -88,5 +95,13 @@ export default class GraphQLAsk {
     }
 
     this.autocorrect = autocorrect;
+  }
+
+  parseRerank(rerank) {
+    if (typeof rerank !== "boolean") {
+      throw new Error("ask filter: rerank must be a boolean");
+    }
+
+    this.rerank = rerank;
   }
 }
