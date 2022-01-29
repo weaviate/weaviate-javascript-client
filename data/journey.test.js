@@ -301,11 +301,37 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
+  it("checks that object exists", () => {
+    return client.data
+      .checker()
+      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .then((exists) => {
+        if (!exists) {
+          fail("it should exist in DB")
+        }
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
   it("deletes a thing", () => {
     return client.data
       .deleter()
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
       .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("checks that object doesn't exist anymore", () => {
+    return client.data
+      .checker()
+      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .then((exists) => {
+        if (exists) {
+          fail("it should not exist in DB")
+        }
+      })
       .catch((e) => fail("it should not have errord: " + e));
   });
 

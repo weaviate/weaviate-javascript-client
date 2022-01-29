@@ -5,6 +5,7 @@ import Merger from "./merger";
 import Getter from "./getter";
 import GetterById from "./getterById";
 import Deleter from "./deleter";
+import Checker from "./checker";
 import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
@@ -19,6 +20,7 @@ const data = (client) => {
     getter: () => new Getter(client),
     getterById: () => new GetterById(client),
     deleter: () => new Deleter(client),
+    checker: () => new Checker(client),
     referenceCreator: () => new ReferenceCreator(client),
     referenceReplacer: () => new ReferenceReplacer(client),
     referenceDeleter: () => new ReferenceDeleter(client),
