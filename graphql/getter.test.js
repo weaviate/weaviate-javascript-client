@@ -597,7 +597,7 @@ describe("ask searchers", () => {
     };
 
     const expectedQuery =
-      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],certainty:0.8,autocorrect:true})` + `{name}}}`;
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],certainty:0.8,autocorrect:true,rerank:true})` + `{name}}}`;
 
       new Getter(mockClient)
       .withClassName("Person")
@@ -607,6 +607,7 @@ describe("ask searchers", () => {
         properties: ["prop1", "prop2"],
         certainty: 0.8,
         autocorrect: true,
+        rerank: true,
       })
       .do();
 
@@ -642,6 +643,40 @@ describe("ask searchers", () => {
       .withClassName("Person")
       .withFields("name")
       .withAsk({ question: "What is Weaviate?", autocorrect: false })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with question and rerank", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",rerank:true})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?", rerank: true })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with question and rerank set to false", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",rerank:false})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({ question: "What is Weaviate?", rerank: false })
       .do();
 
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
