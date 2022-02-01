@@ -25,6 +25,9 @@ describe("schema", () => {
       vectorizer: 'text2vec-contextionary',
       vectorIndexConfig: {
         cleanupIntervalSeconds: 300,
+        dynamicEfFactor: 8,
+        dynamicEfMax: 500,
+        dynamicEfMin: 100,
         ef: -1,
         maxConnections: 64,
         skip: false,
@@ -67,6 +70,12 @@ describe("schema", () => {
     const prop = {
       dataType: ["string"],
       name: "anotherProp",
+      moduleConfig: {
+        'text2vec-contextionary': {
+          skip: false,
+          vectorizePropertyName: false
+        }
+      }
     };
 
     return client.schema
@@ -102,12 +111,21 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "anotherProp",
+                  moduleConfig: {
+                    'text2vec-contextionary': {
+                      skip: false,
+                      vectorizePropertyName: false
+                    }
+                  }
                 },
               ],
               vectorIndexType: "hnsw",
               vectorizer: "text2vec-contextionary",
               vectorIndexConfig: {
                 cleanupIntervalSeconds: 300,
+                dynamicEfFactor: 8,
+                dynamicEfMax: 500,
+                dynamicEfMin: 100,
                 ef: -1,
                 maxConnections: 64,
                 skip: false,

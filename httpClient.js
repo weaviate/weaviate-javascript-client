@@ -44,6 +44,16 @@ const client = (config) => {
         body: payload ? JSON.stringify(payload) : undefined,
       }).then(makeCheckStatus(false));
     },
+    head: (path, payload) => {
+      return fetch(url(path), {
+        method: "HEAD",
+        headers: {
+          ...config.headers,
+          "content-type": "application/json",
+        },
+        body: payload ? JSON.stringify(payload) : undefined,
+      }).then(handleHeadResponse(false, true));
+    },
     get: (path, expectReturnContent = true) => {
       return fetch(url(path), {
         method: "GET",
@@ -87,5 +97,12 @@ const makeCheckStatus = (expectResponseBody) => (res) => {
     return res.json();
   }
 };
+
+const handleHeadResponse = (expectResponseBody) => (res) => {
+  if (res.status == 204 || res.status == 404) {
+    return res.status == 204
+  }
+  return makeCheckStatus(expectResponseBody)
+}
 
 module.exports = client;
