@@ -4,7 +4,7 @@ A javascript client for easy interaction with a weaviate instance.
 
 ## Documentation
 
-- [Documentation](https://www.semi.technology/documentation/weaviate/current/client-libraries/javascript.html).
+- [Documentation](https://weaviate.io/developers/weaviate/current/client-libraries/javascript.html).
 
 ## Support
 
