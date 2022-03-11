@@ -6,59 +6,69 @@ describe("schema", () => {
     host: "localhost:8080",
   });
 
-  it("creates a thing class (implicitly)", () => {
-    const classObj = {
-      class: 'MyThingClass',
-      properties: [
-        {
-          dataType: ["string"],
-          name: 'stringProp',
-          moduleConfig: {
-            'text2vec-contextionary': {
-              skip: false,
-              vectorizePropertyName: false
-            }
+  const classObj = {
+    class: 'MyThingClass',
+    properties: [
+      {
+        dataType: ["string"],
+        name: 'stringProp',
+        moduleConfig: {
+          'text2vec-contextionary': {
+            skip: false,
+            vectorizePropertyName: false
           }
         }
-      ],
-      vectorIndexType: 'hnsw',
-      vectorizer: 'text2vec-contextionary',
-      vectorIndexConfig: {
-        cleanupIntervalSeconds: 300,
-        dynamicEfFactor: 8,
-        dynamicEfMax: 500,
-        dynamicEfMin: 100,
-        ef: -1,
-        maxConnections: 64,
-        skip: false,
-        efConstruction: 128,
-        vectorCacheMaxObjects: 500000,
-        flatSearchCutoff: 40000
-      },
-      invertedIndexConfig: {
-        cleanupIntervalSeconds: 60
-      },
-      moduleConfig: { 
-        'text2vec-contextionary': 
-        { 
-          vectorizeClassName: true
-        }
-      },
-      shardingConfig: {
-        actualCount: 1,
-        actualVirtualCount: 128,
-        desiredCount: 1,
-        desiredVirtualCount: 128,
-        function: "murmur3",
-        key: "_id",
-        strategy: "hash",
-        virtualPerPhysical: 128,
-      },
-    };
+      }
+    ],
+    vectorIndexType: 'hnsw',
+    vectorizer: 'text2vec-contextionary',
+    vectorIndexConfig: {
+      cleanupIntervalSeconds: 300,
+      dynamicEfFactor: 8,
+      dynamicEfMax: 500,
+      dynamicEfMin: 100,
+      ef: -1,
+      maxConnections: 64,
+      skip: false,
+      efConstruction: 128,
+      vectorCacheMaxObjects: 500000,
+      flatSearchCutoff: 40000
+    },
+    invertedIndexConfig: {
+      cleanupIntervalSeconds: 60
+    },
+    moduleConfig: {
+      'text2vec-contextionary':
+      {
+        vectorizeClassName: true
+      }
+    },
+    shardingConfig: {
+      actualCount: 1,
+      actualVirtualCount: 128,
+      desiredCount: 1,
+      desiredVirtualCount: 128,
+      function: "murmur3",
+      key: "_id",
+      strategy: "hash",
+      virtualPerPhysical: 128,
+    },
+  };
 
+  it("creates a thing class (implicitly)", () => {
     return client.schema
       .classCreator()
       .withClass(classObj)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(classObj);
+      });
+  });
+
+  it("gets an existing class", () => {
+    return client.schema
+      .classGetter()
+      .withClassName(classObj.class)
       .do()
       .then((res) => {
         expect(res).toEqual(classObj);
