@@ -33,8 +33,7 @@ export default class ShardsGetter {
         new Error(`invalid usage: ${this.errors.join(", ")}`)
       );
     }
-    // const path = `/schema/${this.className}/shards`;
-    // return this.client.get(path);
+
     return getShards(this.client, this.className)
   };
 }
