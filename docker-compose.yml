@@ -1,7 +1,8 @@
 version: '3.4'
 services:
   weaviate:
-    image: semitechnologies/weaviate:1.10.1
+    # TODO: temporarily use this version until next release
+    image: semitechnologies/weaviate:1.11.0-658bee1
     restart: on-failure:0
     ports:
      - "8080:8080"

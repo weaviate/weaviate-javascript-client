@@ -12,6 +12,7 @@ describe("schema", () => {
       {
         dataType: ["string"],
         name: 'stringProp',
+        tokenization: "word",
         moduleConfig: {
           'text2vec-contextionary': {
             skip: false,
@@ -35,7 +36,16 @@ describe("schema", () => {
       flatSearchCutoff: 40000
     },
     invertedIndexConfig: {
-      cleanupIntervalSeconds: 60
+      cleanupIntervalSeconds: 60,
+      bm25: {
+        b: 0.75,
+        k1: 1.2
+      },
+      stopwords: {
+        preset: "en",
+        additions: null,
+        removals: null
+      }
     },
     moduleConfig: {
       'text2vec-contextionary':
@@ -80,6 +90,7 @@ describe("schema", () => {
     const prop = {
       dataType: ["string"],
       name: "anotherProp",
+      tokenization: "word",
       moduleConfig: {
         'text2vec-contextionary': {
           skip: false,
@@ -111,6 +122,7 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "stringProp",
+                  tokenization: "word",
                   moduleConfig: {
                     'text2vec-contextionary': {
                       skip: false,
@@ -121,6 +133,7 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "anotherProp",
+                  tokenization: "word",
                   moduleConfig: {
                     'text2vec-contextionary': {
                       skip: false,
@@ -144,7 +157,16 @@ describe("schema", () => {
                 flatSearchCutoff: 40000
               },
               invertedIndexConfig: {
-                cleanupIntervalSeconds: 60
+                cleanupIntervalSeconds: 60,
+                bm25: {
+                  b: 0.75,
+                  k1: 1.2
+                },
+                stopwords: {
+                  preset: "en",
+                  additions: null,
+                  removals: null
+                }
               },
               moduleConfig: { 
                 'text2vec-contextionary': 
