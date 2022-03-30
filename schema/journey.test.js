@@ -234,6 +234,68 @@ describe("schema", () => {
     });
   })
 
+  it("updates all shards in a class to READONLY", async () => {
+    var shardCount = 3
+    var readonlyClass = classObj
+    readonlyClass.class = "ReadonlyClass"
+    readonlyClass.shardingConfig.desiredCount = shardCount
+
+    await client.schema
+      .classCreator()
+      .withClass(classObj)
+      .do()
+      .then((res) => {
+        expect(res).toHaveProperty('shardingConfig.actualCount', 3)
+      });
+
+    var shards = await getShards(client, readonlyClass.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(shardCount)
+
+    return client.schema
+      .shardsUpdater()
+      .withClassName(classObj.class)
+      .withStatus("READONLY")
+      .do()
+      .then(res => {
+        expect(res.length).toEqual(shardCount)
+        res.forEach(obj => {
+          expect(obj.status).toEqual("READONLY")
+        });
+      });
+  })
+
+  it("updates all shards in a class to READY", async () => {
+    var shardCount = 3
+    var readyClass = classObj
+    readyClass.class = "ReadyClass"
+    readyClass.shardingConfig.desiredCount = shardCount
+
+    await client.schema
+      .classCreator()
+      .withClass(classObj)
+      .do()
+      .then((res) => {
+        expect(res).toHaveProperty('shardingConfig.actualCount', 3)
+      });
+
+    var shards = await getShards(client, readyClass.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(shardCount)
+
+    return client.schema
+      .shardsUpdater()
+      .withClassName(classObj.class)
+      .withStatus("READY")
+      .do()
+      .then(res => {
+        expect(res.length).toEqual(shardCount)
+        res.forEach(obj => {
+          expect(obj.status).toEqual("READY")
+        });
+      });
+  })
+
   it("deletes an existing class", () => {
     const className = "MyThingClass";
 
@@ -253,6 +315,6 @@ async function getShards(client, className) {
     .withClassName(className)
     .do()
     .then((res) => {
-      return res
+      return res;
     });
 }

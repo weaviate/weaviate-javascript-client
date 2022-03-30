@@ -1,7 +1,11 @@
-export default class ShardUpdater {
+import { getShards } from "./shardsGetter";
+import { updateShard } from "./shardUpdater";
+
+export default class ShardsUpdater {
   constructor(client) {
     this.client = client;
     this.errors = [];
+    this.shards = [];
   }
 
   withClassName = (className) => {
@@ -18,24 +22,6 @@ export default class ShardUpdater {
       this.errors = [
         ...this.errors,
         "className must be set - set with .withClassName(className)",
-      ];
-    }
-  };
-
-  withShardName = (shardName) => {
-    this.shardName = shardName;
-    return this;
-  };
-
-  validateShardName = () => {
-    if (
-      this.shardName == undefined ||
-      this.shardName == null ||
-      this.shardName.length == 0
-    ) {
-      this.errors = [
-        ...this.errors,
-        "shardName must be set - set with .withShardName(shardName)",
       ];
     }
   };
@@ -60,9 +46,27 @@ export default class ShardUpdater {
 
   validate = () => {
     this.validateClassName();
-    this.validateShardName();
     this.validateStatus();
   };
+
+  updateShards = async () => {
+    var payload = []
+    for (let i = 0; i < this.shards.length; i++) {
+      await updateShard(this.client, this.className, this.shards[i].name, this.status)
+        .then(res => {
+          payload.push({name: this.shards[i].name, status: res.status})
+        })
+        .catch(err => this.errors = [...this.errors, err]);
+    }
+
+    if (this.errors.length > 0) {
+      return Promise.reject(
+        new Error(`failed to update shards: ${this.errors.join(", ")}`)
+      );
+    }
+
+    return Promise.resolve(payload);
+  }
 
   do = () => {
     this.validate();
@@ -72,11 +76,12 @@ export default class ShardUpdater {
       );
     }
 
-    return updateShard(this.client, this.className, this.shardName, this.status)
+    return getShards(this.client, this.className)
+      .then(shards => this.shards = shards)
+      .then(this.updateShards)
+      .then(payload => {return payload})
+      .catch(err => {
+        return Promise.reject(err);
+      });
   };
-}
-
-export function updateShard(client, className, shardName, status) {
-  const path = `/schema/${className}/shards/${shardName}`;
-  return client.put(path, {status: status}, true)
 }

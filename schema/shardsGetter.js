@@ -30,10 +30,16 @@ export default class ShardsGetter {
     this.validate();
     if (this.errors.length > 0) {
       return Promise.reject(
-        new Error("invalid usage: " + this.errors.join(", "))
+        new Error(`invalid usage: ${this.errors.join(", ")}`)
       );
     }
-    const path = `/schema/${this.className}/shards`;
-    return this.client.get(path);
+    // const path = `/schema/${this.className}/shards`;
+    // return this.client.get(path);
+    return getShards(this.client, this.className)
   };
+}
+
+export function getShards(client, className) {
+  const path = `/schema/${className}/shards`;
+  return client.get(path)
 }
