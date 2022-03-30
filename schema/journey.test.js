@@ -190,6 +190,18 @@ describe("schema", () => {
       });
   });
 
+  it("gets the shards of an existing class", () => {
+    return client.schema
+      .shardsGetter()
+      .withClassName(classObj.class)
+      .do()
+      .then((res) => {
+        res.forEach(shard => {
+          expect(shard.status).toEqual("READY");
+        });
+      });
+  })
+
   it("deletes an existing class", () => {
     const className = "MyThingClass";
 
