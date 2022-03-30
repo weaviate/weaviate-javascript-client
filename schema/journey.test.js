@@ -202,6 +202,38 @@ describe("schema", () => {
       });
   })
 
+  it("updates a shard of an existing class to readonly", async () => {
+    var shards = await getShards(client, classObj.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(1)
+
+    client.schema
+      .shardUpdater()
+      .withClassName(classObj.class)
+      .withShardName(shards[0].name)
+      .withStatus("READONLY")
+      .do()
+      .then(res => {
+        expect(res.status).toEqual("READONLY");
+    });
+  })
+
+  it("updates a shard of an existing class to ready", async () => {
+    var shards = await getShards(client, classObj.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(1)
+
+    client.schema
+      .shardUpdater()
+      .withClassName(classObj.class)
+      .withShardName(shards[0].name)
+      .withStatus("READY")
+      .do()
+      .then(res => {
+        expect(res.status).toEqual("READY");
+    });
+  })
+
   it("deletes an existing class", () => {
     const className = "MyThingClass";
 
@@ -214,3 +246,13 @@ describe("schema", () => {
       });
   });
 });
+
+async function getShards(client, className) {
+  return client.schema
+    .shardsGetter()
+    .withClassName(className)
+    .do()
+    .then((res) => {
+      return res
+    });
+}
