@@ -1,3 +1,5 @@
+import { isValidStringProperty } from "../validation/string";
+
 export default class Validator {
   constructor(client) {
     this.client = client;
@@ -20,11 +22,7 @@ export default class Validator {
   };
 
   validateClassName = () => {
-    if (
-      this.className == undefined ||
-      this.className == null ||
-      this.className.length == 0
-    ) {
+    if (!isValidStringProperty(this.className)) {
       this.errors = [
         ...this.errors,
         "className must be set - set with .withClassName(className)",

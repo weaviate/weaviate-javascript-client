@@ -6,64 +6,7 @@ describe("schema", () => {
     host: "localhost:8080",
   });
 
-  const classObj = {
-    class: 'MyThingClass',
-    properties: [
-      {
-        dataType: ["string"],
-        name: 'stringProp',
-        tokenization: "word",
-        moduleConfig: {
-          'text2vec-contextionary': {
-            skip: false,
-            vectorizePropertyName: false
-          }
-        }
-      }
-    ],
-    vectorIndexType: 'hnsw',
-    vectorizer: 'text2vec-contextionary',
-    vectorIndexConfig: {
-      cleanupIntervalSeconds: 300,
-      dynamicEfFactor: 8,
-      dynamicEfMax: 500,
-      dynamicEfMin: 100,
-      ef: -1,
-      maxConnections: 64,
-      skip: false,
-      efConstruction: 128,
-      vectorCacheMaxObjects: 500000,
-      flatSearchCutoff: 40000
-    },
-    invertedIndexConfig: {
-      cleanupIntervalSeconds: 60,
-      bm25: {
-        b: 0.75,
-        k1: 1.2
-      },
-      stopwords: {
-        preset: "en",
-        additions: null,
-        removals: null
-      }
-    },
-    moduleConfig: {
-      'text2vec-contextionary':
-      {
-        vectorizeClassName: true
-      }
-    },
-    shardingConfig: {
-      actualCount: 1,
-      actualVirtualCount: 128,
-      desiredCount: 1,
-      desiredVirtualCount: 128,
-      function: "murmur3",
-      key: "_id",
-      strategy: "hash",
-      virtualPerPhysical: 128,
-    },
-  };
+  const classObj = newClassObject('MyThingClass');
 
   it("creates a thing class (implicitly)", () => {
     return client.schema
@@ -204,10 +147,10 @@ describe("schema", () => {
 
   it("updates a shard of an existing class to readonly", async () => {
     var shards = await getShards(client, classObj.class);
-    expect(Array.isArray(shards)).toBe(true)
-    expect(shards.length).toEqual(1)
+    expect(Array.isArray(shards)).toBe(true);
+    expect(shards.length).toEqual(1);
 
-    client.schema
+    return client.schema
       .shardUpdater()
       .withClassName(classObj.class)
       .withShardName(shards[0].name)
@@ -220,10 +163,10 @@ describe("schema", () => {
 
   it("updates a shard of an existing class to ready", async () => {
     var shards = await getShards(client, classObj.class);
-    expect(Array.isArray(shards)).toBe(true)
-    expect(shards.length).toEqual(1)
+    expect(Array.isArray(shards)).toBe(true);
+    expect(shards.length).toEqual(1);
 
-    client.schema
+    return client.schema
       .shardUpdater()
       .withClassName(classObj.class)
       .withShardName(shards[0].name)
@@ -234,27 +177,36 @@ describe("schema", () => {
     });
   })
 
-  it("updates all shards in a class to READONLY", async () => {
-    var shardCount = 3
-    var readonlyClass = classObj
-    readonlyClass.class = "ReadonlyClass"
-    readonlyClass.shardingConfig.desiredCount = shardCount
+  it("deletes an existing class", () => {
+    return client.schema
+      .classDeleter()
+      .withClassName(classObj.class)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(undefined);
+      });
+  });
+
+  it("updates all shards in a class", async () => {
+    var shardCount = 3;
+    var newClass = newClassObject('NewClass');
+    newClass.shardingConfig.desiredCount = shardCount;
 
     await client.schema
       .classCreator()
-      .withClass(classObj)
+      .withClass(newClass)
       .do()
       .then((res) => {
         expect(res).toHaveProperty('shardingConfig.actualCount', 3)
       });
 
-    var shards = await getShards(client, readonlyClass.class);
-    expect(Array.isArray(shards)).toBe(true)
-    expect(shards.length).toEqual(shardCount)
+    var shards = await getShards(client, newClass.class);
+    expect(Array.isArray(shards)).toBe(true);
+    expect(shards.length).toEqual(shardCount);
 
-    return client.schema
+    await client.schema
       .shardsUpdater()
-      .withClassName(classObj.class)
+      .withClassName(newClass.class)
       .withStatus("READONLY")
       .do()
       .then(res => {
@@ -263,29 +215,10 @@ describe("schema", () => {
           expect(obj.status).toEqual("READONLY")
         });
       });
-  })
-
-  it("updates all shards in a class to READY", async () => {
-    var shardCount = 3
-    var readyClass = classObj
-    readyClass.class = "ReadyClass"
-    readyClass.shardingConfig.desiredCount = shardCount
 
     await client.schema
-      .classCreator()
-      .withClass(classObj)
-      .do()
-      .then((res) => {
-        expect(res).toHaveProperty('shardingConfig.actualCount', 3)
-      });
-
-    var shards = await getShards(client, readyClass.class);
-    expect(Array.isArray(shards)).toBe(true)
-    expect(shards.length).toEqual(shardCount)
-
-    return client.schema
       .shardsUpdater()
-      .withClassName(classObj.class)
+      .withClassName(newClass.class)
       .withStatus("READY")
       .do()
       .then(res => {
@@ -294,20 +227,77 @@ describe("schema", () => {
           expect(obj.status).toEqual("READY")
         });
       });
-  })
-
-  it("deletes an existing class", () => {
-    const className = "MyThingClass";
 
     return client.schema
       .classDeleter()
-      .withClassName(className)
+      .withClassName(newClass.class)
       .do()
       .then((res) => {
         expect(res).toEqual(undefined);
       });
-  });
+  })
 });
+
+function newClassObject(className) {
+  return {
+    class: className,
+    properties: [
+      {
+        dataType: ["string"],
+        name: 'stringProp',
+        tokenization: "word",
+        moduleConfig: {
+          'text2vec-contextionary': {
+            skip: false,
+            vectorizePropertyName: false
+          }
+        }
+      }
+    ],
+    vectorIndexType: 'hnsw',
+    vectorizer: 'text2vec-contextionary',
+    vectorIndexConfig: {
+      cleanupIntervalSeconds: 300,
+      dynamicEfFactor: 8,
+      dynamicEfMax: 500,
+      dynamicEfMin: 100,
+      ef: -1,
+      maxConnections: 64,
+      skip: false,
+      efConstruction: 128,
+      vectorCacheMaxObjects: 500000,
+      flatSearchCutoff: 40000
+    },
+    invertedIndexConfig: {
+      cleanupIntervalSeconds: 60,
+      bm25: {
+        b: 0.75,
+        k1: 1.2
+      },
+      stopwords: {
+        preset: "en",
+        additions: null,
+        removals: null
+      }
+    },
+    moduleConfig: {
+      'text2vec-contextionary':
+      {
+        vectorizeClassName: true
+      }
+    },
+    shardingConfig: {
+      actualCount: 1,
+      actualVirtualCount: 128,
+      desiredCount: 1,
+      desiredVirtualCount: 128,
+      function: "murmur3",
+      key: "_id",
+      strategy: "hash",
+      virtualPerPhysical: 128,
+    },
+  };
+}
 
 async function getShards(client, className) {
   return client.schema

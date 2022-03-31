@@ -1,3 +1,5 @@
+import { isValidStringProperty } from "../validation/string";
+
 export default class ShardUpdater {
   constructor(client) {
     this.client = client;
@@ -10,11 +12,7 @@ export default class ShardUpdater {
   };
 
   validateClassName = () => {
-    if (
-      this.className == undefined ||
-      this.className == null ||
-      this.className.length == 0
-    ) {
+    if (!isValidStringProperty(this.className)) {
       this.errors = [
         ...this.errors,
         "className must be set - set with .withClassName(className)",
@@ -28,11 +26,7 @@ export default class ShardUpdater {
   };
 
   validateShardName = () => {
-    if (
-      this.shardName == undefined ||
-      this.shardName == null ||
-      this.shardName.length == 0
-    ) {
+    if (!isValidStringProperty(this.shardName)) {
       this.errors = [
         ...this.errors,
         "shardName must be set - set with .withShardName(shardName)",
@@ -46,11 +40,7 @@ export default class ShardUpdater {
   }
 
   validateStatus = () => {
-    if (
-      this.status == undefined ||
-      this.status == null ||
-      this.status.length == 0
-    ) {
+    if (!isValidStringProperty(this.status)) {
       this.errors = [
         ...this.errors,
         "status must be set - set with .withStatus(status)",
