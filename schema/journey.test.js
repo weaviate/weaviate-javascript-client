@@ -12,6 +12,7 @@ describe("schema", () => {
       {
         dataType: ["string"],
         name: 'stringProp',
+        tokenization: "word",
         moduleConfig: {
           'text2vec-contextionary': {
             skip: false,
@@ -35,7 +36,16 @@ describe("schema", () => {
       flatSearchCutoff: 40000
     },
     invertedIndexConfig: {
-      cleanupIntervalSeconds: 60
+      cleanupIntervalSeconds: 60,
+      bm25: {
+        b: 0.75,
+        k1: 1.2
+      },
+      stopwords: {
+        preset: "en",
+        additions: null,
+        removals: null
+      }
     },
     moduleConfig: {
       'text2vec-contextionary':
@@ -80,6 +90,7 @@ describe("schema", () => {
     const prop = {
       dataType: ["string"],
       name: "anotherProp",
+      tokenization: "word",
       moduleConfig: {
         'text2vec-contextionary': {
           skip: false,
@@ -111,6 +122,7 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "stringProp",
+                  tokenization: "word",
                   moduleConfig: {
                     'text2vec-contextionary': {
                       skip: false,
@@ -121,6 +133,7 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "anotherProp",
+                  tokenization: "word",
                   moduleConfig: {
                     'text2vec-contextionary': {
                       skip: false,
@@ -144,7 +157,16 @@ describe("schema", () => {
                 flatSearchCutoff: 40000
               },
               invertedIndexConfig: {
-                cleanupIntervalSeconds: 60
+                cleanupIntervalSeconds: 60,
+                bm25: {
+                  b: 0.75,
+                  k1: 1.2
+                },
+                stopwords: {
+                  preset: "en",
+                  additions: null,
+                  removals: null
+                }
               },
               moduleConfig: { 
                 'text2vec-contextionary': 
@@ -168,6 +190,112 @@ describe("schema", () => {
       });
   });
 
+  it("gets the shards of an existing class", () => {
+    return client.schema
+      .shardsGetter()
+      .withClassName(classObj.class)
+      .do()
+      .then((res) => {
+        res.forEach(shard => {
+          expect(shard.status).toEqual("READY");
+        });
+      });
+  })
+
+  it("updates a shard of an existing class to readonly", async () => {
+    var shards = await getShards(client, classObj.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(1)
+
+    client.schema
+      .shardUpdater()
+      .withClassName(classObj.class)
+      .withShardName(shards[0].name)
+      .withStatus("READONLY")
+      .do()
+      .then(res => {
+        expect(res.status).toEqual("READONLY");
+    });
+  })
+
+  it("updates a shard of an existing class to ready", async () => {
+    var shards = await getShards(client, classObj.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(1)
+
+    client.schema
+      .shardUpdater()
+      .withClassName(classObj.class)
+      .withShardName(shards[0].name)
+      .withStatus("READY")
+      .do()
+      .then(res => {
+        expect(res.status).toEqual("READY");
+    });
+  })
+
+  it("updates all shards in a class to READONLY", async () => {
+    var shardCount = 3
+    var readonlyClass = classObj
+    readonlyClass.class = "ReadonlyClass"
+    readonlyClass.shardingConfig.desiredCount = shardCount
+
+    await client.schema
+      .classCreator()
+      .withClass(classObj)
+      .do()
+      .then((res) => {
+        expect(res).toHaveProperty('shardingConfig.actualCount', 3)
+      });
+
+    var shards = await getShards(client, readonlyClass.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(shardCount)
+
+    return client.schema
+      .shardsUpdater()
+      .withClassName(classObj.class)
+      .withStatus("READONLY")
+      .do()
+      .then(res => {
+        expect(res.length).toEqual(shardCount)
+        res.forEach(obj => {
+          expect(obj.status).toEqual("READONLY")
+        });
+      });
+  })
+
+  it("updates all shards in a class to READY", async () => {
+    var shardCount = 3
+    var readyClass = classObj
+    readyClass.class = "ReadyClass"
+    readyClass.shardingConfig.desiredCount = shardCount
+
+    await client.schema
+      .classCreator()
+      .withClass(classObj)
+      .do()
+      .then((res) => {
+        expect(res).toHaveProperty('shardingConfig.actualCount', 3)
+      });
+
+    var shards = await getShards(client, readyClass.class);
+    expect(Array.isArray(shards)).toBe(true)
+    expect(shards.length).toEqual(shardCount)
+
+    return client.schema
+      .shardsUpdater()
+      .withClassName(classObj.class)
+      .withStatus("READY")
+      .do()
+      .then(res => {
+        expect(res.length).toEqual(shardCount)
+        res.forEach(obj => {
+          expect(obj.status).toEqual("READY")
+        });
+      });
+  })
+
   it("deletes an existing class", () => {
     const className = "MyThingClass";
 
@@ -180,3 +308,13 @@ describe("schema", () => {
       });
   });
 });
+
+async function getShards(client, className) {
+  return client.schema
+    .shardsGetter()
+    .withClassName(className)
+    .do()
+    .then((res) => {
+      return res;
+    });
+}
