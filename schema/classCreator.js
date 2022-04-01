@@ -46,9 +46,40 @@ export default class ClassCreator {
     }
   };
 
+  withStopwordConfig = (config) => {
+    if (this.class == null) {
+      throw new Error("cannot assign stopword config to null class")
+    }
+
+    if (this.class.invertedIndexConfig == null) {
+      this.class.invertedIndexConfig = {}
+    }
+
+    this.class.invertedIndexConfig.stopwords = config
+    return this
+  }
+
+  validateStopwordConfig = () => {
+    if (
+      this.class.invertedIndexConfig != null &&
+      this.class.invertedIndexConfig.stopwords != null &&
+      typeof this.class.invertedIndexConfig.stopwords !== "object"
+    ) {
+      this.errors = [
+        ...this.errors,
+        "stopword config must be an object"
+      ];
+    }
+  };
+
+  validateInvertedIndexConfig = () => {
+    this.validateBM25Config();
+    this.validateStopwordConfig();
+  }
+
   validate = () => {
     this.validateClass();
-    this.validateBM25Config();
+    this.validateInvertedIndexConfig();
   };
 
   do = () => {
