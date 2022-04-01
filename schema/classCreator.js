@@ -20,8 +20,35 @@ export default class ClassCreator {
     }
   };
 
+  withBM25Config = (config) => {
+    if (this.class == null) {
+      throw new Error("cannot assign BM25 config to null class")
+    }
+
+    if (this.class.invertedIndexConfig == null) {
+      this.class.invertedIndexConfig = {}
+    }
+
+    this.class.invertedIndexConfig.bm25 = config
+    return this
+  }
+
+  validateBM25Config = () => {
+    if (
+      this.class.invertedIndexConfig != null &&
+      this.class.invertedIndexConfig.bm25 != null &&
+      typeof this.class.invertedIndexConfig.bm25 !== "object"
+    ) {
+      this.errors = [
+        ...this.errors,
+        "BM25 config must be an object"
+      ];
+    }
+  };
+
   validate = () => {
     this.validateClass();
+    this.validateBM25Config();
   };
 
   do = () => {

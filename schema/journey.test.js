@@ -289,14 +289,56 @@ describe("schema", () => {
         });
       });
 
-    return client.schema
-      .classDeleter()
-      .withClassName(newClass.class)
-      .do()
-      .then((res) => {
-        expect(res).toEqual(undefined);
-      });
+    return deleteClass(client, newClass.class);
   })
+
+  it("uses withBM25Config on existing invertedIndexConfig", async () => {
+    var newClass = newClassObject('NewClass');
+    var bm25Config = {k1: 1.13, b: 0.222};
+
+    await client.schema
+      .classCreator()
+      .withClass(newClass)
+      .withBM25Config(bm25Config)
+      .do()
+      .then(res => {
+        expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config)
+      });
+
+    return deleteClass(client, newClass.class);
+  });
+
+  it("uses withBM25Config on null invertedIndexConfig", async () => {
+    var newClass = {
+      class: 'EmptyClass', 
+      properties: [{dataType: ["string"],name: 'stringProp'}]
+    }
+
+    var bm25Config = {k1: 1.13, b: 0.222};
+
+    await client.schema
+      .classCreator()
+      .withClass(newClass)
+      .withBM25Config(bm25Config)
+      .do()
+      .then(res => {
+        expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config)
+      });
+
+    return deleteClass(client, newClass.class);
+  });
+
+  it("tries to add bm25 config to null class", async () => {
+    var newClass = newClassObject('NewClass');
+    var bm25Config = {k1: 1.13, b: 0.222};
+
+    expect(() => {
+      client.schema.classCreator()
+        .withBM25Config(bm25Config)
+        .withClass(newClass)
+        .do()
+    }).toThrow("cannot assign BM25 config to null class");
+  });
 });
 
 function newClassObject(className) {
@@ -367,5 +409,15 @@ async function getShards(client, className) {
     .do()
     .then((res) => {
       return res;
+    });
+}
+
+function deleteClass(client, className) {
+  return client.schema
+    .classDeleter()
+    .withClassName(className)
+    .do()
+    .then((res) => {
+      expect(res).toEqual(undefined);
     });
 }
