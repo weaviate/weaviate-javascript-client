@@ -1,7 +1,6 @@
-import { DEFAULT_KIND, validateKind } from "../kinds";
 import { isValidStringProperty } from "../validation/string";
 
-export default class ClassCreator {
+export default class PropertyCreator {
   constructor(client) {
     this.client = client;
     this.errors = [];
@@ -27,11 +26,7 @@ export default class ClassCreator {
   };
 
   validateProperty = () => {
-    if (
-      this.property == undefined ||
-      this.property == null ||
-      this.property.length == 0
-    ) {
+    if (this.property == undefined || this.property == null) {
       this.errors = [
         ...this.errors,
         "property must be set - set with .withProperty(property)",

@@ -28,12 +28,25 @@ describe("schema", () => {
       });
   });
 
+  it("fails to create class with property having not supported tokenization", () => {
+    const doomedClass = newClassObject("DoomedClass");
+    doomedClass.properties[0].tokenization = "not-supported";
+
+    return client.schema
+      .classCreator()
+      .withClass(doomedClass)
+      .do()
+      .catch(err =>
+        expect(err).toEqual("usage error (422): {\"code\":606,\"message\":\"tokenization in body should be one of [word field]\"}")
+      );
+  });
+
   it("extends the thing class with a new property", () => {
     const className = "MyThingClass";
     const prop = {
       dataType: ["string"],
       name: "anotherProp",
-      tokenization: "word",
+      tokenization: "field",
       moduleConfig: {
         'text2vec-contextionary': {
           skip: false,
@@ -50,6 +63,54 @@ describe("schema", () => {
       .then((res) => {
         expect(res).toEqual(prop);
       });
+  });
+
+  it("fails to extend the thing class with property having not supported tokenization (1)", () => {
+    const className = "MyThingClass";
+    const prop = {
+      dataType: ["text"],
+      name: "yetAnotherProp",
+      tokenization: "field",
+      moduleConfig: {
+        'text2vec-contextionary': {
+          skip: false,
+          vectorizePropertyName: false
+        }
+      }
+    };
+
+    return client.schema
+      .propertyCreator()
+      .withClassName(className)
+      .withProperty(prop)
+      .do()
+      .catch(err =>
+        expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'field' is not allowed for data type 'text'\"}]}")
+      );
+  });
+
+  it("fails to extend the thing class with property having not supported tokenization (2)", () => {
+    const className = "MyThingClass";
+    const prop = {
+      dataType: ["int[]"],
+      name: "yetAnotherProp",
+      tokenization: "word",
+      moduleConfig: {
+        'text2vec-contextionary': {
+          skip: false,
+          vectorizePropertyName: false
+        }
+      }
+    };
+
+    return client.schema
+      .propertyCreator()
+      .withClassName(className)
+      .withProperty(prop)
+      .do()
+      .catch(err =>
+        expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'word' is not allowed for data type 'int[]'\"}]}")
+      );
   });
 
   it("retrieves the schema and it matches the expectations", () => {
@@ -76,7 +137,7 @@ describe("schema", () => {
                 {
                   dataType: ["string"],
                   name: "anotherProp",
-                  tokenization: "word",
+                  tokenization: "field",
                   moduleConfig: {
                     'text2vec-contextionary': {
                       skip: false,
