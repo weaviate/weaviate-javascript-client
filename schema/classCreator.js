@@ -20,70 +20,8 @@ export default class ClassCreator {
     }
   };
 
-  withBM25Config = (config) => {
-    if (this.class == null) {
-      throw new Error("cannot assign BM25 config to null class")
-    }
-
-    if (this.class.invertedIndexConfig == null) {
-      this.class.invertedIndexConfig = {}
-    }
-
-    this.class.invertedIndexConfig.bm25 = config
-    return this
-  }
-
-  validateBM25Config = () => {
-    if (
-      this.class.invertedIndexConfig != null &&
-      this.class.invertedIndexConfig.bm25 != null &&
-      typeof this.class.invertedIndexConfig.bm25 !== "object"
-    ) {
-      this.errors = [
-        ...this.errors,
-        "BM25 config must be an object"
-      ];
-    }
-  };
-
-  withStopwordConfig = (config) => {
-    if (this.class == null) {
-      throw new Error("cannot assign stopword config to null class")
-    }
-
-    if (this.class.invertedIndexConfig == null) {
-      this.class.invertedIndexConfig = {}
-    }
-
-    this.class.invertedIndexConfig.stopwords = config
-    return this
-  }
-
-  validateStopwordConfig = () => {
-    if (
-      this.class.invertedIndexConfig != null &&
-      this.class.invertedIndexConfig.stopwords != null &&
-      typeof this.class.invertedIndexConfig.stopwords !== "object"
-    ) {
-      this.errors = [
-        ...this.errors,
-        "stopword config must be an object"
-      ];
-    }
-  };
-
-  validateInvertedIndexConfig = () => {
-    this.validateBM25Config();
-    this.validateStopwordConfig();
-  }
-
-  validate = () => {
-    this.validateClass();
-    this.validateInvertedIndexConfig();
-  };
-
   do = () => {
-    this.validate();
+    this.validateClass();
     if (this.errors.length > 0) {
       return Promise.reject(
         new Error("invalid usage: " + this.errors.join(", "))
