@@ -292,14 +292,15 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   })
 
-  it("uses withBM25Config on existing invertedIndexConfig", async () => {
+  it("has updated values of bm25 config", async () => {
     var newClass = newClassObject('NewClass');
     var bm25Config = {k1: 1.13, b: 0.222};
+
+    newClass.invertedIndexConfig.bm25 = bm25Config;
 
     await client.schema
       .classCreator()
       .withClass(newClass)
-      .withBM25Config(bm25Config)
       .do()
       .then(res => {
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
@@ -308,39 +309,7 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   });
 
-  it("uses withBM25Config on null invertedIndexConfig", async () => {
-    var newClass = {
-      class: 'EmptyClass', 
-      properties: [{dataType: ["string"],name: 'stringProp'}]
-    }
-
-    var bm25Config = {k1: 1.13, b: 0.222};
-
-    await client.schema
-      .classCreator()
-      .withClass(newClass)
-      .withBM25Config(bm25Config)
-      .do()
-      .then(res => {
-        expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
-      });
-
-    return deleteClass(client, newClass.class);
-  });
-
-  it("tries to add bm25 config to null class", async () => {
-    var newClass = newClassObject('NewClass');
-    var bm25Config = {k1: 1.13, b: 0.222};
-
-    expect(() => {
-      client.schema.classCreator()
-        .withBM25Config(bm25Config)
-        .withClass(newClass)
-        .do()
-    }).toThrow("cannot assign BM25 config to null class");
-  });
-
-  it("uses withStopwordConfig on existing invertedIndexConfig", async () => {
+  it("has updated values of stopwords config", async () => {
     var newClass = newClassObject('SpaceClass');
     var stopwordConfig = {
       preset: "en",
@@ -348,10 +317,11 @@ describe("schema", () => {
       removals: ["a", "the"]
     };
 
+    newClass.invertedIndexConfig.stopwords = stopwordConfig;
+
     await client.schema
       .classCreator()
       .withClass(newClass)
-      .withStopwordConfig(stopwordConfig)
       .do()
       .then(res => {
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
@@ -360,65 +330,27 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   });
 
-  it("uses withStopwordConfig on null invertedIndexConfig", async () => {
-    var newClass = {
-      class: 'EmptyClass', 
-      properties: [{dataType: ["string"],name: 'stringProp'}]
-    }
-
-    var stopwordConfig = {
-      preset: "en",
-      additions: ["star", "nebula"],
-      removals: ["a", "the"]
-    };
-
-    await client.schema
-      .classCreator()
-      .withClass(newClass)
-      .withStopwordConfig(stopwordConfig)
-      .do()
-      .then(res => {
-        expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
-      });
-
-    return deleteClass(client, newClass.class);
-  });
-
-  it("tries to add stopword config to null class", async () => {
-    var newClass = newClassObject('NewClass');
-    var stopwordConfig = {
-      preset: "en",
-      additions: ["star", "nebula"],
-      removals: ["a", "the"]
-    };
-
-    expect(() => {
-      client.schema.classCreator()
-        .withStopwordConfig(stopwordConfig)
-        .withClass(newClass)
-        .do()
-    }).toThrow("cannot assign stopword config to null class");
-  });
-
-  it("creating a class withBM25Config and withStopwordConfig", async () => {
+  it("creates a class with bm25 and stopwords config", async () => {
     var newClass = {
       class: 'EmptyClass', 
       properties: [{dataType: ["string"],name: 'stringProp'}]
     }
 
     var bm25Config = {k1: 1.13, b: 0.222};
-
     var stopwordConfig = {
       preset: "en",
       additions: ["star", "nebula"],
       removals: ["a", "the"]
     };
 
+    newClass.invertedIndexConfig = {
+      bm25: bm25Config,
+      stopwords: stopwordConfig
+    };
+
     await client.schema
       .classCreator()
       .withClass(newClass)
-      .withBM25Config(bm25Config)
-      .withStopwordConfig(stopwordConfig)
       .do()
       .then(res => {
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
