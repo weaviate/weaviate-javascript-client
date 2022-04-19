@@ -80,6 +80,11 @@ export default class Aggregator {
     return this;
   };
 
+  withObjectLimit = (objectLimit) => {
+    this.objectLimit = objectLimit;
+    return this;
+  };
+
   withLimit = (limit) => {
     this.limit = limit;
     return this;
@@ -162,6 +167,10 @@ export default class Aggregator {
 
       if (this.limit) {
         args = [...args, `limit:${this.limit}`];
+      }
+
+      if (this.objectLimit) {
+        args = [...args, `objectLimit:${this.objectLimit}`];
       }
 
       params = `(${args.join(",")})`;
