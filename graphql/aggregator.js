@@ -1,9 +1,13 @@
 import Where from "./where";
+import NearText from "./nearText";
+import NearVector from "./nearVector";
+import NearObject from "./nearObject";
 
 export default class Aggregator {
   constructor(client) {
     this.client = client;
     this.errors = [];
+    this.includesNearMediaFilter = false
   }
 
   withFields = (fields) => {
@@ -22,6 +26,57 @@ export default class Aggregator {
     } catch (e) {
       this.errors = [...this.errors, e];
     }
+    return this;
+  };
+
+  withNearText = (nearTextObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
+    try {
+      this.nearTextString = new NearText(nearTextObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
+    this.includesNearMediaFilter = true
+    return this;
+  };
+
+  withNearObject = (nearObjectObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
+    try {
+      this.nearObjectString = new NearObject(nearObjectObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
+    this.includesNearMediaFilter = true
+    return this;
+  };
+
+  withNearVector = (nearVectorObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
+    try {
+      this.nearVectorString = new NearVector(nearVectorObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
+    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -75,11 +130,30 @@ export default class Aggregator {
       );
     }
 
-    if (this.whereString || this.limit || this.groupBy) {
+    if (
+      this.whereString || 
+      this.nearTextString ||
+      this.nearObjectString ||
+      this.nearVectorString ||
+      this.limit || 
+      this.groupBy
+    ) {
       let args = [];
 
       if (this.whereString) {
         args = [...args, `where:${this.whereString}`];
+      }
+
+      if (this.nearTextString) {
+        args = [...args, `nearText:${this.nearTextString}`];
+      }
+
+      if (this.nearObjectString) {
+        args = [...args, `nearObject:${this.nearObjectString}`];
+      }
+
+      if (this.nearVectorString) {
+        args = [...args, `nearVector:${this.nearVectorString}`];
       }
 
       if (this.groupBy) {

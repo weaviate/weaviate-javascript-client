@@ -10,6 +10,7 @@ export default class Getter {
   constructor(client) {
     this.client = client;
     this.errors = [];
+    this.includesNearMediaFilter = false
   }
 
   withFields = (fields) => {
@@ -42,20 +43,36 @@ export default class Getter {
   };
 
   withNearText = (nearTextObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
+
+    this.includesNearMediaFilter = true
     return this;
   };
 
   withNearObject = (nearObjectObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
+
+    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -69,20 +86,36 @@ export default class Getter {
   };
 
   withNearImage = (nearImageObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
     try {
       this.nearImageString = new NearImage(nearImageObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
+
+    this.includesNearMediaFilter = true
     return this;
   };
 
   withNearVector = (nearVectorObj) => {
+    if (this.includesNearMediaFilter) {
+      throw new Error(
+        "cannot use multiple near<Media> filters in a single query"
+      )
+    }
+
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
     } catch (e) {
       this.errors = [...this.errors, e];
     }
+
+    this.includesNearMediaFilter = true
     return this;
   };
 
