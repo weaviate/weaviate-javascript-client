@@ -2,6 +2,7 @@ import Where from "./where";
 import NearText from "./nearText";
 import NearVector from "./nearVector";
 import NearObject from "./nearObject";
+import { isValidPositiveIntProperty } from "../validation/number";
 
 export default class Aggregator {
   constructor(client) {
@@ -38,11 +39,11 @@ export default class Aggregator {
 
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -55,11 +56,11 @@ export default class Aggregator {
 
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -72,11 +73,22 @@ export default class Aggregator {
 
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
+    return this;
+  };
+
+  withObjectLimit = (objectLimit) => {
+    if (!isValidPositiveIntProperty(objectLimit)) {
+      throw new Error(
+        "objectLimit must be a non-negative integer"
+      )
+    }
+
+    this.objectLimit = objectLimit;
     return this;
   };
 
@@ -162,6 +174,10 @@ export default class Aggregator {
 
       if (this.limit) {
         args = [...args, `limit:${this.limit}`];
+      }
+
+      if (this.objectLimit) {
+        args = [...args, `objectLimit:${this.objectLimit}`];
       }
 
       params = `(${args.join(",")})`;

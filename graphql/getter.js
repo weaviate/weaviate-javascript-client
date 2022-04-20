@@ -51,11 +51,11 @@ export default class Getter {
 
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -68,11 +68,11 @@ export default class Getter {
 
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -94,11 +94,11 @@ export default class Getter {
 
     try {
       this.nearImageString = new NearImage(nearImageObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
@@ -111,11 +111,11 @@ export default class Getter {
 
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
+      this.includesNearMediaFilter = true;
     } catch (e) {
       this.errors = [...this.errors, e];
     }
 
-    this.includesNearMediaFilter = true
     return this;
   };
 
