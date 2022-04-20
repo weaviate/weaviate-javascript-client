@@ -280,6 +280,21 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e)); 
   });
 
+  test("graphql aggregate method with bad objectLimit input", () => {
+    var objectLimit = -1.1
+
+    return expect(() => {
+      client.graphql
+        .aggregate()
+        .withClassName("Article")
+        .withNearText({ concepts: ["Article"], certainty: 0.7 })
+        .withObjectLimit(objectLimit)
+        .withFields("meta { count }")
+        .do()
+    })
+      .toThrow("objectLimit must be a non-negative integer");
+  });
+
   test("graphql explore with minimal fields", () => {
     return client.graphql
       .explore()

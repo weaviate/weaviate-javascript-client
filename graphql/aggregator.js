@@ -2,6 +2,7 @@ import Where from "./where";
 import NearText from "./nearText";
 import NearVector from "./nearVector";
 import NearObject from "./nearObject";
+import { isValidPositiveIntProperty } from "../validation/number";
 
 export default class Aggregator {
   constructor(client) {
@@ -81,6 +82,12 @@ export default class Aggregator {
   };
 
   withObjectLimit = (objectLimit) => {
+    if (!isValidPositiveIntProperty(objectLimit)) {
+      throw new Error(
+        "objectLimit must be a non-negative integer"
+      )
+    }
+
     this.objectLimit = objectLimit;
     return this;
   };
