@@ -332,6 +332,86 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e));
   });
 
+  test("graphql get method with sort filter: wordCount asc", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("wordCount")
+      .withSort({
+        path: ["wordCount"]
+      })
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBe(3);
+        expect(result.data.Get.Article[0]["wordCount"]).toEqual(40);
+        expect(result.data.Get.Article[1]["wordCount"]).toEqual(60);
+        expect(result.data.Get.Article[2]["wordCount"]).toEqual(600);
+      });
+  });
+
+  test("graphql get method with [sort] filter: wordCount asc", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("wordCount")
+      .withSort([{ path: ["wordCount"], order: "asc" }])
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBe(3);
+        expect(result.data.Get.Article[0]["wordCount"]).toEqual(40);
+        expect(result.data.Get.Article[1]["wordCount"]).toEqual(60);
+        expect(result.data.Get.Article[2]["wordCount"]).toEqual(600);
+      });
+  });
+
+  test("graphql get method with sort filter: title desc", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("title")
+      .withSort({ path: ["title"], order: "desc" })
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBe(3);
+        expect(result.data.Get.Article[0]["title"]).toEqual("Article about Apple");
+        expect(result.data.Get.Article[1]["title"]).toEqual("Article 2");
+        expect(result.data.Get.Article[2]["title"]).toEqual("Article 1");
+      });
+  });
+
+  test("graphql get method with [sort] filter: title desc", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("title")
+      .withSort([{ path: ["title"], order: "desc" }])
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBe(3);
+        expect(result.data.Get.Article[0]["title"]).toEqual("Article about Apple");
+        expect(result.data.Get.Article[1]["title"]).toEqual("Article 2");
+        expect(result.data.Get.Article[2]["title"]).toEqual("Article 1");
+      });
+  });
+
+  test("graphql get method with [sort] filters", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("title")
+      .withSort([
+        { path: ["wprdCount"], order: "asc" },
+        { path: ["title"], order: "desc" },
+      ])
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toBe(3);
+        expect(result.data.Get.Article[0]["title"]).toEqual("Article about Apple");
+        expect(result.data.Get.Article[1]["title"]).toEqual("Article 2");
+        expect(result.data.Get.Article[2]["title"]).toEqual("Article 1");
+      });
+  });
+
   it("tears down and cleans up", () => {
     return Promise.all([
       client.schema.classDeleter().withClassName("Article").do(),

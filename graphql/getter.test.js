@@ -824,3 +824,164 @@ describe("nearImage searchers", () => {
     });
   });
 });
+
+describe("sort filters", () => {
+  test("a query with a valid sort filter", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(sort:[{path:["property"],order:asc}])` +
+      `{name}}}`;
+
+    const sort = { path: ["property"], order: "asc" }
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withSort(sort)
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid array of sort filter", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(sort:[{path:["property"],order:asc}])` +
+      `{name}}}`;
+
+    const sort = [{ path: ["property"], order: "asc" }]
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withSort(sort)
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid array of sort filters", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(sort:[{path:["property1"],order:asc},{path:["property2"],order:asc},{path:["property3"],order:desc}])` +
+      `{name}}}`;
+
+    const sort = [
+      { path: ["property1"], order: "asc" }, 
+      { path: ["property2"], order: "asc" },
+      { path: ["property3"], order: "desc" }
+    ]
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withSort(sort)
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+});
+
+describe("invalid sort filters", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const tests = [
+    {
+      name: "empty filter",
+      sort: {},
+      msg: "Error: invalid usage: Error: sort filter: path needs to be set"
+    },
+    {
+      name: "[empty filter]",
+      sort: [{}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: path needs to be set"
+    },
+    {
+      name: "empty path",
+      sort: {path:[]},
+      msg: "Error: invalid usage: Error: sort filter: path cannot be empty"
+    },
+    {
+      name: "[empty path]",
+      sort: [{path:[]}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: path cannot be empty"
+    },
+    {
+      name: "only with order",
+      sort: {order: "asc"},
+      msg: "Error: invalid usage: Error: sort filter: path needs to be set"
+    },
+    {
+      name: "[only with order]",
+      sort: [{order: "asc"}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: path needs to be set"
+    },
+    {
+      name: "with wrong order",
+      sort: {order: "asce"},
+      msg: "Error: invalid usage: Error: sort filter: order parameter not valid, possible values are: asc, desc"
+    },
+    {
+      name: "[with wrong order]",
+      sort: [{order: "desce"}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: order parameter not valid, possible values are: asc, desc"
+    },
+    {
+      name: "with wrong order type",
+      sort: {order: 1},
+      msg: "Error: invalid usage: Error: sort filter: order must be a string"
+    },
+    {
+      name: "[with wrong order type]",
+      sort: [{order: 1}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: order must be a string"
+    },
+    {
+      name: "with proper path but wrong order",
+      sort: {path:["prop"], order: "asce"},
+      msg: "Error: invalid usage: Error: sort filter: order parameter not valid, possible values are: asc, desc"
+    },
+    {
+      name: "with proper path but wrong order",
+      sort: [{path:["prop"], order: "asce"}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 0: sort filter: order parameter not valid, possible values are: asc, desc"
+    },
+    {
+      name: "with wrong path in second argument",
+      sort: [{path:["prop"]},{path:[]}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 1: sort filter: path cannot be empty"
+    },
+    {
+      name: "with wrong path in second argument",
+      sort: [{path:["prop"]},{path:["prop"],order:"asce"},{path:[]}],
+      msg: "Error: invalid usage: Error: sort filter: sort argument at 1: sort filter: order parameter not valid, possible values are: asc, desc, sort argument at 2: sort filter: path cannot be empty"
+    },
+  ]
+  tests.forEach((t) => {
+    test(t.name, () => {
+      new Getter(mockClient)
+        .withClassName("Person")
+        .withFields("name")
+        .withSort(t.sort)
+        .do()
+        .then(() => fail("it should have error'd"))
+        .catch((e) => {
+          expect(e.toString()).toEqual(t.msg);
+        });
+    });
+  });
+});
