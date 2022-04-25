@@ -5,6 +5,7 @@ import NearObject from "./nearObject";
 import NearImage from "./nearImage";
 import Ask from "./ask";
 import Group from "./group";
+import Sort from "./sort";
 
 export default class Getter {
   constructor(client) {
@@ -129,6 +130,15 @@ export default class Getter {
     return this;
   };
 
+  withSort = (sortObj) => {
+    try {
+      this.sortString = new Sort(sortObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+    return this;
+  };
+
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
@@ -166,7 +176,8 @@ export default class Getter {
       this.nearImageString ||
       this.limit ||
       this.offset ||
-      this.groupString
+      this.groupString ||
+      this.sortString
     ) {
       let args = [];
 
@@ -204,6 +215,10 @@ export default class Getter {
 
       if (this.offset) {
         args = [...args, `offset:${this.offset}`];
+      }
+
+      if (this.sortString) {
+        args = [...args, `sort:[${this.sortString}]`];
       }
 
       params = `(${args.join(",")})`;
