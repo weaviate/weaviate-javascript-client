@@ -400,15 +400,71 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withFields("title")
       .withSort([
-        { path: ["wprdCount"], order: "asc" },
+        { path: ["wordCount"], order: "asc" },
         { path: ["title"], order: "desc" },
       ])
       .do()
       .then(function (result) {
         expect(result.data.Get.Article.length).toBe(3);
-        expect(result.data.Get.Article[0]["title"]).toEqual("Article about Apple");
-        expect(result.data.Get.Article[1]["title"]).toEqual("Article 2");
-        expect(result.data.Get.Article[2]["title"]).toEqual("Article 1");
+        expect(result.data.Get.Article[0]["title"]).toEqual("Article 2");
+        expect(result.data.Get.Article[1]["title"]).toEqual("Article 1");
+        expect(result.data.Get.Article[2]["title"]).toEqual("Article about Apple");
+      });
+  });
+
+  test("graphql get method with creationTimeUnix filter", async () => {
+    var expected = await client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("_additional { creationTimeUnix }")
+      .do()
+      .then(res => {
+        expect(res.data.Get.Article.length).toBeGreaterThan(0)
+        return res
+      });
+    
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("_additional { id creationTimeUnix }")
+      .withWhere({
+        path: ["_creationTimeUnix"], 
+        operator: "Equal", 
+        valueString: expected.data.Get.Article[0]._additional.creationTimeUnix
+      })
+      .do()
+      .then(res => {
+        expect(res.data.Get.Article.length).toBeGreaterThan(0)
+        expect(res.data.Get.Article[0]._additional.creationTimeUnix)
+          .toEqual(expected.data.Get.Article[0]._additional.creationTimeUnix)
+      });
+  });
+
+  test("graphql get method with lastUpdateTimeUnix filter", async () => {
+    var expected = await client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("_additional { lastUpdateTimeUnix }")
+      .do()
+      .then(res => {
+        expect(res.data.Get.Article.length).toBeGreaterThan(0)
+        return res
+      });
+    
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withFields("_additional { id lastUpdateTimeUnix }")
+      .withWhere({
+        path: ["_lastUpdateTimeUnix"], 
+        operator: "Equal", 
+        valueString: expected.data.Get.Article[0]._additional.lastUpdateTimeUnix
+      })
+      .do()
+      .then(res => {
+        expect(res.data.Get.Article.length).toBeGreaterThan(0)
+        expect(res.data.Get.Article[0]._additional.lastUpdateTimeUnix)
+          .toEqual(expected.data.Get.Article[0]._additional.lastUpdateTimeUnix)
       });
   });
 
@@ -422,6 +478,7 @@ describe("the graphql journey", () => {
 const setup = async (client) => {
   const thing = {
     class: "Article",
+    invertedIndexConfig: {indexTimestamps: true},
     properties: [
       {
         name: "title",
