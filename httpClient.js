@@ -34,7 +34,7 @@ const client = (config) => {
         body: JSON.stringify(payload),
       }).then(makeCheckStatus(false));
     },
-    delete: (path, payload) => {
+    delete: (path, payload, expectReturnContent = false) => {
       return fetch(url(path), {
         method: "DELETE",
         headers: {
@@ -42,7 +42,7 @@ const client = (config) => {
           "content-type": "application/json",
         },
         body: payload ? JSON.stringify(payload) : undefined,
-      }).then(makeCheckStatus(false));
+      }).then(makeCheckStatus(expectReturnContent));
     },
     head: (path, payload) => {
       return fetch(url(path), {
