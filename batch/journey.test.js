@@ -1,3 +1,4 @@
+const { Operator } = require("../filters/operator");
 const weaviate = require("../index");
 const { Output, Status } = require("./objectsBatchDeleter");
 
@@ -256,7 +257,7 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(thingClassName)
       .withWhere({
-        operator: "Equal",
+        operator: Operator.EQUAL,
         valueString: "bar1",
         path: ["stringProp"]
       })
@@ -270,7 +271,7 @@ describe("batch deleting", () => {
           class: thingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: "Equal",
+            operator: Operator.EQUAL,
             valueString: "bar1",
             path: ["stringProp"],
           },
@@ -293,7 +294,7 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: "Like",
+        operator: Operator.LIKE,
         valueString: "foo3",
         path: ["stringProp"]
       })
@@ -307,7 +308,7 @@ describe("batch deleting", () => {
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: "Like",
+            operator: Operator.LIKE,
             valueString: "foo3",
             path: ["stringProp"],
           },
@@ -327,7 +328,7 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: "Equal",
+        operator: Operator.EQUAL,
         valueString: "doesNotExist",
         path: ["stringProp"]
       })
@@ -339,7 +340,7 @@ describe("batch deleting", () => {
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: "Equal",
+            operator: Operator.EQUAL,
             valueString: "doesNotExist",
             path: ["stringProp"],
           },
@@ -360,7 +361,7 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: "LessThan",
+        operator: Operator.LESS_THAN,
         valueString: inAMinute,
         path: ["_creationTimeUnix"]
       })
@@ -373,7 +374,7 @@ describe("batch deleting", () => {
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: "LessThan",
+            operator: Operator.LESS_THAN,
             valueString: inAMinute,
             path: ["_creationTimeUnix"],
           },

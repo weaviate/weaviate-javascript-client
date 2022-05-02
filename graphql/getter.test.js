@@ -1,5 +1,5 @@
 import Getter from "./getter";
-import weaviate from "../index";
+import { Operator } from "../filters/operator";
 
 test("a simple query without params", () => {
   const mockClient = {
@@ -76,7 +76,7 @@ describe("where filters", () => {
     new Getter(mockClient)
       .withClassName("Person")
       .withFields("name")
-      .withWhere({ operator: "Equal", valueString: "John Doe", path: ["name"] })
+      .withWhere({ operator: Operator.EQUAL, valueString: "John Doe", path: ["name"] })
       .do();
 
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
@@ -100,7 +100,7 @@ describe("where filters", () => {
       .withClassName("Person")
       .withFields("name")
       .withWhere({
-        operator: "WithinGeoRange",
+        operator: Operator.WITHIN_GEO_RANGE,
         valueGeoRange: {
           geoCoordinates: {
             latitude: 51.51,
@@ -123,10 +123,10 @@ describe("where filters", () => {
     };
 
     const nestedWhere = {
-      operator: "And",
+      operator: Operator.AND,
       operands: [
-        { valueString: "foo", operator: "Equal", path: ["foo"] },
-        { valueString: "bar", operator: "NotEqual", path: ["bar"] },
+        { valueString: "foo", operator: Operator.EQUAL, path: ["foo"] },
+        { valueString: "bar", operator: Operator.NOT_EQUAL, path: ["bar"] },
       ],
     };
     const expectedQuery =
@@ -159,27 +159,27 @@ describe("where filters", () => {
       },
       {
         title: "missing value",
-        where: { operator: "Equal" },
+        where: { operator: Operator.EQUAL },
         msg: "where filter: value<Type> cannot be empty",
       },
       {
         title: "missing path",
-        where: { operator: "Equal", valueString: "foo" },
+        where: { operator: Operator.EQUAL, valueString: "foo" },
         msg: "where filter: path cannot be empty",
       },
       {
         title: "path is not an array",
-        where: { operator: "Equal", valueString: "foo", path: "mypath" },
+        where: { operator: Operator.EQUAL, valueString: "foo", path: "mypath" },
         msg: "where filter: path must be an array",
       },
       {
         title: "unknown value type",
-        where: { operator: "Equal", valueWrong: "foo" },
+        where: { operator: Operator.EQUAL, valueWrong: "foo" },
         msg: "where filter: unrecognized value prop 'valueWrong'",
       },
       {
         title: "operands is not an array",
-        where: { operator: "And", operands: {} },
+        where: { operator: Operator.AND, operands: {} },
         msg: "where filter: operands must be an array",
       },
     ];
