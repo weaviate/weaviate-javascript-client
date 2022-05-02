@@ -1,4 +1,6 @@
+const { Operator } = require("../filters/operator");
 const weaviate = require("../index");
+const { Output, Status } = require("./objectsBatchDeleter");
 
 const thingClassName = "BatchJourneyTestThing";
 const otherThingClassName = "BatchJourneyTestOtherThing";
@@ -241,6 +243,171 @@ describe("batch importing", () => {
   it("tears down and cleans up", () => cleanup(client));
 });
 
+describe("batch deleting", () => {
+  const client = weaviate.client({
+    scheme: "http",
+    host: "localhost:8080",
+  });
+
+  it("sets up schema", () => setup(client));
+  it("sets up data", () => setupData(client));
+
+  it("batch deletes with dryRun and verbose output", () =>
+    client.batch
+      .objectsBatchDeleter()
+      .withClassName(thingClassName)
+      .withWhere({
+        operator: Operator.EQUAL,
+        valueString: "bar1",
+        path: ["stringProp"]
+      })
+      .withDryRun(true)
+      .withOutput(Output.VERBOSE)
+      .do()
+      .then(result => {
+        expect(result.dryRun).toBe(true);
+        expect(result.output).toBe(Output.VERBOSE);
+        expect(result.match).toEqual({
+          class: thingClassName,
+          where: {
+            operands: null, // FIXME should not be received
+            operator: Operator.EQUAL,
+            valueString: "bar1",
+            path: ["stringProp"],
+          },
+        })
+        expect(result.results).toEqual({
+          successful: 0,
+          failed: 0,
+          matches: 1,
+          limit: 10000,
+          objects: [{
+            id: thingIds[1],
+            status: Status.DRYRUN,
+          }],
+        });
+      })
+  )
+
+  it("batch deletes with dryRun and minimal output", () =>
+    client.batch
+      .objectsBatchDeleter()
+      .withClassName(otherThingClassName)
+      .withWhere({
+        operator: Operator.LIKE,
+        valueString: "foo3",
+        path: ["stringProp"]
+      })
+      .withDryRun(true)
+      .withOutput(Output.MINIMAL)
+      .do()
+      .then(result => {
+        expect(result.dryRun).toBe(true);
+        expect(result.output).toBe(Output.MINIMAL);
+        expect(result.match).toEqual({
+          class: otherThingClassName,
+          where: {
+            operands: null, // FIXME should not be received
+            operator: Operator.LIKE,
+            valueString: "foo3",
+            path: ["stringProp"],
+          },
+        })
+        expect(result.results).toEqual({
+          successful: 0,
+          failed: 0,
+          matches: 1,
+          limit: 10000,
+          objects: null,
+        });
+      })
+  )
+
+  it("batch deletes but no matches with default dryRun and output", () =>
+    client.batch
+      .objectsBatchDeleter()
+      .withClassName(otherThingClassName)
+      .withWhere({
+        operator: Operator.EQUAL,
+        valueString: "doesNotExist",
+        path: ["stringProp"]
+      })
+      .do()
+      .then(result => {
+        expect(result.dryRun).toBe(false);
+        expect(result.output).toBe(Output.MINIMAL);
+        expect(result.match).toEqual({
+          class: otherThingClassName,
+          where: {
+            operands: null, // FIXME should not be received
+            operator: Operator.EQUAL,
+            valueString: "doesNotExist",
+            path: ["stringProp"],
+          },
+        })
+        expect(result.results).toEqual({
+          successful: 0,
+          failed: 0,
+          matches: 0,
+          limit: 10000,
+          objects: null,
+        });
+      })
+  )
+
+  it("batch deletes with default dryRun", () => {
+    const inAMinute = "" + (new Date().getTime() + 60 * 1000);
+    return client.batch
+      .objectsBatchDeleter()
+      .withClassName(otherThingClassName)
+      .withWhere({
+        operator: Operator.LESS_THAN,
+        valueString: inAMinute,
+        path: ["_creationTimeUnix"]
+      })
+      .withOutput(Output.VERBOSE)
+      .do()
+      .then(result => {
+        expect(result.dryRun).toBe(false);
+        expect(result.output).toBe(Output.VERBOSE);
+        expect(result.match).toEqual({
+          class: otherThingClassName,
+          where: {
+            operands: null, // FIXME should not be received
+            operator: Operator.LESS_THAN,
+            valueString: inAMinute,
+            path: ["_creationTimeUnix"],
+          },
+        })
+        expect(result.results.successful).toBe(2);
+        expect(result.results.failed).toBe(0);
+        expect(result.results.matches).toBe(2);
+        expect(result.results.limit).toBe(10000);
+        expect(result.results.objects).toHaveLength(2)
+        expect(result.results.objects).toContainEqual({
+          id: otherThingIds[0],
+          status: Status.SUCCESS,
+        });
+        expect(result.results.objects).toContainEqual({
+          id: otherThingIds[1],
+          status: Status.SUCCESS,
+        });
+      })
+  })
+
+  it("batch deletes fails due to validation", () => 
+    client.batch
+      .objectsBatchDeleter()
+      .withClassName("")
+      .withWhere("shouldBeObject")
+      .do()
+      .catch(err => expect(err.toString()).toBe("Error: invalid usage: string className must be set - set with .withClassName(className), object where must be set - set with .withWhere(whereFilter)"))
+  )
+
+  it("tears down and cleans up", () => cleanup(client));
+});
+
+
 const setup = async (client) => {
   // first import the classes
   await Promise.all([
@@ -266,6 +433,9 @@ const setup = async (client) => {
             dataType: ["string"],
           },
         ],
+        invertedIndexConfig: {
+          indexTimestamps: true,
+        },
       })
       .do(),
   ]);
@@ -280,7 +450,50 @@ const setup = async (client) => {
     .do();
 };
 
-//
+const setupData = (client) => {
+  const toImport = [
+    {
+      class: thingClassName,
+      id: thingIds[0],
+      properties: { stringProp: "foo1" },
+    },
+    {
+      class: thingClassName,
+      id: thingIds[1],
+      properties: { stringProp: "bar1" },
+    },
+    {
+      class: thingClassName,
+      id: thingIds[2],
+      properties: { stringProp: "foo2" },
+    },
+    {
+      class: thingClassName,
+      id: thingIds[3],
+      properties: { stringProp: "bar2" },
+    },
+    {
+      class: otherThingClassName,
+      id: otherThingIds[0],
+      properties: { stringProp: "foo3" },
+    },
+    {
+      class: otherThingClassName,
+      id: otherThingIds[1],
+      properties: { stringProp: "bar3" },
+    },
+  ];
+
+  return client.batch
+    .objectsBatcher()
+    .withObject(toImport[0])
+    .withObject(toImport[1])
+    .withObject(toImport[2])
+    .withObject(toImport[3])
+    .withObject(toImport[4])
+    .withObject(toImport[5])
+    .do();
+}
 
 const cleanup = (client) =>
   Promise.all([
