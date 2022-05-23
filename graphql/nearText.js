@@ -121,7 +121,7 @@ export default class GraphQLNearText {
       throw new Error("nearText filter: moveTo must be object");
     }
 
-    if (!Array.isArray(target.concepts) && !Array.isArray(target.objects)) {
+    if (!target.concepts && !target.objects) {
       throw new Error("nearText filter: moveTo.concepts or moveTo.objects must be present");
     }
 
@@ -150,7 +150,7 @@ export default class GraphQLNearText {
       throw new Error("nearText filter: moveAwayFrom must be object");
     }
 
-    if (!Array.isArray(target.concepts) && !Array.isArray(target.objects)) {
+    if (!target.concepts && !target.objects) {
       throw new Error("nearText filter: moveAwayFrom.concepts or moveAwayFrom.objects must be present");
     }
 

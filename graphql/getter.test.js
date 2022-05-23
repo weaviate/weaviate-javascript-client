@@ -418,7 +418,7 @@ describe("nearText searchers", () => {
         title: "moveTo with empty objects",
         nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: {} } },
         msg:
-          "nearText filter: moveTo.concepts or moveTo.objects must be present",
+          "nearText filter: moveTo.objects must be an array",
       },
       {
         title: "moveTo with empty object in objects",
@@ -448,7 +448,7 @@ describe("nearText searchers", () => {
         title: "moveAwayFrom with empty objects",
         nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: {} } },
         msg:
-          "nearText filter: moveAwayFrom.concepts or moveAwayFrom.objects must be present",
+          "nearText filter: moveAwayFrom.objects must be an array",
       },
       {
         title: "moveAwayFrom with empty object in objects",
