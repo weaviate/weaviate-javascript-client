@@ -184,16 +184,16 @@ export default class GraphQLNearText {
     this.autocorrect = autocorrect;
   }
 
-  parseMoveObjects(moveXXX, objects) {
+  parseMoveObjects(move, objects) {
     let moveObjects = [];
     let errors = [];
     for (var i in objects) {
       if (!objects[i].id && !objects[i].beacon) {
-        errors.push(`${moveXXX}.objects[${i}].id or ${moveXXX}.objects[${i}].beacon must be present`)
+        errors.push(`${move}.objects[${i}].id or ${move}.objects[${i}].beacon must be present`)
       } else if (objects[i].id && typeof objects[i].id !== "string") {
-        errors.push(`${moveXXX}.objects[${i}].id must be string`)
+        errors.push(`${move}.objects[${i}].id must be string`)
       } else if (objects[i].beacon && typeof objects[i].beacon !== "string") {
-        errors.push(`${moveXXX}.objects[${i}].beacon must be string`)
+        errors.push(`${move}.objects[${i}].beacon must be string`)
       } else {
         var objs = []
         if (objects[i].id) {
