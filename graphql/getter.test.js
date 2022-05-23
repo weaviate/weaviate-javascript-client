@@ -286,6 +286,76 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
+  test("with moveTo with objects parameter", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],certainty:0.7,moveTo:{objects:[{id:"uuid"},{beacon:"beacon"}],force:0.7}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        certainty: 0.7,
+        moveTo: { force: 0.7, objects: [{ id: "uuid" }, {beacon: "beacon"}] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with moveAwayFrom with objects parameter", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],certainty:0.7,moveAwayFrom:{objects:[{id:"uuid"},{beacon:"beacon"}],force:0.7}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        certainty: 0.7,
+        moveAwayFrom: { force: 0.7, objects: [{ id: "uuid" }, {beacon: "beacon"}] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with moveTo and moveAway with objects parameter", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],certainty:0.7,moveTo:{objects:[{id:"uuid"}],force:0.7},moveAwayFrom:{objects:[{beacon:"beacon"}],force:0.5}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        certainty: 0.7,
+        moveTo: { force: 0.7, objects: [{ id: "uuid" }] },
+        moveAwayFrom: { force: 0.5, objects: [{ beacon: "beacon" }] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
   describe("queries with invalid nearText searchers", () => {
     const mockClient = {
       query: jest.fn(),
@@ -308,30 +378,101 @@ describe("nearText searchers", () => {
         msg: "nearText filter: certainty must be a number",
       },
       {
-        title: "moveTo without concepts",
+        title: "moveTo empty object",
         nearText: { concepts: ["foo"], moveTo: {} },
-        msg: "nearText filter: moveTo.concepts must be an array",
+        msg: "nearText filter: moveTo.concepts or moveTo.objects must be present",
       },
       {
-        title: "moveTo without concepts",
+        title: "moveTo without force with concepts",
         nearText: { concepts: ["foo"], moveTo: { concepts: ["foo"] } },
-        msg: "nearText filter: moveTo must have fields 'concepts' and 'force'",
+        msg: "nearText filter: moveTo must have fields 'concepts' or 'objects' and 'force'",
+      },
+      {
+        title: "moveTo without force with objects",
+        nearText: { concepts: ["foo"], moveTo: { objects: [{beacon: "beacon"}] } },
+        msg: "nearText filter: moveTo must have fields 'concepts' or 'objects' and 'force'",
       },
       {
         title: "moveAwayFrom without concepts",
         nearText: { concepts: ["foo"], moveAwayFrom: {} },
-        msg: "nearText filter: moveAwayFrom.concepts must be an array",
+        msg: "nearText filter: moveAwayFrom.concepts or moveAwayFrom.objects must be present",
       },
       {
-        title: "moveAwayFrom without concepts",
+        title: "moveAwayFrom without force with concepts",
         nearText: { concepts: ["foo"], moveAwayFrom: { concepts: ["foo"] } },
         msg:
-          "nearText filter: moveAwayFrom must have fields 'concepts' and 'force'",
+          "nearText filter: moveAwayFrom must have fields 'concepts' or 'objects' and 'force'",
+      },
+      {
+        title: "moveAwayFrom without force with objects",
+        nearText: { concepts: ["foo"], moveAwayFrom: { objects: [{id: "uuid"}] } },
+        msg:
+          "nearText filter: moveAwayFrom must have fields 'concepts' or 'objects' and 'force'",
       },
       {
         title: "autocorrect of wrong type",
         nearText: { concepts: ["foo"], autocorrect: "foo" },
         msg: "nearText filter: autocorrect must be a boolean",
+      },
+      {
+        title: "moveTo with empty objects",
+        nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: {} } },
+        msg:
+          "nearText filter: moveTo.objects must be an array",
+      },
+      {
+        title: "moveTo with empty object in objects",
+        nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: [{}] } },
+        msg:
+          "nearText filter: moveTo.objects[0].id or moveTo.objects[0].beacon must be present",
+      },
+      {
+        title: "moveTo with objects[0].id not of string type",
+        nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: [{id: 0.8}] } },
+        msg:
+          "nearText filter: moveTo.objects[0].id must be string",
+      },
+      {
+        title: "moveTo with objects[0].beacon not of string type",
+        nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: [{beacon: 0.8}] } },
+        msg:
+          "nearText filter: moveTo.objects[0].beacon must be string",
+      },
+      {
+        title: "moveTo with objects[0].id not of string type and objects[1].beacon not of string type",
+        nearText: { concepts: ["foo"], moveTo: { force: 0.8, objects: [{id: 0.8},{beacon: 0.8}] } },
+        msg:
+          "nearText filter: moveTo.objects[0].id must be string, moveTo.objects[1].beacon must be string",
+      },
+      {
+        title: "moveAwayFrom with empty objects",
+        nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: {} } },
+        msg:
+          "nearText filter: moveAwayFrom.objects must be an array",
+      },
+      {
+        title: "moveAwayFrom with empty object in objects",
+        nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: [{}] } },
+        msg:
+          "nearText filter: moveAwayFrom.objects[0].id or moveAwayFrom.objects[0].beacon must be present",
+      },
+      {
+        title: "moveAwayFrom with objects[0].id not of string type",
+        nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: [{id: 0.8}] } },
+        msg:
+          "nearText filter: moveAwayFrom.objects[0].id must be string",
+      },
+      {
+        title: "moveAwayFrom with objects[0].beacon not of string type",
+        nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: [{beacon: 0.8}] } },
+        msg:
+          "nearText filter: moveAwayFrom.objects[0].beacon must be string",
+      },
+      {
+        title: "moveAwayFrom with objects[0].id not of string type and objects[1].beacon not of string type",
+        nearText: { concepts: ["foo"], moveAwayFrom: { force: 0.8, objects: [{id: 0.8},{beacon: 0.8}] } },
+        msg:
+          "nearText filter: moveAwayFrom.objects[0].id must be string, moveAwayFrom.objects[1].beacon must be string",
       },
     ];
 

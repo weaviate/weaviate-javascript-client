@@ -150,6 +150,7 @@ describe("schema", () => {
               vectorizer: "text2vec-contextionary",
               vectorIndexConfig: {
                 cleanupIntervalSeconds: 300,
+                distance: "cosine",
                 dynamicEfFactor: 8,
                 dynamicEfMax: 500,
                 dynamicEfMin: 100,
@@ -381,6 +382,7 @@ function newClassObject(className) {
     vectorizer: 'text2vec-contextionary',
     vectorIndexConfig: {
       cleanupIntervalSeconds: 300,
+      distance: "cosine",
       dynamicEfFactor: 8,
       dynamicEfMax: 500,
       dynamicEfMin: 100,

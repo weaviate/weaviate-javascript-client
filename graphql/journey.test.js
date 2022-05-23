@@ -102,6 +102,23 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e));
   });
 
+  test("graphql get with nearText with moveTo and moveAwayFrom", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withNearText({
+        concepts: ["Article"], certainty: 0.7,
+        moveTo: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e2" }], force: 0.7 },
+        moveAwayFrom: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e1" }], force: 0.5 },
+      })
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
   test("graphql get expected failure - multiple nearMedia filters", () => {
     return expect(() => {
       client.graphql
@@ -509,6 +526,7 @@ const setup = async (client) => {
       },
     },
     {
+      id: "abefd256-8574-442b-9293-9205193737e1",
       class: "Article",
       properties: {
         wordCount: 40,
@@ -517,6 +535,7 @@ const setup = async (client) => {
       },
     },
     {
+      id: "abefd256-8574-442b-9293-9205193737e2",
       class: "Article",
       properties: {
         wordCount: 600,
