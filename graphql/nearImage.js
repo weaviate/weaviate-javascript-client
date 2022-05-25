@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 export default class GraphQLNearImage {
   constructor(nearImageObj) {
     this.source = nearImageObj;
