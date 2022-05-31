@@ -9,11 +9,11 @@ A javascript client for easy interaction with a weaviate instance.
 ## Support
 
 - [Stackoverflow for questions](https://stackoverflow.com/questions/tagged/weaviate).
-- [Github for issues](https://github.com/semi-technologies/weaviate-python-client/issues).
+- [Github for issues](https://github.com/semi-technologies/weaviate-javascript-client/issues).
 
 ## Contributing
 
-- [How to Contribute](https://github.com/semi-technologies/weaviate/blob/master/CONTRIBUTE.md).
+- [How to Contribute](https://github.com/semi-technologies/weaviate-javascript-client/blob/master/CONTRIBUTE.md).
 
 ## Build Status
 
