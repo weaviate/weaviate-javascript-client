@@ -202,7 +202,7 @@ describe("data", () => {
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
       .do()
       .catch(err => 
-        expect(err).toEqual("it should not have errord: usage error (500): {\"error\":[{\"message\":\"repo: object by id: index not found for class DoesNotExist\"}]}")
+        expect(err).toEqual("usage error (500): {\"error\":[{\"message\":\"repo: object by id: index not found for class DoesNotExist\"}]}")
       );
   });
 
@@ -369,6 +369,30 @@ describe("data", () => {
       setTimeout(resolve, 1000);
     });
   });
+
+  it("deletes a thing with class name", async () => {
+    const properties = { stringProp: "with-id" };
+    const id = "6781a974-cfbf-455d-ace8-f1dba4564230";
+
+    client.data
+      .creator()
+      .withClassName(thingClassName)
+      .withProperties(properties)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .deleter()
+      .withId(id)
+      .withClassName(thingClassName)
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  })
 
   it("verifies there are now fewer things (after delete)", () => {
     return Promise.all([

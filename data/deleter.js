@@ -1,3 +1,5 @@
+import { isValidStringProperty } from "../validation/string";
+
 export default class Deleter {
   constructor(client) {
     this.client = client;
@@ -8,6 +10,19 @@ export default class Deleter {
     this.id = id;
     return this;
   };
+
+  withClassName = (className) => {
+    this.className = className;
+    return this;
+  }
+
+  buildPath = () => {
+    let path = `/objects`;
+    if (isValidStringProperty(this.className)) {
+      path = `${path}/${this.className}`
+    }
+    return `/${path}/${this.id}`;
+  }
 
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
@@ -34,7 +49,7 @@ export default class Deleter {
     }
     this.validate();
 
-    const path = `/objects/${this.id}`;
+    const path = this.buildPath();
     return this.client.delete(path);
   };
 }
