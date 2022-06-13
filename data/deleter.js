@@ -1,4 +1,4 @@
-import { buildObjectsPath } from "./path"
+import { buildObjectsPath } from "./path";
 
 export default class Deleter {
   constructor(client) {

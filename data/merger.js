@@ -1,4 +1,5 @@
 import { isValidStringProperty } from "../validation/string";
+import { buildObjectsPath } from "./path";
 
 export default class Merger {
   constructor(client) {
@@ -55,7 +56,8 @@ export default class Merger {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects/${this.id}`;
+
+    const path = buildObjectsPath(this.id, this.className);
     return this.client.patch(path, this.payload());
   };
 }
