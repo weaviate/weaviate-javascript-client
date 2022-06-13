@@ -354,10 +354,24 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("checks that object exists", () => {
+  it("checks that object exists by id only", () => {
     return client.data
       .checker()
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .then((exists) => {
+        if (!exists) {
+          fail("it should exist in DB")
+        }
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("checks that object exists by id and class name", () => {
+    return client.data
+      .checker()
+      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withClassName(thingClassName)
       .do()
       .then((exists) => {
         if (!exists) {

@@ -1,4 +1,4 @@
-import { isValidStringProperty } from "../validation/string";
+import { buildObjectsPath } from "./path"
 
 export default class GetterById {
   constructor(client) {
@@ -16,14 +16,6 @@ export default class GetterById {
     this.className = className;
     return this;
   };
-
-  buildPath = () => {
-    let path = `/objects`;
-    if (isValidStringProperty(this.className)) {
-      path = `${path}/${this.className}`
-    }
-    return `/${path}/${this.id}`;
-  }
 
   extendAdditionals = (prop) => {
     this.additionals = [...this.additionals, prop];
@@ -60,7 +52,7 @@ export default class GetterById {
       );
     }
 
-    let path = this.buildPath();
+    let path = buildObjectsPath(this.id, this.className);
   
     if (this.additionals.length > 0) {
       path += `?include=${this.additionals.join(",")}`;

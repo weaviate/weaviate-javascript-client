@@ -1,4 +1,4 @@
-import { isValidStringProperty } from "../validation/string";
+import { buildObjectsPath } from "./path"
 
 export default class Deleter {
   constructor(client) {
@@ -14,14 +14,6 @@ export default class Deleter {
   withClassName = (className) => {
     this.className = className;
     return this;
-  }
-
-  buildPath = () => {
-    let path = `/objects`;
-    if (isValidStringProperty(this.className)) {
-      path = `${path}/${this.className}`
-    }
-    return `/${path}/${this.id}`;
   }
 
   validateIsSet = (prop, name, setter) => {
@@ -49,7 +41,7 @@ export default class Deleter {
     }
     this.validate();
 
-    const path = this.buildPath();
+    const path = buildObjectsPath(this.id, this.className);
     return this.client.delete(path);
   };
 }

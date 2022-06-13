@@ -1,4 +1,5 @@
 import { isValidStringProperty } from "../validation/string";
+import { buildObjectsPath } from "./path";
 
 export default class Updater {
   constructor(client) {
@@ -25,7 +26,7 @@ export default class Updater {
     if (!isValidStringProperty(this.className)) {
       this.errors = [
         ...this.errors,
-        "className must be set - set with withId(id)",
+        "className must be set - use withClassName(className)",
       ];
     }
   };
@@ -38,14 +39,6 @@ export default class Updater {
       ];
     }
   };
-
-  buildPath = () => {
-    let path = `/objects`;
-    if (isValidStringProperty(this.className)) {
-      path = `${path}/${this.className}`
-    }
-    return `/${path}/${this.id}`;
-  }
 
   payload = () => ({
     properties: this.properties,
@@ -66,7 +59,8 @@ export default class Updater {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = this.buildPath();
+
+    const path = buildObjectsPath(this.id, this.className);
     return this.client.put(path, this.payload());
   };
 }
