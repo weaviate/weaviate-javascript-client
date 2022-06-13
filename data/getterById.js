@@ -1,3 +1,5 @@
+import { isValidStringProperty } from "../validation/string";
+
 export default class GetterById {
   constructor(client) {
     this.client = client;
@@ -9,6 +11,19 @@ export default class GetterById {
     this.id = id;
     return this;
   };
+
+  withClassName = (className) => {
+    this.className = className;
+    return this;
+  };
+
+  buildPath = () => {
+    let path = `/objects`;
+    if (isValidStringProperty(this.className)) {
+      path = `${path}/${this.className}`
+    }
+    return `/${path}/${this.id}`;
+  }
 
   extendAdditionals = (prop) => {
     this.additionals = [...this.additionals, prop];
@@ -45,7 +60,8 @@ export default class GetterById {
       );
     }
 
-    let path = `/objects/${this.id}`;
+    let path = this.buildPath();
+  
     if (this.additionals.length > 0) {
       path += `?include=${this.additionals.join(",")}`;
     }

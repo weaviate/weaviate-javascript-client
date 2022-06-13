@@ -178,6 +178,34 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
+  it("gets one thing by id with class name", () => {
+    return client.data
+      .getterById()
+      .withClassName(thingClassName)
+      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: "1565c06c-463f-466c-9092-5930dbac3887",
+            properties: { stringProp: "with-id" },
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("fails to get one thing by id with invalid class name", () => {
+    return client.data
+      .getterById()
+      .withClassName("DoesNotExist")
+      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .do()
+      .catch(err => 
+        expect(err).toEqual("it should not have errord: usage error (500): {\"error\":[{\"message\":\"repo: object by id: index not found for class DoesNotExist\"}]}")
+      );
+  });
+
   it("gets one thing by id with all optional additional props", () => {
     return client.data
       .getterById()
