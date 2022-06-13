@@ -162,7 +162,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("gets one thing by id", () => {
+  it("gets one thing by id only", () => {
     return client.data
       .getterById()
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
@@ -178,7 +178,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("gets one thing by id with class name", () => {
+  it("gets one thing by id and class name", () => {
     return client.data
       .getterById()
       .withClassName(thingClassName)
@@ -239,7 +239,7 @@ describe("data", () => {
       });
   });
 
-  it("updates a thing", () => {
+  it("updates a thing by id only", () => {
     const id = "1565c06c-463f-466c-9092-5930dbac3887";
     return client.data
       .getterById()
@@ -259,6 +259,31 @@ describe("data", () => {
       .then((res) => {
         expect(res.properties).toEqual({
           stringProp: "thing-updated",
+        });
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("updates a thing by id and class name", () => {
+    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    return client.data
+      .getterById()
+      .withId(id)
+      .withClassName(thingClassName)
+      .do()
+      .then((res) => {
+        const properties = res.properties;
+        properties.stringProp = "thing-updated-with-class-name";
+        return client.data
+          .updater()
+          .withId(id)
+          .withClassName(thingClassName)
+          .withProperties(properties)
+          .do();
+      })
+      .then((res) => {
+        expect(res.properties).toEqual({
+          stringProp: "thing-updated-with-class-name",
         });
       })
       .catch((e) => fail("it should not have errord: " + e));
@@ -342,7 +367,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("deletes a thing", () => {
+  it("deletes a thing by id only", () => {
     return client.data
       .deleter()
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
@@ -350,7 +375,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("checks that object doesn't exist anymore", () => {
+  it("checks that object doesn't exist anymore with delete by id only", () => {
     return client.data
       .checker()
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
@@ -363,18 +388,11 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("waits for es index updates", () => {
-    return new Promise((resolve, reject) => {
-      // TODO: remove in 1.0.0
-      setTimeout(resolve, 1000);
-    });
-  });
-
-  it("deletes a thing with class name", async () => {
+  it("deletes a thing with id and class name", async () => {
     const properties = { stringProp: "with-id" };
     const id = "6781a974-cfbf-455d-ace8-f1dba4564230";
 
-    client.data
+    await client.data
       .creator()
       .withClassName(thingClassName)
       .withProperties(properties)
@@ -393,6 +411,19 @@ describe("data", () => {
       .do()
       .catch((e) => fail("it should not have errord: " + e));
   })
+
+  it("checks that object doesn't exist anymore with delete by id and class name", () => {
+    return client.data
+      .checker()
+      .withId("6781a974-cfbf-455d-ace8-f1dba4564230")
+      .do()
+      .then((exists) => {
+        if (exists) {
+          fail("it should not exist in DB")
+        }
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
 
   it("verifies there are now fewer things (after delete)", () => {
     return Promise.all([

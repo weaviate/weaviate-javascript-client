@@ -39,6 +39,14 @@ export default class Updater {
     }
   };
 
+  buildPath = () => {
+    let path = `/objects`;
+    if (isValidStringProperty(this.className)) {
+      path = `${path}/${this.className}`
+    }
+    return `/${path}/${this.id}`;
+  }
+
   payload = () => ({
     properties: this.properties,
     class: this.className,
@@ -58,7 +66,7 @@ export default class Updater {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects/${this.id}`;
+    const path = this.buildPath();
     return this.client.put(path, this.payload());
   };
 }
