@@ -21,6 +21,10 @@ export default class GraphQLAsk {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.distance) {
+      args = [...args, `distance:${this.distance}`];
+    }
+
     if (this.autocorrect !== undefined) {
       args = [...args, `autocorrect:${this.autocorrect}`];
     }
@@ -52,6 +56,9 @@ export default class GraphQLAsk {
           break;
         case "certainty":
           this.parseCertainty(this.source[key]);
+          break;
+        case "distance":
+          this.parseDistance(this.source[key]);
           break;
         case "autocorrect":
           this.parseAutocorrect(this.source[key]);
@@ -87,6 +94,14 @@ export default class GraphQLAsk {
     }
 
     this.certainty = cert;
+  }
+
+  parseDistance(dist) {
+    if (typeof dist !== "number") {
+      throw new Error("ask filter: distance must be a number");
+    }
+
+    this.distance = dist;
   }
 
   parseAutocorrect(autocorrect) {

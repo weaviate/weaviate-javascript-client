@@ -13,6 +13,10 @@ export default class GraphQLNearVector {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.distance) {
+      args = [...args, `distance:${this.distance}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -33,6 +37,9 @@ export default class GraphQLNearVector {
           break;
         case "certainty":
           this.parseCertainty(this.source[key]);
+          break;
+        case "distance":
+          this.parseDistance(this.source[key]);
           break;
         default:
           throw new Error("nearVector filter: unrecognized key '" + key + "'");
@@ -60,5 +67,13 @@ export default class GraphQLNearVector {
     }
 
     this.certainty = cert;
+  }
+
+  parseDistance(dist) {
+    if (typeof dist !== "number") {
+      throw new Error("nearVector filter: distance must be a number");
+    }
+
+    this.distance = dist;
   }
 }

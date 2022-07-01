@@ -13,6 +13,10 @@ export default class GraphQLNearText {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.distance) {
+      args = [...args, `distance:${this.distance}`];
+    }
+
     if (this.moveTo) {
       let moveToArgs = []
       if (this.moveToConcepts) {
@@ -85,6 +89,9 @@ export default class GraphQLNearText {
         case "certainty":
           this.parseCertainty(this.source[key]);
           break;
+        case "distance":
+          this.parseDistance(this.source[key]);
+          break;
         case "moveTo":
           this.parseMoveTo(this.source[key]);
           break;
@@ -114,6 +121,14 @@ export default class GraphQLNearText {
     }
 
     this.certainty = cert;
+  }
+
+  parseDistance(dist) {
+    if (typeof dist !== "number") {
+      throw new Error("nearText filter: distance must be a number");
+    }
+
+    this.distance = dist;
   }
 
   parseMoveTo(target) {

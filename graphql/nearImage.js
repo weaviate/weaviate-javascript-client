@@ -22,6 +22,10 @@ export default class GraphQLNearImage {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.distance) {
+      args = [...args, `distance:${this.distance}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -43,6 +47,9 @@ export default class GraphQLNearImage {
         case "certainty":
           this.parseCertainty(this.source[key]);
           break;
+        case "distance":
+          this.parseDistance(this.source[key]);
+          break;
         default:
           throw new Error("nearImage filter: unrecognized key '" + key + "'");
       }
@@ -63,5 +70,13 @@ export default class GraphQLNearImage {
     }
 
     this.certainty = cert;
+  }
+
+  parseDistance(dist) {
+    if (typeof dist !== "number") {
+      throw new Error("nearImage filter: distance must be a number");
+    }
+
+    this.distance = dist;
   }
 }

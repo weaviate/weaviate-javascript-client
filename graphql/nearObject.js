@@ -21,6 +21,10 @@ export default class GraphQLNearObject {
       args = [...args, `certainty:${this.certainty}`];
     }
 
+    if (this.distance) {
+      args = [...args, `distance:${this.distance}`];
+    }
+
     if (!wrap) {
       return `${args.join(",")}`;
     }
@@ -44,6 +48,9 @@ export default class GraphQLNearObject {
           break;
         case "certainty":
           this.parseCertainty(this.source[key]);
+          break;
+        case "distance":
+          this.parseDistance(this.source[key]);
           break;
         default:
           throw new Error("nearObject filter: unrecognized key '" + key + "'");
@@ -73,5 +80,13 @@ export default class GraphQLNearObject {
     }
 
     this.certainty = cert;
+  }
+
+  parseDistance(dist) {
+    if (typeof dist !== "number") {
+      throw new Error("nearObject filter: distance must be a number");
+    }
+
+    this.distance = dist;
   }
 }
