@@ -1,3 +1,5 @@
+import { buildObjectsPath } from "./path";
+
 export default class Deleter {
   constructor(client) {
     this.client = client;
@@ -8,6 +10,11 @@ export default class Deleter {
     this.id = id;
     return this;
   };
+
+  withClassName = (className) => {
+    this.className = className;
+    return this;
+  }
 
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
@@ -34,7 +41,7 @@ export default class Deleter {
     }
     this.validate();
 
-    const path = `/objects/${this.id}`;
+    const path = buildObjectsPath(this.id, this.className);
     return this.client.delete(path);
   };
 }

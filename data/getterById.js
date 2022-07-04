@@ -1,3 +1,5 @@
+import { buildObjectsPath } from "./path";
+
 export default class GetterById {
   constructor(client) {
     this.client = client;
@@ -7,6 +9,11 @@ export default class GetterById {
 
   withId = (id) => {
     this.id = id;
+    return this;
+  };
+
+  withClassName = (className) => {
+    this.className = className;
     return this;
   };
 
@@ -45,7 +52,8 @@ export default class GetterById {
       );
     }
 
-    let path = `/objects/${this.id}`;
+    let path = buildObjectsPath(this.id, this.className);
+  
     if (this.additionals.length > 0) {
       path += `?include=${this.additionals.join(",")}`;
     }
