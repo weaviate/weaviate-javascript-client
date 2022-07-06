@@ -202,7 +202,7 @@ describe("data", () => {
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
       .do()
       .catch(err => 
-        expect(err).toEqual("usage error (500): {\"error\":[{\"message\":\"repo: object by id: index not found for class DoesNotExist\"}]}")
+        expect(err).toEqual("usage error (404): ")
       );
   });
 
@@ -309,7 +309,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("adds a reference to a thing", () => {
+  it("adds a reference to a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
     const targetId = "1565c06c-463f-466c-9092-5930dbac3887";
 
@@ -324,7 +324,7 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("replaces all references of a thing", () => {
+  it("replaces all references of a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
     const targetId = implicitThingId;
 
@@ -339,13 +339,61 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
-  it("deletes a single reference of a thing", () => {
+  it("deletes a single reference of a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
     const targetId = implicitThingId;
 
     return client.data
       .referenceDeleter()
       .withId(sourceId)
+      .withReferenceProperty("refProp")
+      .withReference(
+        client.data.referencePayloadBuilder().withId(targetId).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("adds a reference to a thing by id and class name", () => {
+    const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
+    const targetId = "1565c06c-463f-466c-9092-5930dbac3887";
+
+    return client.data
+      .referenceCreator()
+      .withId(sourceId)
+      .withClassName(refSourceClassName)
+      .withReferenceProperty("refProp")
+      .withReference(
+        client.data.referencePayloadBuilder().withId(targetId).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("replaces all references of a thing by id and class name", () => {
+    const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
+    const targetId = implicitThingId;
+
+    return client.data
+      .referenceReplacer()
+      .withId(sourceId)
+      .withClassName(refSourceClassName)
+      .withReferenceProperty("refProp")
+      .withReferences([
+        client.data.referencePayloadBuilder().withId(targetId).payload(),
+      ])
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("deletes a single reference of a thing by id and class name", () => {
+    const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
+    const targetId = implicitThingId;
+
+    return client.data
+      .referenceDeleter()
+      .withId(sourceId)
+      .withClassName(refSourceClassName)
       .withReferenceProperty("refProp")
       .withReference(
         client.data.referencePayloadBuilder().withId(targetId).payload()

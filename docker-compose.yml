@@ -2,7 +2,7 @@ version: '3.4'
 services:
   weaviate:
     # TODO: temporarily use this version until next release
-    image: semitechnologies/weaviate:latest@sha256:9c5552ef8bd867eaa9fcc50398fff1225e7b2f887e9fb6c9f928d26a462c8715
+    image: semitechnologies/weaviate:latest@sha256:0a3da16a431a86c994327f4e7434b4a7ee443de0f075a6376f5d9e648bc9d455
     restart: on-failure:0
     ports:
      - "8080:8080"

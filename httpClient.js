@@ -77,18 +77,17 @@ const client = (config) => {
 const makeUrl = (basePath) => (path) => basePath + path;
 
 const makeCheckStatus = (expectResponseBody) => (res) => {
-  if (res.status >= 400 && res.status < 500) {
-    return res.json().then((err) => {
+  if (res.status >= 400) {
+    return res.text().then(errText => {
+      var err;
+      try {
+        // in case of invalid json response (like empty string)
+        err = JSON.stringify(JSON.parse(errText))
+      } catch(e) {
+        err = errText
+      }
       return Promise.reject(
-        `usage error (${res.status}): ${JSON.stringify(err)}`
-      );
-    });
-  }
-
-  if (res.status >= 500) {
-    return res.json().then((err) => {
-      return Promise.reject(
-        `usage error (${res.status}): ${JSON.stringify(err)}`
+        `usage error (${res.status}): ${err}`
       );
     });
   }
