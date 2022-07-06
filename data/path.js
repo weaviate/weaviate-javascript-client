@@ -1,13 +1,5 @@
 import { isValidStringProperty } from "../validation/string";
 
-export function buildObjectsPath(id, className) {
-  let path = `objects`;
-  if (isValidStringProperty(className)) {
-    path = `${path}/${className}`;
-  }
-  return `/${path}/${id}`;
-}
-
 const objectsPathPrefix = "/objects";
 export default class ObjectsPath {
 
@@ -16,132 +8,76 @@ export default class ObjectsPath {
   }
 
   buildCreate() {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(_ => objectsPathPrefix);
+    return this.build({}, []);
   }
-
   buildDelete(id, className) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        if (supports) {
-          if (isValidStringProperty(className)) {
-            path = `${path}/${className}`
-          } else {
-            // TODO warning no classname
-          }
-        } else {
-          // TODO obsolete classname
-        }
-        if (isValidStringProperty(id)) {
-          path = `${path}/${id}`
-        }
-        return path;
-      });
+    return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-
   buildCheck(id, className) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        if (supports) {
-          if (isValidStringProperty(className)) {
-            path = `${path}/${className}`
-          } else {
-            // TODO warning no classname
-          }
-        } else {
-          // TODO obsolete classname
-        }
-        if (isValidStringProperty(id)) {
-          path = `${path}/${id}`
-        }
-        return path;
-      });
+    return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-
-  // TODO remove limit
   buildGetOne(id, className, additionals) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        if (supports) {
-          if (isValidStringProperty(className)) {
-            path = `${path}/${className}`
-          } else {
-            // TODO warning no classname
-          }
-        } else {
-          // TODO obsolete classname
-        }
-        if (isValidStringProperty(id)) {
-          path = `${path}/${id}`
-        }
-        const queryParams = [];
-        if (Array.isArray(additionals) && additionals.length > 0) {
-          queryParams.push(`include=${additionals.join(",")}`);
-        }
-        if (typeof limit == "number" && limit > 0) {
-          queryParams.push(`limit=${limit}`);
-        }
-        if (queryParams.length > 0) {
-          path = `${path}?${queryParams.join("&")}`
-        }
-        return path;
-      });
+    return this.build({id, className, additionals}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-
   buildGet(limit, additionals) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        const queryParams = [];
-        if (Array.isArray(additionals) && additionals.length > 0) {
-          queryParams.push(`include=${additionals.join(",")}`);
-        }
-        if (typeof limit == "number" && limit > 0) {
-          queryParams.push(`limit=${limit}`);
-        }
-        if (queryParams.length > 0) {
-          path = `${path}?${queryParams.join("&")}`
-        }
-        return path;
-      });
+    return this.build({limit, additionals}, [this.addQueryParams]);
   }
-
   buildUpdate(id, className) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        if (supports) {
-          if (isValidStringProperty(className)) {
-            path = `${path}/${className}`
-          } else {
-            // TODO warning no classname
-          }
-        }
-        if (isValidStringProperty(id)) {
-          path = `${path}/${id}`
-        }
-        return path;
-      });
+    return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
+  }
+  buildMerge(id, className) {
+    return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
   }
 
-  buildMerge(id, className) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
-      .then(supports => {
-        var path = objectsPathPrefix;
-        if (supports) {
-          if (isValidStringProperty(className)) {
-            path = `${path}/${className}`
-          } else {
-            // TODO warning no classname
-          }
-        }
-        if (isValidStringProperty(id)) {
-          path = `${path}/${id}`
-        }
-        return path;
+  build(params, modifiers) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+      var path = objectsPathPrefix;
+      modifiers.forEach(modifier => {
+        path = modifier(params, path, support);
       });
+      return path;
+    });
+  }
+
+  addClassNameDeprecatedNotSupportedCheck(params, path, support) {
+    if (support.supports) {
+      if (isValidStringProperty(params.className)) {
+        return `${path}/${params.className}`
+      } else {
+        support.warns.deprecatedNonClassNameNamespacedEndpointsForObjects();
+      }
+    } else {
+      support.warns.notSupportedClassNamespacedEndpointsForObjects();
+    }
+    return path;
+  }
+  addClassNameDeprecatedCheck(params, path, support) {
+    if (support.supports) {
+      if (isValidStringProperty(params.className)) {
+        return `${path}/${params.className}`
+      } else {
+        support.warns.deprecatedNonClassNameNamespacedEndpointsForObjects();
+      }
+    }
+    return path;
+  }
+  addId(params, path) {
+    if (isValidStringProperty(params.id)) {
+      return `${path}/${params.id}`
+    }
+    return path;
+  }
+  addQueryParams(params, path) {
+    const queryParams = [];
+    if (Array.isArray(params.additionals) && params.additionals.length > 0) {
+      queryParams.push(`include=${params.additionals.join(",")}`);
+    }
+    if (typeof params.limit == "number" && params.limit > 0) {
+      queryParams.push(`limit=${params.limit}`);
+    }
+    if (queryParams.length > 0) {
+      return `${path}?${queryParams.join("&")}`
+    }
+    return path;
   }
 }

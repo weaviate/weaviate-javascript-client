@@ -17,14 +17,6 @@ const data = (client, dbVersionPromise) => {
   const dbVersionSupport = new DbVersionSupport(dbVersionPromise);
   const objectsPath = new ObjectsPath(dbVersionSupport);
 
-  // objectsPath.buildCreate("someId", "someClass").then(console.warn).catch(console.error);
-  // objectsPath.buildDelete("someId", "someClass").then(console.warn).catch(console.error);
-  // objectsPath.buildCheck("someId", "someClass").then(console.warn).catch(console.error);
-  // objectsPath.buildGetOne("someId", "someClass", 100, ["add1", "add2"]).then(console.warn).catch(console.error);
-  // objectsPath.buildGet(100, ["add1", "add2"]).then(console.warn).catch(console.error);
-  // objectsPath.buildUpdate("someId", "someClass").then(console.warn).catch(console.error);
-  // objectsPath.buildMerge("someId", "someClass").then(console.warn).catch(console.error);
-
   return {
     creator: () => new Creator(client, objectsPath),
     validator: () => new Validator(client),
