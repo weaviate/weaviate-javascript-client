@@ -1,6 +1,7 @@
 export default class Getter {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
     this.additionals = [];
   }
@@ -25,21 +26,8 @@ export default class Getter {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    let path = `/objects`;
 
-    let params = [];
-    if (this.additionals.length > 0) {
-      params = [...params, `include=${this.additionals.join(",")}`];
-    }
-
-    if (this.limit) {
-      params = [...params, `limit=${this.limit}`];
-    }
-
-    if (params.length > 0) {
-      path += `?${params.join("&")}`;
-    }
-
-    return this.client.get(path);
+    return this.objectsPath.buildGet(this.limit, this.additionals)
+      .then(this.client.get);
   };
 }

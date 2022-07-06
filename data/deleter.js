@@ -1,8 +1,7 @@
-import { buildObjectsPath } from "./path";
-
 export default class Deleter {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
   }
 
@@ -41,7 +40,7 @@ export default class Deleter {
     }
     this.validate();
 
-    const path = buildObjectsPath(this.id, this.className);
-    return this.client.delete(path);
+    return this.objectsPath.buildDelete(this.id, this.className)
+      .then(this.client.delete);
   };
 }
