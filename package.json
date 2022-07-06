@@ -4,7 +4,7 @@
   "description": "Javascript client for Weaviate",
   "main": "lib.js",
   "scripts": {
-    "test": "jest --runInBand",
+    "test": "jest --useStderr --runInBand",
     "build": "rollup -c rollup.config.js"
   },
   "repository": {

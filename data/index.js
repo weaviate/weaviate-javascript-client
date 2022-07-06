@@ -10,8 +10,17 @@ import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
+import DbVersionSupport from "../utils/dbVersionSupport";
+import ObjectsPath from "./path";
 
-const data = (client) => {
+const data = (client, dbVersionPromise) => {
+  const dbVersionSupport = new DbVersionSupport(dbVersionPromise);
+  const objectsPath = new ObjectsPath(dbVersionSupport);
+
+  objectsPath.buildCreate("someId", "someClass").then(console.warn).catch(console.error);
+  objectsPath.buildDelete("someId", "someClass").then(console.warn).catch(console.error);
+  objectsPath.buildCheck("someId", "someClass").then(console.warn).catch(console.error);
+
   return {
     creator: () => new Creator(client),
     validator: () => new Validator(client),

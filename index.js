@@ -28,13 +28,16 @@ const app = {
       headers: params.headers,
     });
 
+    const miscClient = misc(httpClient);
+    const dbVersionPromise = miscClient.metaGetter().fetchVersion();
+
     return {
       graphql: graphql(graphqlClient),
       schema: schema(httpClient),
-      data: data(httpClient),
+      data: data(httpClient, dbVersionPromise),
       classifications: classifications(httpClient),
       batch: batch(httpClient),
-      misc: misc(httpClient),
+      misc: miscClient,
       c11y: c11y(httpClient),
     };
   },
