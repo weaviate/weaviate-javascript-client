@@ -1,9 +1,9 @@
 import { isValidStringProperty } from "../validation/string";
-import { buildObjectsPath } from "./path";
 
 export default class Merger {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
   }
 
@@ -57,7 +57,7 @@ export default class Merger {
       );
     }
 
-    const path = buildObjectsPath(this.id, this.className);
-    return this.client.patch(path, this.payload());
+    return this.objectsPath.buildMerge(this.id, this.className)
+      .then(path => this.client.patch(path, this.payload()));
   };
 }

@@ -1,6 +1,8 @@
 export default class ReferenceReplacer {
-  constructor(client) {
+  constructor(client, referencesPath, beaconPath) {
     this.client = client;
+    this.referencesPath = referencesPath;
+    this.beaconPath = beaconPath;
     this.errors = [];
   }
 
@@ -8,6 +10,11 @@ export default class ReferenceReplacer {
     this.id = id;
     return this;
   };
+
+  withClassName(className) {
+    this.className = className;
+    return this;
+  }
 
   withReferences = (refs) => {
     this.references = refs;
@@ -46,7 +53,23 @@ export default class ReferenceReplacer {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects/${this.id}/references/${this.refProp}`;
-    return this.client.put(path, this.payload(), false);
+
+    var payloadPromise = Array.isArray(this.references)
+      ? Promise.all(this.references.map(ref => this.rebuildReferencePromise(ref)))
+      : Promise.resolve([]);
+
+    return Promise.all([
+      this.referencesPath.build(this.id, this.className, this.refProp),
+      payloadPromise
+    ]).then(results => {
+      const path = results[0];
+      const payload = results[1];
+      return this.client.put(path, payload, false);
+    });
   };
+
+  rebuildReferencePromise(reference) {
+    return this.beaconPath.rebuild(reference.beacon)
+      .then(beacon => ({ beacon }));
+  }
 }

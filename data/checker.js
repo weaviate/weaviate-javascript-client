@@ -1,8 +1,7 @@
-import { buildObjectsPath } from "./path";
-
 export default class Checker {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
   }
 
@@ -41,7 +40,7 @@ export default class Checker {
     }
     this.validate();
 
-    const path = buildObjectsPath(this.id, this.className);
-    return this.client.head(path);
+    return this.objectsPath.buildCheck(this.id, this.className)
+      .then(this.client.head)
   };
 }

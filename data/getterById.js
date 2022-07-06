@@ -1,8 +1,7 @@
-import { buildObjectsPath } from "./path";
-
 export default class GetterById {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
     this.additionals = [];
   }
@@ -14,11 +13,6 @@ export default class GetterById {
 
   withClassName = (className) => {
     this.className = className;
-    return this;
-  };
-
-  extendAdditionals = (prop) => {
-    this.additionals = [...this.additionals, prop];
     return this;
   };
 
@@ -52,11 +46,7 @@ export default class GetterById {
       );
     }
 
-    let path = buildObjectsPath(this.id, this.className);
-  
-    if (this.additionals.length > 0) {
-      path += `?include=${this.additionals.join(",")}`;
-    }
-    return this.client.get(path);
+    return this.objectsPath.buildGetOne(this.id, this.className, this.additionals)
+      .then(this.client.get);
   };
 }
