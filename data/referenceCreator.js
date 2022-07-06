@@ -1,6 +1,7 @@
 export default class ReferenceCreator {
-  constructor(client) {
+  constructor(client, referencesPath) {
     this.client = client;
+    this.referencesPath = referencesPath;
     this.errors = [];
   }
 
@@ -8,6 +9,11 @@ export default class ReferenceCreator {
     this.id = id;
     return this;
   };
+
+  withClassName(className) {
+    this.className = className;
+    return this;
+  }
 
   withReference = (ref) => {
     this.reference = ref;
@@ -47,7 +53,8 @@ export default class ReferenceCreator {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects/${this.id}/references/${this.refProp}`;
-    return this.client.post(path, this.payload(), false);
+    
+    return this.referencesPath.build(this.id, this.className, this.refProp)
+      .then(path => this.client.post(path, this.payload(), false));
   };
 }

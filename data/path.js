@@ -1,7 +1,8 @@
 import { isValidStringProperty } from "../validation/string";
 
 const objectsPathPrefix = "/objects";
-export default class ObjectsPath {
+
+export class ObjectsPath {
 
   constructor(dbVersionSupport) {
     this.dbVersionSupport = dbVersionSupport;
@@ -79,5 +80,35 @@ export default class ObjectsPath {
       return `${path}?${queryParams.join("&")}`
     }
     return path;
+  }
+}
+
+export class ReferencesPath {
+
+  constructor(dbVersionSupport) {
+    this.dbVersionSupport = dbVersionSupport;
+  }
+
+  build(id, className, property) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+      var path = objectsPathPrefix;
+      if (support.supports) {
+        if (isValidStringProperty(className)) {
+          path = `${path}/${className}`
+        } else {
+          support.warns.deprecatedNonClassNameNamespacedEndpointsForReferences();
+        }
+      } else {
+        support.warns.notSupportedClassNamespacedEndpointsForReferences();
+      }
+      if (isValidStringProperty(id)) {
+        path = `${path}/${id}`
+      }
+      path = `${path}/references`;
+      if (isValidStringProperty(property)) {
+        path = `${path}/${property}`
+      }
+      return path;
+    });
   }
 }

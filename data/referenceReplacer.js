@@ -1,6 +1,7 @@
 export default class ReferenceReplacer {
-  constructor(client) {
+  constructor(client, referencesPath) {
     this.client = client;
+    this.referencesPath = referencesPath;
     this.errors = [];
   }
 
@@ -8,6 +9,11 @@ export default class ReferenceReplacer {
     this.id = id;
     return this;
   };
+
+  withClassName(className) {
+    this.className = className;
+    return this;
+  }
 
   withReferences = (refs) => {
     this.references = refs;
@@ -46,7 +52,8 @@ export default class ReferenceReplacer {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects/${this.id}/references/${this.refProp}`;
-    return this.client.put(path, this.payload(), false);
+
+    return this.referencesPath.build(this.id, this.className, this.refProp)
+      .then(path => this.client.put(path, this.payload(), false));
   };
 }

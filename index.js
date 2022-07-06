@@ -6,6 +6,7 @@ import batch from "./batch/index.js";
 import misc from "./misc/index.js";
 import c11y from "./c11y/index.js";
 import { KIND_THINGS, KIND_ACTIONS } from "./kinds";
+import DbVersionSupport from "./utils/dbVersionSupport.js";
 
 const app = {
   client: function (params) {
@@ -29,12 +30,12 @@ const app = {
     });
 
     const miscClient = misc(httpClient);
-    const dbVersionPromise = miscClient.metaGetter().fetchVersion();
+    const dbVersionSupport = new DbVersionSupport(miscClient.metaGetter().fetchVersion())
 
     return {
       graphql: graphql(graphqlClient),
       schema: schema(httpClient),
-      data: data(httpClient, dbVersionPromise),
+      data: data(httpClient, dbVersionSupport),
       classifications: classifications(httpClient),
       batch: batch(httpClient),
       misc: miscClient,

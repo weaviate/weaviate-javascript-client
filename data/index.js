@@ -10,12 +10,11 @@ import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
-import DbVersionSupport from "../utils/dbVersionSupport";
-import ObjectsPath from "./path";
+import { ObjectsPath, ReferencesPath } from "./path";
 
-const data = (client, dbVersionPromise) => {
-  const dbVersionSupport = new DbVersionSupport(dbVersionPromise);
+const data = (client, dbVersionSupport) => {
   const objectsPath = new ObjectsPath(dbVersionSupport);
+  const referencesPath = new ReferencesPath(dbVersionSupport)
 
   return {
     creator: () => new Creator(client, objectsPath),
@@ -26,9 +25,9 @@ const data = (client, dbVersionPromise) => {
     getterById: () => new GetterById(client, objectsPath),
     deleter: () => new Deleter(client, objectsPath),
     checker: () => new Checker(client, objectsPath),
-    referenceCreator: () => new ReferenceCreator(client),
-    referenceReplacer: () => new ReferenceReplacer(client),
-    referenceDeleter: () => new ReferenceDeleter(client),
+    referenceCreator: () => new ReferenceCreator(client, referencesPath),
+    referenceReplacer: () => new ReferenceReplacer(client, referencesPath),
+    referenceDeleter: () => new ReferenceDeleter(client, referencesPath),
     referencePayloadBuilder: () => new ReferencePayloadBuilder(client),
   };
 };
