@@ -10,7 +10,8 @@ import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
-import { BeaconPath, ObjectsPath, ReferencesPath } from "./path";
+import { ObjectsPath, ReferencesPath } from "./path";
+import { BeaconPath } from "../utils/beaconPath";
 
 const data = (client, dbVersionSupport) => {
   const objectsPath = new ObjectsPath(dbVersionSupport);
