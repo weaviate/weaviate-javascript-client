@@ -6,6 +6,11 @@ export default class Getter {
     this.additionals = [];
   }
 
+  withClassName = (className) => {
+    this.className = className;
+    return this;
+  };
+
   withLimit = (limit) => {
     this.limit = limit;
     return this;
@@ -27,7 +32,7 @@ export default class Getter {
       );
     }
 
-    return this.objectsPath.buildGet(this.limit, this.additionals)
+    return this.objectsPath.buildGet(this.className, this.limit, this.additionals)
       .then(this.client.get);
   };
 }

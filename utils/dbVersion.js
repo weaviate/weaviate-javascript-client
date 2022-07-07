@@ -15,6 +15,7 @@ export class DbVersionSupport {
         notSupportedClassNamespacedEndpointsForObjects: () => console.warn(`Usage of objects paths with className is not supported in Weaviate ${version}. className parameter is ignored`),
         notSupportedClassNamespacedEndpointsForReferences: () => console.warn(`Usage of references paths with className is not supported in Weaviate ${version}. className parameter is ignored`),
         notSupportedClassNamespacedEndpointsForBeacons: () => console.warn(`Usage of beacons paths with className is not supported in Weaviate ${version}. className parameter is ignored`),
+        notSupportedClassParameterInEndpointsForObjects: () => console.warn(`Usage of objects paths with class query parameter is not supported in Weaviate ${version}. class query parameter is ignored`),
       }
     }));
   }

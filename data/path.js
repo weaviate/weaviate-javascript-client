@@ -20,8 +20,8 @@ export class ObjectsPath {
   buildGetOne(id, className, additionals) {
     return this.build({id, className, additionals}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(limit, additionals) {
-    return this.build({limit, additionals}, [this.addQueryParams]);
+  buildGet(className, limit, additionals) {
+    return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
   }
   buildUpdate(id, className) {
     return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
@@ -73,8 +73,25 @@ export class ObjectsPath {
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
     }
+    if (queryParams.length > 0) {
+      return `${path}?${queryParams.join("&")}`;
+    }
+    return path;
+  }
+  addQueryParamsForGet(params, path, support) {
+    const queryParams = [];
+    if (Array.isArray(params.additionals) && params.additionals.length > 0) {
+      queryParams.push(`include=${params.additionals.join(",")}`);
+    }
     if (typeof params.limit == "number" && params.limit > 0) {
       queryParams.push(`limit=${params.limit}`);
+    }
+    if (isValidStringProperty(params.className)) {
+      if (support.supports) {
+        queryParams.push(`class=${params.className}`);
+      } else {
+        support.warns.notSupportedClassParameterInEndpointsForObjects();
+      }
     }
     if (queryParams.length > 0) {
       return `${path}?${queryParams.join("&")}`;

@@ -140,6 +140,28 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
+  it("gets all classes objects", () => {
+    return client.data
+      .getter()
+      .withClassName(thingClassName)
+      .do()
+      .then((res) => {
+        expect(res.objects).toHaveLength(2);
+        expect(res.objects).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: "1565c06c-463f-466c-9092-5930dbac3887",
+              properties: { stringProp: "with-id" },
+            }),
+            expect.objectContaining({
+              properties: { stringProp: "without-id" },
+            }),
+          ])
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
   it("gets all things with all optional _additional params", () => {
     return client.data
       .getter()
@@ -158,6 +180,26 @@ describe("data", () => {
         expect(res.objects[0].additional.nearestNeighbors).toBeDefined();
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("gets all classes objects  with all optional _additional params", () => {
+    return client.data
+      .getter()
+      .withClassName(thingClassName)
+      .withAdditional("classification")
+      .withAdditional("interpretation")
+      .withAdditional("nearestNeighbors")
+      .withAdditional("featureProjection")
+      .withVector()
+      .do()
+      .then((res) => {
+        expect(res.objects).toHaveLength(2);
+        expect(res.objects[0].vector.length).toBeGreaterThan(10);
+        expect(res.objects[0].additional.interpretation).toBeDefined();
+        expect(res.objects[0].additional.featureProjection).toBeDefined();
+        expect(res.objects[0].additional.nearestNeighbors).toBeDefined();
       })
       .catch((e) => fail("it should not have errord: " + e));
   });
