@@ -1,9 +1,9 @@
 import { isValidStringProperty } from "../validation/string";
-import { buildObjectsPath } from "./path";
 
 export default class Updater {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
   }
 
@@ -60,7 +60,7 @@ export default class Updater {
       );
     }
 
-    const path = buildObjectsPath(this.id, this.className);
-    return this.client.put(path, this.payload());
+    return this.objectsPath.buildUpdate(this.id, this.className)
+      .then(path => this.client.put(path, this.payload()));
   };
 }

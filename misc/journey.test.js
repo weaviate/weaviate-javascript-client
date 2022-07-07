@@ -70,20 +70,4 @@ describe("misc endpoints", () => {
       })
       .catch((e) => fail("it should not have errord: " + e));
   });
-
-  it("fetches the server version", async () => {
-    let version = await client.misc.metaGetter()
-      .do()
-      .then(res => {
-        return res.version;
-      })
-      .catch((e) => fail("it should not have errord: " + e));
-
-    return client.misc.metaGetter()
-      .fetchVersion()
-      .then(res => {
-        expect(res).toEqual(version);
-      })
-      .catch((e) => fail("it should not have errord: " + e));
-  });
 });

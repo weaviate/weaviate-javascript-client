@@ -1,8 +1,9 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class Creator {
-  constructor(client) {
+  constructor(client, objectsPath) {
     this.client = client;
+    this.objectsPath = objectsPath;
     this.errors = [];
   }
 
@@ -53,7 +54,8 @@ export default class Creator {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/objects`;
-    return this.client.post(path, this.payload());
+
+    return this.objectsPath.buildCreate()
+      .then(path => this.client.post(path, this.payload()))
   };
 }

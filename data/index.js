@@ -10,20 +10,26 @@ import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
+import { ObjectsPath, ReferencesPath } from "./path";
+import { BeaconPath } from "../utils/beaconPath";
 
-const data = (client) => {
+const data = (client, dbVersionSupport) => {
+  const objectsPath = new ObjectsPath(dbVersionSupport);
+  const referencesPath = new ReferencesPath(dbVersionSupport);
+  const beaconPath = new BeaconPath(dbVersionSupport);
+
   return {
-    creator: () => new Creator(client),
+    creator: () => new Creator(client, objectsPath),
     validator: () => new Validator(client),
-    updater: () => new Updater(client),
-    merger: () => new Merger(client),
-    getter: () => new Getter(client),
-    getterById: () => new GetterById(client),
-    deleter: () => new Deleter(client),
-    checker: () => new Checker(client),
-    referenceCreator: () => new ReferenceCreator(client),
-    referenceReplacer: () => new ReferenceReplacer(client),
-    referenceDeleter: () => new ReferenceDeleter(client),
+    updater: () => new Updater(client, objectsPath),
+    merger: () => new Merger(client, objectsPath),
+    getter: () => new Getter(client, objectsPath),
+    getterById: () => new GetterById(client, objectsPath),
+    deleter: () => new Deleter(client, objectsPath),
+    checker: () => new Checker(client, objectsPath),
+    referenceCreator: () => new ReferenceCreator(client, referencesPath, beaconPath),
+    referenceReplacer: () => new ReferenceReplacer(client, referencesPath, beaconPath),
+    referenceDeleter: () => new ReferenceDeleter(client, referencesPath, beaconPath),
     referencePayloadBuilder: () => new ReferencePayloadBuilder(client),
   };
 };

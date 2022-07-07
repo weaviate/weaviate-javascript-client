@@ -56,8 +56,8 @@ describe("batch importing", () => {
 
       it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data.getterById().withId(thingIds[0]).do(),
-          client.data.getterById().withId(thingIds[1]).do(),
+          client.data.getterById().withId(thingIds[0]).withClassName(thingClassName).do(),
+          client.data.getterById().withId(thingIds[1]).withClassName(thingClassName).do(),
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
@@ -94,8 +94,8 @@ describe("batch importing", () => {
 
       it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data.getterById().withId(thingIds[2]).do(),
-          client.data.getterById().withId(thingIds[3]).do(),
+          client.data.getterById().withId(thingIds[2]).withClassName(thingClassName).do(),
+          client.data.getterById().withId(thingIds[3]).withClassName(thingClassName).do(),
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
@@ -132,8 +132,8 @@ describe("batch importing", () => {
 
       it("verifies they are now queryable", () => {
         return Promise.all([
-          client.data.getterById().withId(toImport[0].id).do(),
-          client.data.getterById().withId(toImport[1].id).do(),
+          client.data.getterById().withId(toImport[0].id).withClassName(toImport[0].class).do(),
+          client.data.getterById().withId(toImport[1].id).withClassName(toImport[1].class).do(),
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
@@ -144,16 +144,12 @@ describe("batch importing", () => {
       return client.batch
         .referencesBatcher()
         .withReference({
-          from:
-            `weaviate://localhost/${thingClassName}/` +
-            `${thingIds[0]}/refProp`,
-          to: `weaviate://localhost/${otherThingIds[0]}`,
+          from: `weaviate://localhost/${thingClassName}/${thingIds[0]}/refProp`,
+          to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`,
         })
         .withReference({
-          from:
-            `weaviate://localhost/${thingClassName}/` +
-            `${thingIds[1]}/refProp`,
-          to: `weaviate://localhost/${otherThingIds[1]}`,
+          from: `weaviate://localhost/${thingClassName}/${thingIds[1]}/refProp`,
+          to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
         })
         .do()
         .then((res) => {
@@ -174,6 +170,7 @@ describe("batch importing", () => {
             .withFromRefProp("refProp")
             .withFromId(thingIds[2])
             .withToId(otherThingIds[0])
+            .withToClassName(otherThingClassName)
             .payload()
         )
         .withReference(
@@ -183,6 +180,7 @@ describe("batch importing", () => {
             .withFromRefProp("refProp")
             .withFromId(thingIds[3])
             .withToId(otherThingIds[1])
+            .withToClassName(otherThingClassName)
             .payload()
         )
         .do()
@@ -203,37 +201,41 @@ describe("batch importing", () => {
         client.data
           .getterById()
           .withId(thingIds[0])
+          .withClassName(thingClassName)
           .do()
           .then((res) => {
             expect(res.properties.refProp[0].beacon).toEqual(
-              `weaviate://localhost/${otherThingIds[0]}`
+              `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
           }),
         client.data
           .getterById()
           .withId(thingIds[1])
+          .withClassName(thingClassName)
           .do()
           .then((res) => {
             expect(res.properties.refProp[0].beacon).toEqual(
-              `weaviate://localhost/${otherThingIds[1]}`
+              `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
           }),
         client.data
           .getterById()
           .withId(thingIds[2])
+          .withClassName(thingClassName)
           .do()
           .then((res) => {
             expect(res.properties.refProp[0].beacon).toEqual(
-              `weaviate://localhost/${otherThingIds[0]}`
+              `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
           }),
         client.data
           .getterById()
           .withId(thingIds[3])
+          .withClassName(thingClassName)
           .do()
           .then((res) => {
             expect(res.properties.refProp[0].beacon).toEqual(
-              `weaviate://localhost/${otherThingIds[1]}`
+              `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
           }),
       ]).catch((e) => fail("it should not have error'd " + e));
@@ -395,7 +397,7 @@ describe("batch deleting", () => {
       })
   })
 
-  it("batch deletes fails due to validation", () => 
+  it("batch deletes fails due to validation", () =>
     client.batch
       .objectsBatchDeleter()
       .withClassName("")
