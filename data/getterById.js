@@ -21,11 +21,6 @@ export default class GetterById {
     return this;
   };
 
-  extendAdditionals = (prop) => {
-    this.additionals = [...this.additionals, prop];
-    return this;
-  };
-
   withAdditional = (additionalFlag) => this.extendAdditionals(additionalFlag);
 
   withVector = () => this.extendAdditionals("vector");

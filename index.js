@@ -6,7 +6,7 @@ import batch from "./batch/index.js";
 import misc from "./misc/index.js";
 import c11y from "./c11y/index.js";
 import { KIND_THINGS, KIND_ACTIONS } from "./kinds";
-import DbVersionSupport from "./utils/dbVersionSupport.js";
+import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion.js";
 
 const app = {
   client: function (params) {
@@ -29,8 +29,8 @@ const app = {
       headers: params.headers,
     });
 
-    const miscClient = misc(httpClient);
-    const dbVersionSupport = new DbVersionSupport(miscClient.metaGetter().fetchVersion())
+    const dbVersionProvider = initDbVersionProvider(httpClient);
+    const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
     return {
       graphql: graphql(graphqlClient),
@@ -38,7 +38,7 @@ const app = {
       data: data(httpClient, dbVersionSupport),
       classifications: classifications(httpClient),
       batch: batch(httpClient),
-      misc: miscClient,
+      misc: misc(httpClient, dbVersionProvider),
       c11y: c11y(httpClient),
     };
   },
@@ -47,6 +47,20 @@ const app = {
   KIND_THINGS,
   KIND_ACTIONS,
 };
+
+function initDbVersionProvider(httpClient) {
+  const metaGetter = misc(httpClient).metaGetter();
+  const versionGetter = () => {
+    return metaGetter.do()
+      .then(result => result.version)
+      .catch(_ => Promise.resolve(""));
+  }
+
+  const dbVersionProvider = new DbVersionProvider(versionGetter);
+  dbVersionProvider.refresh();
+
+  return dbVersionProvider;
+}
 
 export default app;
 module.exports = app;

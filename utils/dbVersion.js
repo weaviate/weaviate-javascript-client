@@ -1,10 +1,11 @@
-export default class DbVersionSupport {
-    constructor(dbVersionPromise) {
-        this.dbVersionPromise = dbVersionPromise;
+export class DbVersionSupport {
+    
+    constructor(dbVersionProvider) {
+        this.dbVersionProvider = dbVersionProvider;
     }
     
     supportsClassNameNamespacedEndpointsPromise() {
-        return this.dbVersionPromise.then(version => ({
+        return this.dbVersionProvider.getVersionPromise().then(version => ({
             version,
             supports: this.supportsClassNameNamespacedEndpoints(version),
             warns: {
@@ -29,5 +30,27 @@ export default class DbVersionSupport {
             }
         }
         return false;
+    }
+}
+
+
+
+export class DbVersionProvider {
+
+    constructor(versionGetter) {
+        this.versionGetter = versionGetter;
+        this.versionPromise = Promise.resolve("");
+    }
+
+    getVersionPromise() {
+        return this.versionPromise;
+    }
+
+    refresh(force = false) {
+        this.versionPromise.then(version => {
+            if (force || version === "") {
+                this.versionPromise = this.versionGetter();
+            }
+        });
     }
 }
