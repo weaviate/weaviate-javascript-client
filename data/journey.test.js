@@ -201,7 +201,7 @@ describe("data", () => {
       .withClassName("DoesNotExist")
       .withId("1565c06c-463f-466c-9092-5930dbac3887")
       .do()
-      .catch(err => 
+      .catch(err =>
         expect(err).toEqual("usage error (404): ")
       );
   });
@@ -364,7 +364,7 @@ describe("data", () => {
       .withClassName(refSourceClassName)
       .withReferenceProperty("refProp")
       .withReference(
-        client.data.referencePayloadBuilder().withId(targetId).payload()
+        client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
       .catch((e) => fail("it should not have errord: " + e));
@@ -380,7 +380,7 @@ describe("data", () => {
       .withClassName(refSourceClassName)
       .withReferenceProperty("refProp")
       .withReferences([
-        client.data.referencePayloadBuilder().withId(targetId).payload(),
+        client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload(),
       ])
       .do()
       .catch((e) => fail("it should not have errord: " + e));
@@ -396,7 +396,7 @@ describe("data", () => {
       .withClassName(refSourceClassName)
       .withReferenceProperty("refProp")
       .withReference(
-        client.data.referencePayloadBuilder().withId(targetId).payload()
+        client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
       .catch((e) => fail("it should not have errord: " + e));

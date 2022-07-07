@@ -1,7 +1,8 @@
 export default class ReferenceDeleter {
-  constructor(client, referencesPath) {
+  constructor(client, referencesPath, beaconPath) {
     this.client = client;
     this.referencesPath = referencesPath;
+    this.beaconPath = beaconPath;
     this.errors = [];
   }
 
@@ -54,7 +55,13 @@ export default class ReferenceDeleter {
       );
     }
 
-    return this.referencesPath.build(this.id, this.className, this.refProp)
-      .then(path => this.client.delete(path, this.payload(), false));
+    return Promise.all([
+      this.referencesPath.build(this.id, this.className, this.refProp),
+      this.beaconPath.rebuild(this.reference.beacon)
+    ]).then(results => {
+      const path = results[0];
+      const beacon = results[1];
+      return this.client.delete(path, { beacon }, false);
+    });
   };
 }

@@ -1,3 +1,5 @@
+import { isValidStringProperty } from "../validation/string";
+
 export default class ReferencePayloadBuilder {
   constructor(client) {
     this.client = client;
@@ -8,6 +10,11 @@ export default class ReferencePayloadBuilder {
     this.id = id;
     return this;
   };
+
+  withClassName(className) {
+    this.className = className;
+    return this;
+  }
 
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
@@ -28,8 +35,12 @@ export default class ReferencePayloadBuilder {
       throw new Error(this.errors.join(", "));
     }
 
+    var beacon = `weaviate://localhost`;
+    if (isValidStringProperty(this.className)) {
+      beacon = `${beacon}/${this.className}`;
+    }
     return {
-      beacon: `weaviate://localhost/${this.id}`,
+      beacon: `${beacon}/${this.id}`,
     };
   };
 }

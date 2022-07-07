@@ -1,7 +1,8 @@
 export default class ReferenceCreator {
-  constructor(client, referencesPath) {
+  constructor(client, referencesPath, beaconPath) {
     this.client = client;
     this.referencesPath = referencesPath;
+    this.beaconPath = beaconPath;
     this.errors = [];
   }
 
@@ -53,8 +54,14 @@ export default class ReferenceCreator {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    
-    return this.referencesPath.build(this.id, this.className, this.refProp)
-      .then(path => this.client.post(path, this.payload(), false));
+
+    return Promise.all([
+      this.referencesPath.build(this.id, this.className, this.refProp),
+      this.beaconPath.rebuild(this.reference.beacon)
+    ]).then(results => {
+      const path = results[0];
+      const beacon = results[1];
+      return this.client.post(path, { beacon }, false);
+    });
   };
 }

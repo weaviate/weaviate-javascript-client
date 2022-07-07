@@ -1,6 +1,7 @@
 import { isValidStringProperty } from "../validation/string";
 
 const objectsPathPrefix = "/objects";
+const beaconPathPrefix = "weaviate://localhost";
 
 export class ObjectsPath {
 
@@ -43,7 +44,7 @@ export class ObjectsPath {
   addClassNameDeprecatedNotSupportedCheck(params, path, support) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
-        return `${path}/${params.className}`
+        return `${path}/${params.className}`;
       } else {
         support.warns.deprecatedNonClassNameNamespacedEndpointsForObjects();
       }
@@ -55,7 +56,7 @@ export class ObjectsPath {
   addClassNameDeprecatedCheck(params, path, support) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
-        return `${path}/${params.className}`
+        return `${path}/${params.className}`;
       } else {
         support.warns.deprecatedNonClassNameNamespacedEndpointsForObjects();
       }
@@ -64,7 +65,7 @@ export class ObjectsPath {
   }
   addId(params, path) {
     if (isValidStringProperty(params.id)) {
-      return `${path}/${params.id}`
+      return `${path}/${params.id}`;
     }
     return path;
   }
@@ -77,11 +78,12 @@ export class ObjectsPath {
       queryParams.push(`limit=${params.limit}`);
     }
     if (queryParams.length > 0) {
-      return `${path}?${queryParams.join("&")}`
+      return `${path}?${queryParams.join("&")}`;
     }
     return path;
   }
 }
+
 
 export class ReferencesPath {
 
@@ -94,7 +96,7 @@ export class ReferencesPath {
       var path = objectsPathPrefix;
       if (support.supports) {
         if (isValidStringProperty(className)) {
-          path = `${path}/${className}`
+          path = `${path}/${className}`;
         } else {
           support.warns.deprecatedNonClassNameNamespacedEndpointsForReferences();
         }
@@ -102,13 +104,61 @@ export class ReferencesPath {
         support.warns.notSupportedClassNamespacedEndpointsForReferences();
       }
       if (isValidStringProperty(id)) {
-        path = `${path}/${id}`
+        path = `${path}/${id}`;
       }
       path = `${path}/references`;
       if (isValidStringProperty(property)) {
-        path = `${path}/${property}`
+        path = `${path}/${property}`;
       }
       return path;
+    });
+  }
+}
+
+
+export class BeaconPath {
+
+  constructor(dbVersionSupport) {
+    this.dbVersionSupport = dbVersionSupport;
+    // matches
+    // weaviate://localhost/class/id    => match[2] = class, match[4] = id
+    // weaviate://localhost/class/id/   => match[2] = class, match[4] = id
+    // weaviate://localhost/id          => match[2] = id, match[4] = undefined
+    // weaviate://localhost/id/         => match[2] = id, match[4] = undefined
+    this.beaconRegExp = /^weaviate:\/\/localhost(\/([^\/]+))?(\/([^\/]+))?[\/]?$/ig;
+  }
+
+  rebuild(beacon) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+      const match = new RegExp(this.beaconRegExp).exec(beacon);
+      if (!match) {
+        return beacon;
+      }
+
+      var className;
+      var id;
+      if (match[4] !== undefined) {
+        id = match[4];
+        className = match[2];
+      } else {
+        id = match[2];
+      }
+
+      var beaconPath = beaconPathPrefix;
+      if (support.supports) {
+        if (isValidStringProperty(className)) {
+          beaconPath = `${beaconPath}/${className}`;
+        } else {
+          support.warns.deprecatedNonClassNameNamespacedEndpointsForBeacons();
+        }
+      } else {
+        support.warns.notSupportedClassNamespacedEndpointsForBeacons();
+      }
+      if (isValidStringProperty(id)) {
+        beaconPath = `${beaconPath}/${id}`;
+      }
+
+      return beaconPath;
     });
   }
 }

@@ -10,11 +10,12 @@ import ReferenceCreator from "./referenceCreator";
 import ReferenceReplacer from "./referenceReplacer";
 import ReferenceDeleter from "./referenceDeleter";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
-import { ObjectsPath, ReferencesPath } from "./path";
+import { BeaconPath, ObjectsPath, ReferencesPath } from "./path";
 
 const data = (client, dbVersionSupport) => {
   const objectsPath = new ObjectsPath(dbVersionSupport);
-  const referencesPath = new ReferencesPath(dbVersionSupport)
+  const referencesPath = new ReferencesPath(dbVersionSupport);
+  const beaconPath = new BeaconPath(dbVersionSupport);
 
   return {
     creator: () => new Creator(client, objectsPath),
@@ -25,9 +26,9 @@ const data = (client, dbVersionSupport) => {
     getterById: () => new GetterById(client, objectsPath),
     deleter: () => new Deleter(client, objectsPath),
     checker: () => new Checker(client, objectsPath),
-    referenceCreator: () => new ReferenceCreator(client, referencesPath),
-    referenceReplacer: () => new ReferenceReplacer(client, referencesPath),
-    referenceDeleter: () => new ReferenceDeleter(client, referencesPath),
+    referenceCreator: () => new ReferenceCreator(client, referencesPath, beaconPath),
+    referenceReplacer: () => new ReferenceReplacer(client, referencesPath, beaconPath),
+    referenceDeleter: () => new ReferenceDeleter(client, referencesPath, beaconPath),
     referencePayloadBuilder: () => new ReferencePayloadBuilder(client),
   };
 };

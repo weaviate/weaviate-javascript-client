@@ -34,7 +34,6 @@ export class DbVersionSupport {
 }
 
 
-
 export class DbVersionProvider {
 
   constructor(versionGetter) {
