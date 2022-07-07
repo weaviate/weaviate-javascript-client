@@ -220,7 +220,7 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with optional parameters", () => {
+  test("with optional parameters (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -244,7 +244,31 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with optional parameters and autocorrect", () => {
+  test("with optional parameters (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],distance:0.3,moveTo:{concepts:["foo"],force:0.7},moveAwayFrom:{concepts:["bar"],force:0.5}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        distance: 0.3,
+        moveTo: { concepts: ["foo"], force: 0.7 },
+        moveAwayFrom: { concepts: ["bar"], force: 0.5 },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with optional parameters and autocorrect (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -260,6 +284,31 @@ describe("nearText searchers", () => {
       .withNearText({
         concepts: ["foo", "bar"],
         certainty: 0.7,
+        moveTo: { concepts: ["foo"], force: 0.7 },
+        moveAwayFrom: { concepts: ["bar"], force: 0.5 },
+        autocorrect: true,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with optional parameters and autocorrect (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],distance:0.7,moveTo:{concepts:["foo"],force:0.7},moveAwayFrom:{concepts:["bar"],force:0.5},autocorrect:true})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        distance: 0.7,
         moveTo: { concepts: ["foo"], force: 0.7 },
         moveAwayFrom: { concepts: ["bar"], force: 0.5 },
         autocorrect: true,
@@ -286,7 +335,7 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with moveTo with objects parameter", () => {
+  test("with moveTo with objects parameter (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -309,7 +358,30 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with moveAwayFrom with objects parameter", () => {
+  test("with moveTo with objects parameter (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],distance:0.7,moveTo:{objects:[{id:"uuid"},{beacon:"beacon"}],force:0.7}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        distance: 0.7,
+        moveTo: { force: 0.7, objects: [{ id: "uuid" }, {beacon: "beacon"}] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with moveAwayFrom with objects parameter (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -332,7 +404,30 @@ describe("nearText searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with moveTo and moveAway with objects parameter", () => {
+  test("with moveAwayFrom with objects parameter (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],distance:0.7,moveAwayFrom:{objects:[{id:"uuid"},{beacon:"beacon"}],force:0.7}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        distance: 0.7,
+        moveAwayFrom: { force: 0.7, objects: [{ id: "uuid" }, {beacon: "beacon"}] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with moveTo and moveAway with objects parameter (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -348,6 +443,30 @@ describe("nearText searchers", () => {
       .withNearText({
         concepts: ["foo", "bar"],
         certainty: 0.7,
+        moveTo: { force: 0.7, objects: [{ id: "uuid" }] },
+        moveAwayFrom: { force: 0.5, objects: [{ beacon: "beacon" }] },
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with moveTo and moveAway with objects parameter (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearText:{concepts:["foo","bar"],distance:0.7,moveTo:{objects:[{id:"uuid"}],force:0.7},moveAwayFrom:{objects:[{beacon:"beacon"}],force:0.5}})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearText({
+        concepts: ["foo", "bar"],
+        distance: 0.7,
         moveTo: { force: 0.7, objects: [{ id: "uuid" }] },
         moveAwayFrom: { force: 0.5, objects: [{ beacon: "beacon" }] },
       })
@@ -376,6 +495,11 @@ describe("nearText searchers", () => {
         title: "certainty of wrong type",
         nearText: { concepts: ["foo"], certainty: "foo" },
         msg: "nearText filter: certainty must be a number",
+      },
+      {
+        title: "distance of wrong type",
+        nearText: { concepts: ["foo"], distance: "foo" },
+        msg: "nearText filter: distance must be a number",
       },
       {
         title: "moveTo empty object",
@@ -510,7 +634,7 @@ describe("nearVector searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("with optional parameters", () => {
+  test("with optional parameters (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -526,6 +650,28 @@ describe("nearVector searchers", () => {
       .withNearVector({
         vector: [0.1234, 0.9876],
         certainty: 0.7,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("with optional parameters (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` +
+      `(nearVector:{vector:[0.1234,0.9876],distance:0.7})` +
+      `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearVector({
+        vector: [0.1234, 0.9876],
+        distance: 0.7,
       })
       .do();
 
@@ -557,6 +703,11 @@ describe("nearVector searchers", () => {
         title: "certainty of wrong type",
         nearVector: { vector: [0.123, 0.987], certainty: "foo" },
         msg: "nearVector filter: certainty must be a number",
+      },
+      {
+        title: "distance of wrong type",
+        nearVector: { vector: [0.123, 0.987], distance: "foo" },
+        msg: "nearVector filter: distance must be a number",
       },
     ];
 
@@ -611,7 +762,7 @@ describe("nearObject searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("a query with a valid nearObject with all params", () => {
+  test("a query with a valid nearObject with all params (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -626,6 +777,27 @@ describe("nearObject searchers", () => {
         id: "some-uuid",
         beacon: "weaviate/some-uuid",
         certainty: 0.7
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearObject with all params (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearObject:{id:"some-uuid",beacon:"weaviate/some-uuid",distance:0.7})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearObject({
+        id: "some-uuid",
+        beacon: "weaviate/some-uuid",
+        distance: 0.7
       })
       .do();
 
@@ -657,6 +829,11 @@ describe("nearObject searchers", () => {
         title: "certainty of wrong type",
         nearObject: { id: "foo", certainty: "foo" },
         msg: "nearObject filter: certainty must be a number",
+      },
+      {
+        title: "distance of wrong type",
+        nearObject: { id: "foo", distance: "foo" },
+        msg: "nearObject filter: distance must be a number",
       }
     ];
 
@@ -732,7 +909,28 @@ describe("ask searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("a query with a valid ask with all params", () => {
+  test("a query with a valid ask with question, properties, distance", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],distance:0.8})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({
+        question: "What is Weaviate?",
+        properties: ["prop1", "prop2"],
+        distance: 0.8,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with all params (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -747,6 +945,29 @@ describe("ask searchers", () => {
         question: "What is Weaviate?",
         properties: ["prop1", "prop2"],
         certainty: 0.8,
+        autocorrect: true,
+        rerank: true,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid ask with all params (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(ask:{question:"What is Weaviate?",properties:["prop1","prop2"],distance:0.8,autocorrect:true,rerank:true})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withAsk({
+        question: "What is Weaviate?",
+        properties: ["prop1", "prop2"],
+        distance: 0.8,
         autocorrect: true,
         rerank: true,
       })
@@ -850,6 +1071,11 @@ describe("ask searchers", () => {
         msg: "ask filter: certainty must be a number",
       },
       {
+        title: "distance of wrong type",
+        ask: { question: "foo", distance: "foo" },
+        msg: "ask filter: distance must be a number",
+      },
+      {
         title: "autocorrect of wrong type",
         ask: { question: "foo", autocorrect: "foo" },
         msg: "ask filter: autocorrect must be a boolean",
@@ -890,7 +1116,7 @@ describe("nearImage searchers", () => {
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  test("a query with a valid nearImage with all params", () => {
+  test("a query with a valid nearImage with all params (with certainty)", () => {
     const mockClient = {
       query: jest.fn(),
     };
@@ -904,6 +1130,26 @@ describe("nearImage searchers", () => {
       .withNearImage({
         image: "iVBORw0KGgoAAAANS",
         certainty: 0.8,
+      })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("a query with a valid nearImage with all params (with distance)", () => {
+    const mockClient = {
+      query: jest.fn(),
+    };
+
+    const expectedQuery =
+      `{Get{Person` + `(nearImage:{image:"iVBORw0KGgoAAAANS",distance:0.8})` + `{name}}}`;
+
+      new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withNearImage({
+        image: "iVBORw0KGgoAAAANS",
+        distance: 0.8,
       })
       .do();
 
@@ -947,6 +1193,11 @@ describe("nearImage searchers", () => {
         title: "certainty of wrong type",
         nearImage: { image: "foo", certainty: "foo" },
         msg: "nearImage filter: certainty must be a number",
+      },
+      {
+        title: "distance of wrong type",
+        nearImage: { image: "foo", distance: "foo" },
+        msg: "nearImage filter: distance must be a number",
       }
     ];
 
