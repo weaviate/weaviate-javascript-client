@@ -10,6 +10,10 @@ if test -z "$VERSION"; then
   exit 1
 fi
 
+if case $VERSION in v*) false;; esac; then
+  VERSION="v$VERSION"
+fi
+
 for tool in $REQUIRED_TOOLS; do
   if ! hash "$tool" 2>/dev/null; then
     echo "This script requires '$tool', but it is not installed."
@@ -17,13 +21,9 @@ for tool in $REQUIRED_TOOLS; do
   fi
 done
 
-if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-  echo "Cannot prepare release, a release for v$VERSION already exists"
+if git rev-parse "$VERSION" >/dev/null 2>&1; then
+  echo "Cannot prepare release, a release for $VERSION already exists"
   exit 1
 fi
 
-jq --arg new_version "$VERSION" '.version = ($new_version)' package.json > tmp.json && mv tmp.json package.json
-
-git commit -a -m "prepare release v$VERSION"
-
-git tag -a "v$VERSION" -m "$VERSION"
+npm version "${VERSION/v}"
