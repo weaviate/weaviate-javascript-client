@@ -54,8 +54,11 @@ export class DbVersionProvider {
   refresh(force = false) {
     if (force || !this.versionPromise) {
       this.versionPromise = undefined;
-      this.versionGetter().then(assignPromise.bind(this));
+      return this.versionGetter()
+        .then(assignPromise.bind(this))
+        .then(() => Promise.resolve(true));
     }
+    return Promise.resolve(false);
   }
 }
 
