@@ -34,23 +34,35 @@ export class DbVersionSupport {
   }
 }
 
-
+const EMPTY_VERSION = "";
 export class DbVersionProvider {
 
   constructor(versionGetter) {
     this.versionGetter = versionGetter;
-    this.versionPromise = Promise.resolve("");
+
+    this.emptyVersionPromise = Promise.resolve(EMPTY_VERSION);
+    this.versionPromise = undefined;
   }
 
   getVersionPromise() {
-    return this.versionPromise;
+    if (this.versionPromise) {
+      return this.versionPromise;
+    }
+    return this.versionGetter().then(assignPromise.bind(this));
   }
 
   refresh(force = false) {
-    this.versionPromise.then(version => {
-      if (force || version === "") {
-        this.versionPromise = this.versionGetter();
-      }
-    });
+    if (force || !this.versionPromise) {
+      this.versionPromise = undefined;
+      this.versionGetter().then(assignPromise.bind(this));
+    }
   }
+}
+
+function assignPromise(version) {
+  if (version === EMPTY_VERSION) {
+    return this.emptyVersionPromise;
+  }
+  this.versionPromise = Promise.resolve(version);
+  return this.versionPromise;
 }
