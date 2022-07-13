@@ -17,10 +17,76 @@ const otherThingIds = [
   "8727fa2b-610a-4a5c-af26-e558943f71c7",
 ];
 
+const someObjects = [
+  {
+    class: thingClassName,
+    id: thingIds[0],
+    properties: { stringProp: "foo1" },
+  },
+  {
+    class: thingClassName,
+    id: thingIds[1],
+    properties: { stringProp: "bar1" },
+  },
+  {
+    class: thingClassName,
+    id: thingIds[2],
+    properties: { stringProp: "foo2" },
+  },
+  {
+    class: thingClassName,
+    id: thingIds[3],
+    properties: { stringProp: "bar2" },
+  },
+  {
+    class: otherThingClassName,
+    id: otherThingIds[0],
+    properties: { stringProp: "foo3" },
+  },
+  {
+    class: otherThingClassName,
+    id: otherThingIds[1],
+    properties: { stringProp: "bar3" },
+  },
+];
+
+const someReferences = [
+  {
+    from: `weaviate://localhost/${thingClassName}/${thingIds[0]}/refProp`,
+    to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`,
+  },
+  {
+    from: `weaviate://localhost/${thingClassName}/${thingIds[1]}/refProp`,
+    to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
+  },
+  {
+    from: `weaviate://localhost/${thingClassName}/${thingIds[2]}/refProp`,
+    to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
+  },
+  {
+    from: `weaviate://localhost/${thingClassName}/${thingIds[3]}/refProp`,
+    to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
+  }
+];
+
 describe("batch importing", () => {
   const client = weaviate.client({
     scheme: "http",
     host: "localhost:8080",
+  });
+
+  it("can add objects with different methods", () => {
+    const batcher = client.batch.objectsBatcher()
+      .withObject(someObjects[0])
+      .withObjects(someObjects[1])
+      .withObjects(someObjects[2], someObjects[3])
+      .withObjects([someObjects[4], someObjects[5]]);
+
+    expect(batcher.objects).toHaveLength(someObjects.length);
+    batcher.objects.forEach((obj, i) => {
+      expect(obj.class).toBe(someObjects[i].class);
+      expect(obj.id).toBe(someObjects[i].id);
+    })
   });
 
   it("sets up", () => setup(client));
@@ -81,8 +147,7 @@ describe("batch importing", () => {
       it("imports them", () => {
         client.batch
           .objectsBatcher()
-          .withObject(toImport[0])
-          .withObject(toImport[1])
+          .withObjects(toImport[0], toImport[1])
           .do()
           .then()
           .catch((e) => fail("it should not have error'd " + e));
@@ -119,8 +184,7 @@ describe("batch importing", () => {
       it("imports them", () => {
         client.batch
           .objectsBatcher()
-          .withObject(toImport[0])
-          .withObject(toImport[1])
+          .withObjects([toImport[0], toImport[1]])
           .do()
           .then()
           .catch((e) => fail("it should not have error'd " + e));
@@ -140,6 +204,19 @@ describe("batch importing", () => {
   });
 
   describe("batch reference between the thing and otherThing objects", () => {
+    it("can add references with different methods", () => {
+      const batcher = client.batch.referencesBatcher()
+        .withReference(someReferences[0])
+        .withReferences(someReferences[1], someReferences[2])
+        .withReferences([someReferences[3]]);
+
+      expect(batcher.references).toHaveLength(someReferences.length);
+      batcher.references.forEach((ref, i) => {
+        expect(ref.from).toBe(someReferences[i].from);
+        expect(ref.to).toBe(someReferences[i].to);
+      })
+    });
+
     it("imports the refs with raw objects", () => {
       return client.batch
         .referencesBatcher()
@@ -161,28 +238,25 @@ describe("batch importing", () => {
     });
 
     it("imports more refs with a builder pattern", () => {
+      const reference1 = client.batch
+        .referencePayloadBuilder()
+        .withFromClassName(thingClassName)
+        .withFromRefProp("refProp")
+        .withFromId(thingIds[2])
+        .withToId(otherThingIds[0])
+        .withToClassName(otherThingClassName)
+        .payload();
+      const reference2 = client.batch
+        .referencePayloadBuilder()
+        .withFromClassName(thingClassName)
+        .withFromRefProp("refProp")
+        .withFromId(thingIds[3])
+        .withToId(otherThingIds[1])
+        .withToClassName(otherThingClassName)
+        .payload();
       return client.batch
         .referencesBatcher()
-        .withReference(
-          client.batch
-            .referencePayloadBuilder()
-            .withFromClassName(thingClassName)
-            .withFromRefProp("refProp")
-            .withFromId(thingIds[2])
-            .withToId(otherThingIds[0])
-            .withToClassName(otherThingClassName)
-            .payload()
-        )
-        .withReference(
-          client.batch
-            .referencePayloadBuilder()
-            .withFromClassName(thingClassName)
-            .withFromRefProp("refProp")
-            .withFromId(thingIds[3])
-            .withToId(otherThingIds[1])
-            .withToClassName(otherThingClassName)
-            .payload()
-        )
+        .withReferences(reference1, reference2)
         .do()
         .then((res) => {
           res.forEach((elem) => {
@@ -453,47 +527,9 @@ const setup = async (client) => {
 };
 
 const setupData = (client) => {
-  const toImport = [
-    {
-      class: thingClassName,
-      id: thingIds[0],
-      properties: { stringProp: "foo1" },
-    },
-    {
-      class: thingClassName,
-      id: thingIds[1],
-      properties: { stringProp: "bar1" },
-    },
-    {
-      class: thingClassName,
-      id: thingIds[2],
-      properties: { stringProp: "foo2" },
-    },
-    {
-      class: thingClassName,
-      id: thingIds[3],
-      properties: { stringProp: "bar2" },
-    },
-    {
-      class: otherThingClassName,
-      id: otherThingIds[0],
-      properties: { stringProp: "foo3" },
-    },
-    {
-      class: otherThingClassName,
-      id: otherThingIds[1],
-      properties: { stringProp: "bar3" },
-    },
-  ];
-
   return client.batch
     .objectsBatcher()
-    .withObject(toImport[0])
-    .withObject(toImport[1])
-    .withObject(toImport[2])
-    .withObject(toImport[3])
-    .withObject(toImport[4])
-    .withObject(toImport[5])
+    .withObjects(someObjects)
     .do();
 }
 

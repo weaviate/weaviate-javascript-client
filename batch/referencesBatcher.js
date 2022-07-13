@@ -6,10 +6,25 @@ export default class ReferencesBatcher {
     this.errors = [];
   }
 
-  withReference = (obj) => {
-    this.references = [...this.references, obj];
+  /**
+   * can be called as:
+   *  - withReferences([ref1, ref2, ref3])
+   *  - withReferences(ref1, ref2, ref3)
+   *  - withReferences(ref1)
+   * @param  {...any} references
+   */
+  withReferences(...references) {
+    let refs = references;
+    if (references.length && Array.isArray(references[0])) {
+      refs = references[0];
+    }
+    this.references = [...this.references, ...refs];
     return this;
-  };
+  }
+
+  withReference(reference) {
+    return this.withReferences(reference);
+  }
 
   payload = () => this.references;
 
