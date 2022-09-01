@@ -4,6 +4,7 @@ import BackupRestorer from "./backupRestorer";
 import BackupRestoreStatusGetter from "./backupRestoreStatusGetter";
 import BackupCreateHelper from "./backupCreateHelper";
 import BackupRestoreHelper from "./backupRestoreHelper";
+import BackupGetter from "./backupGetter";
 
 export const Storage = {
   FILESYSTEM: "filesystem",
@@ -33,6 +34,7 @@ const backup = client => {
     createStatusGetter: () => new BackupCreateStatusGetter(new BackupCreateHelper(client)),
     restorer: () => new BackupRestorer(new BackupRestoreHelper(client)),
     restoreStatusGetter: () => new BackupRestoreStatusGetter(new BackupRestoreHelper(client)),
+    getter: () => new BackupGetter(client),
   };
 };
 

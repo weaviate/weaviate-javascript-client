@@ -1,8 +1,9 @@
-import { validateAll } from "./validation";
+import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateStorageName } from "./validation";
 
 export default class BackupCreator {
 
-  className;
+  includeClassNames;
+  excludeClassNames;
   storageName;
   backupId;
   waitForCompletion;
@@ -12,8 +13,21 @@ export default class BackupCreator {
     this.helper = helper;
   }
 
-  withClassName(className) {
-    this.className = className;
+  withIncludeClassNames(...classNames) {
+    let cls = classNames;
+    if (classNames.length && Array.isArray(classNames[0])) {
+      cls = classNames[0];
+    }
+    this.includeClassNames = cls;
+    return this;
+  }
+
+  withExcludeClassNames(...classNames) {
+    let cls = classNames;
+    if (classNames.length && Array.isArray(classNames[0])) {
+      cls = classNames[0];
+    }
+    this.excludeClassNames = cls;
     return this;
   }
 
@@ -33,7 +47,12 @@ export default class BackupCreator {
   }
 
   validate() {
-    this.errors = validateAll(this.className, this.storageName, this.backupId)
+    this.errors = [
+      ...validateIncludeClassNames(this.includeClassNames),
+      ...validateExcludeClassNames(this.excludeClassNames),
+      ...validateStorageName(this.storageName),
+      ...validateBackupId(this.backupId),
+    ];
   }
 
   do() {
@@ -43,9 +62,17 @@ export default class BackupCreator {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
+
+    const payload = {
+      id: this.backupId,
+      config: {},
+      include: this.includeClassNames,
+      exclude: this.excludeClassNames,
+    };
+
     if (this.waitForCompletion) {
-      return this.helper.createAndWaitForCompletion(this.className, this.storageName, this.backupId);
+      return this.helper.createAndWaitForCompletion(this.storageName, payload);
     }
-    return this.helper.create(this.className, this.storageName, this.backupId);
+    return this.helper.create(this.storageName, payload);
   }
 }

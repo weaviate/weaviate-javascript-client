@@ -1,19 +1,13 @@
-import { validateAll } from "./validation";
+import { validateBackupId, validateStorageName } from "./validation";
 
 export default class BackupRestoreStatusGetter {
 
-  className;
   storageName;
   backupId;
   errors = [];
 
   constructor(helper) {
     this.helper = helper;
-  }
-
-  withClassName(className) {
-    this.className = className;
-    return this;
   }
 
   withStorageName(storageName) {
@@ -27,7 +21,10 @@ export default class BackupRestoreStatusGetter {
   }
 
   validate() {
-    this.errors = validateAll(this.className, this.storageName, this.backupId)
+    this.errors = [
+      ...validateStorageName(this.storageName),
+      ...validateBackupId(this.backupId),
+    ];
   }
 
   do() {
@@ -37,6 +34,6 @@ export default class BackupRestoreStatusGetter {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    return this.helper.statusRestore(this.className, this.storageName, this.backupId);
+    return this.helper.statusRestore(this.storageName, this.backupId);
   }
 }

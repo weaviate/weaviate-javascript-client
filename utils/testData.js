@@ -1,5 +1,5 @@
-const PIZZA_CLASS_NAME = "Pizza";
-const SOUP_CLASS_NAME = "Soup";
+export const PIZZA_CLASS_NAME = "Pizza";
+export const SOUP_CLASS_NAME = "Soup";
 
 const foodProperties = [{
   name: "name",

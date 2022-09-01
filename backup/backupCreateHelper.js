@@ -8,28 +8,18 @@ export default class BackupCreateHelper {
     this.client = client;
   }
 
-  create(className, storageName, backupId) {
-    return this._create(this._path(className, storageName, backupId));
+  create(storageName, payload) {
+    return this.client.post(this._path(storageName), payload);
   }
 
-  _create(path) {
-    return this.client.post(path)
+  statusCreate(storageName, backupId) {
+    return this.client.get(this._path(storageName, backupId));
   }
 
-  statusCreate(className, storageName, backupId) {
-    return this._statusCreate(this._path(className, storageName, backupId));
-  }
-
-  _statusCreate(path) {
-    return this.client.get(path)
-  }
-
-  createAndWaitForCompletion(className, storageName, backupId) {
-    const path = this._path(className, storageName, backupId);
-
+  createAndWaitForCompletion(storageName, payload) {
     return new Promise((resolve, reject) => {
       const loop = () => {
-        this._statusCreate(path)
+        this.statusCreate(storageName, payload.id)
           .then(metaStatusCreate => {
             if (metaStatusCreate.status == CreateStatus.SUCCESS || metaStatusCreate.status == CreateStatus.FAILED) {
               resolve(metaStatusCreate);
@@ -40,14 +30,16 @@ export default class BackupCreateHelper {
           .catch(reject);
       };
 
-      this._create(path)
+      this.create(storageName, payload)
         .then(loop)
         .catch(reject)
     });
   }
 
-  _path(className, storageName, backupId) {
-    // TODO change snapshots to backups
-    return `/schema/${className}/snapshots/${storageName}/${backupId}`;
+  _path(storageName, backupId) {
+    if (backupId) {
+      return `/backups/${storageName}/${backupId}`;
+    }
+    return `/backups/${storageName}`;
   }
 }

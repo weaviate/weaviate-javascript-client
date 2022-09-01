@@ -8,28 +8,18 @@ export default class BackupRestoreHelper {
     this.client = client;
   }
 
-  restore(className, storageName, backupId) {
-    return this._restore(this._path(className, storageName, backupId));
+  restore(storageName, payload) {
+    return this.client.post(this._path(storageName, payload.id), payload);
   }
 
-  _restore(path) {
-    return this.client.post(path)
+  statusRestore(storageName, backupId) {
+    return this.client.get(this._path(storageName, backupId));
   }
 
-  statusRestore(className, storageName, backupId) {
-    return this._statusRestore(this._path(className, storageName, backupId));
-  }
-
-  _statusRestore(path) {
-    return this.client.get(path)
-  }
-
-  restoreAndWaitForCompletion(className, storageName, backupId) {
-    const path = this._path(className, storageName, backupId);
-
+  restoreAndWaitForCompletion(storageName, payload) {
     return new Promise((resolve, reject) => {
       const loop = () => {
-        this._statusRestore(path)
+        this.statusRestore(storageName, payload.id)
           .then(metaStatusRestore => {
             if (metaStatusRestore.status == RestoreStatus.SUCCESS || metaStatusRestore.status == RestoreStatus.FAILED) {
               resolve(metaStatusRestore);
@@ -40,15 +30,14 @@ export default class BackupRestoreHelper {
           .catch(reject);
       };
 
-      this._restore(path)
+      this.restore(storageName, payload)
         .then(loop)
         .catch(reject)
     });
   }
 
-  _path(className, storageName, backupId) {
-    // TODO change snapshots to backups
-    return `/schema/${className}/snapshots/${storageName}/${backupId}/restore`;
+  _path(storageName, backupId) {
+    return `/backups/${storageName}/${backupId}/restore`;
   }
 }
 
