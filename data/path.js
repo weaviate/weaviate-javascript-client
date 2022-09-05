@@ -20,8 +20,8 @@ export class ObjectsPath {
   buildGetOne(id, className, additionals) {
     return this.build({id, className, additionals}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(className, limit, additionals) {
-    return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
+  buildGet(className, limit, offset, additionals) {
+    return this.build({className, limit, offset, additionals}, [this.addQueryParamsForGet]);
   }
   buildUpdate(id, className) {
     return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
@@ -85,6 +85,9 @@ export class ObjectsPath {
     }
     if (typeof params.limit == "number" && params.limit > 0) {
       queryParams.push(`limit=${params.limit}`);
+    }
+    if (typeof params.offset == "number" && params.offset > 0) {
+      queryParams.push(`offset=${params.offset}`);
     }
     if (isValidStringProperty(params.className)) {
       if (support.supports) {

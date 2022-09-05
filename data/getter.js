@@ -16,6 +16,11 @@ export default class Getter {
     return this;
   };
 
+  withOffset = (offset) => {
+    this.offset = offset;
+    return this;
+  };
+
   extendAdditionals = (prop) => {
     this.additionals = [...this.additionals, prop];
     return this;
@@ -32,7 +37,7 @@ export default class Getter {
       );
     }
 
-    return this.objectsPath.buildGet(this.className, this.limit, this.additionals)
+    return this.objectsPath.buildGet(this.className, this.limit, this.offset, this.additionals)
       .then(this.client.get);
   };
 }
