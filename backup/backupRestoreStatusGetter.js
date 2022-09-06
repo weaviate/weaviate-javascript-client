@@ -6,8 +6,8 @@ export default class BackupRestoreStatusGetter {
   backupId;
   errors = [];
 
-  constructor(helper) {
-    this.helper = helper;
+  constructor(client) {
+    this.client = client;
   }
 
   withStorageName(storageName) {
@@ -34,6 +34,11 @@ export default class BackupRestoreStatusGetter {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    return this.helper.statusRestore(this.storageName, this.backupId);
+
+    return this.client.get(this._path());
+  }
+
+  _path() {
+    return `/backups/${this.storageName}/${this.backupId}/restore`;
   }
 }

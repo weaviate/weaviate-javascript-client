@@ -1,4 +1,7 @@
+import { RestoreStatus } from ".";
 import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateStorageName } from "./validation";
+
+const WAIT_INTERVAL = 1000;
 
 export default class BackupRestorer {
 
@@ -9,8 +12,9 @@ export default class BackupRestorer {
   waitForCompletion;
   errors = [];
 
-  constructor(helper) {
-    this.helper = helper;
+  constructor(client, statusGetter) {
+    this.client = client;
+    this.statusGetter = statusGetter;
   }
 
   withIncludeClassNames(...classNames) {
@@ -64,15 +68,73 @@ export default class BackupRestorer {
     }
 
     const payload = {
-      id: this.backupId,
       config: {},
       include: this.includeClassNames,
       exclude: this.excludeClassNames,
     };
 
     if (this.waitForCompletion) {
-      return this.helper.restoreAndWaitForCompletion(this.storageName, payload);
+      return this._restoreAndWaitForCompletion(payload);
     }
-    return this.helper.restore(this.storageName, payload);
+    return this._restore(payload);
+  }
+
+  _restore(payload) {
+    return this.client.post(this._path(), payload);
+  }
+
+  _restoreAndWaitForCompletion(payload) {
+    return new Promise((resolve, reject) => {
+      this._restore(payload)
+        .then(restoreResponse => {
+          this.statusGetter
+            .withStorageName(this.storageName)
+            .withBackupId(this.backupId);
+
+          const loop = () => {
+            this.statusGetter.do()
+              .then(restoreStatusResponse => {
+                if (restoreStatusResponse.status == RestoreStatus.SUCCESS
+                    || restoreStatusResponse.status == RestoreStatus.FAILED
+                ) {
+                  resolve(this._merge(restoreStatusResponse, restoreResponse));
+                } else {
+                  setTimeout(loop, WAIT_INTERVAL);
+                }
+              })
+              .catch(reject);
+          };
+
+          loop();
+        })
+        .catch(reject)
+    });
+  }
+
+  _path() {
+    return `/backups/${this.storageName}/${this.backupId}/restore`;
+  }
+
+  _merge(restoreStatusResponse, restoreResponse) {
+    const merged = {};
+    if ('id' in restoreStatusResponse) {
+      merged.id = restoreStatusResponse.id;
+    }
+    if ('path' in restoreStatusResponse) {
+      merged.path = restoreStatusResponse.path
+    }
+    if ('storageName' in restoreStatusResponse) {
+      merged.storageName = restoreStatusResponse.storageName
+    }
+    if ('status' in restoreStatusResponse) {
+      merged.status = restoreStatusResponse.status
+    }
+    if ('error' in restoreStatusResponse) {
+      merged.error = restoreStatusResponse.error
+    }
+    if ('classes' in restoreResponse) {
+      merged.classes = restoreResponse.classes
+    }
+    return merged;
   }
 }

@@ -10,7 +10,7 @@ export function validateIncludeClassNames(classNames) {
     });
     return errors;
   }
-  if (classNames !== null || classNames !== undefined) {
+  if (classNames !== null && classNames !== undefined) {
     return ["strings classNames invalid - set with .withIncludeClassNames(...classNames)"];
   }
   return [];

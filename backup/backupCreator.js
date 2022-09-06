@@ -1,4 +1,7 @@
+import { CreateStatus } from ".";
 import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateStorageName } from "./validation";
+
+const WAIT_INTERVAL = 1000;
 
 export default class BackupCreator {
 
@@ -9,8 +12,9 @@ export default class BackupCreator {
   waitForCompletion;
   errors = [];
 
-  constructor(helper) {
-    this.helper = helper;
+  constructor(client, statusGetter) {
+    this.client = client;
+    this.statusGetter = statusGetter;
   }
 
   withIncludeClassNames(...classNames) {
@@ -71,8 +75,67 @@ export default class BackupCreator {
     };
 
     if (this.waitForCompletion) {
-      return this.helper.createAndWaitForCompletion(this.storageName, payload);
+      return this._createAndWaitForCompletion(payload);
     }
-    return this.helper.create(this.storageName, payload);
+    return this._create(payload);
+  }
+
+  _create(payload) {
+    return this.client.post(this._path(), payload);
+  }
+
+  _createAndWaitForCompletion(payload) {
+    return new Promise((resolve, reject) => {
+      this._create(payload)
+        .then(createResponse => {
+          this.statusGetter
+            .withStorageName(this.storageName)
+            .withBackupId(this.backupId);
+
+          const loop = () => {
+            this.statusGetter.do()
+              .then(createStatusResponse => {
+                if (createStatusResponse.status == CreateStatus.SUCCESS
+                    || createStatusResponse.status == CreateStatus.FAILED
+                ) {
+                  resolve(this._merge(createStatusResponse, createResponse));
+                } else {
+                  setTimeout(loop, WAIT_INTERVAL);
+                }
+              })
+              .catch(reject);
+          };
+
+          loop();
+        })
+        .catch(reject)
+    });
+  }
+
+  _path() {
+    return `/backups/${this.storageName}`;
+  }
+
+  _merge(createStatusResponse, createResponse) {
+    const merged = {};
+    if ('id' in createStatusResponse) {
+      merged.id = createStatusResponse.id;
+    }
+    if ('path' in createStatusResponse) {
+      merged.path = createStatusResponse.path
+    }
+    if ('storageName' in createStatusResponse) {
+      merged.storageName = createStatusResponse.storageName
+    }
+    if ('status' in createStatusResponse) {
+      merged.status = createStatusResponse.status
+    }
+    if ('error' in createStatusResponse) {
+      merged.error = createStatusResponse.error
+    }
+    if ('classes' in createResponse) {
+      merged.classes = createResponse.classes
+    }
+    return merged;
   }
 }

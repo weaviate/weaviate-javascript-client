@@ -2,9 +2,7 @@ import BackupCreator from "./backupCreator";
 import BackupCreateStatusGetter from "./backupCreateStatusGetter";
 import BackupRestorer from "./backupRestorer";
 import BackupRestoreStatusGetter from "./backupRestoreStatusGetter";
-import BackupCreateHelper from "./backupCreateHelper";
-import BackupRestoreHelper from "./backupRestoreHelper";
-import BackupGetter from "./backupGetter";
+// import BackupGetter from "./backupGetter";
 
 export const Storage = {
   FILESYSTEM: "filesystem",
@@ -30,11 +28,11 @@ export const RestoreStatus = {
 
 const backup = client => {
   return {
-    creator: () => new BackupCreator(new BackupCreateHelper(client)),
-    createStatusGetter: () => new BackupCreateStatusGetter(new BackupCreateHelper(client)),
-    restorer: () => new BackupRestorer(new BackupRestoreHelper(client)),
-    restoreStatusGetter: () => new BackupRestoreStatusGetter(new BackupRestoreHelper(client)),
-    getter: () => new BackupGetter(client),
+    creator: () => new BackupCreator(client, new BackupCreateStatusGetter(client)),
+    createStatusGetter: () => new BackupCreateStatusGetter(client),
+    restorer: () => new BackupRestorer(client, new BackupRestoreStatusGetter(client)),
+    restoreStatusGetter: () => new BackupRestoreStatusGetter(client),
+    // getter: () => new BackupGetter(client),
   };
 };
 
