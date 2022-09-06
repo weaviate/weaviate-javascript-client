@@ -28,8 +28,7 @@ describe("create and restore backup with waiting", () => {
         expect(createResponse.id).toBe(BACKUP_ID);
         expect(createResponse.classes).toHaveLength(1)
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
@@ -46,8 +45,7 @@ describe("create and restore backup with waiting", () => {
       .do()
       .then(createStatusResponse => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
-        // TODO remove/leave snapshot.json
-        expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createStatusResponse.backend).toBe(BACKEND);
         expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
@@ -73,8 +71,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreResponse.id).toBe(BACKUP_ID);
         expect(restoreResponse.classes).toHaveLength(1)
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
@@ -91,8 +88,7 @@ describe("create and restore backup with waiting", () => {
       .do()
       .then(restoreStatusResponse => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
-        // TODO remove/leave snapshot.json
-        expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreStatusResponse.backend).toBe(BACKEND);
         expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
@@ -126,8 +122,7 @@ describe("create and restore backup without waiting", () => {
         expect(createResponse.id).toBe(BACKUP_ID);
         expect(createResponse.classes).toHaveLength(1)
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.STARTED);
         expect(createResponse.error).toBeUndefined();
@@ -155,8 +150,7 @@ describe("create and restore backup without waiting", () => {
     })
     .then(createStatusResponse => {
       expect(createStatusResponse.id).toBe(BACKUP_ID);
-      // TODO remove/leave snapshot.json
-      expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+      expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
       expect(createStatusResponse.backend).toBe(BACKEND);
       expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
       expect(createStatusResponse.error).toBeUndefined();
@@ -183,9 +177,7 @@ describe("create and restore backup without waiting", () => {
         expect(restoreResponse.id).toBe(BACKUP_ID);
         expect(restoreResponse.classes).toHaveLength(1)
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        // FIXME
-        // expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.STARTED);
         expect(restoreResponse.error).toBeUndefined();
@@ -213,8 +205,7 @@ describe("create and restore backup without waiting", () => {
     })
     .then(restoreStatusResponse => {
       expect(restoreStatusResponse.id).toBe(BACKUP_ID);
-      // TODO remove/leave snapshot.json
-      expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+      expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
       expect(restoreStatusResponse.backend).toBe(BACKEND);
       expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
       expect(restoreStatusResponse.error).toBeUndefined();
@@ -254,8 +245,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createResponse.classes).toHaveLength(2)
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(createResponse.classes).toContain(SOUP_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
@@ -275,8 +265,7 @@ describe("create and restore 1 of 2 classes", () => {
       .do()
       .then(createStatusResponse => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
-        // TODO remove/leave snapshot.json
-        expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createStatusResponse.backend).toBe(BACKEND);
         expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
@@ -302,8 +291,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreResponse.id).toBe(BACKUP_ID);
         expect(restoreResponse.classes).toHaveLength(1)
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // TODO remove/leave snapshot.json
-        expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
@@ -323,8 +311,7 @@ describe("create and restore 1 of 2 classes", () => {
       .do()
       .then(restoreStatusResponse => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
-        // TODO remove/leave snapshot.json
-        expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
+        expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreStatusResponse.backend).toBe(BACKEND);
         expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
@@ -380,8 +367,7 @@ describe("fail checking create status on not existing backend", () => {
       .do()
       .then(() => fail("should fail on create status"))
       .catch(err => {
-        // FIXME 422
-        expect(err).toContain(500);
+        expect(err).toContain(422);
         expect(err).toContain(BACKEND);
       });
   });
@@ -600,9 +586,7 @@ describe("fail checking restore status for not started restore", () => {
       .do()
       .then(() => fail("should fail on restore status"))
       .catch(err => {
-        // FIXME 404
-        expect(err).toContain(500);
-        // TODO adjust to error message
+        expect(err).toContain(404);
         expect(err).toContain(BACKEND);
         expect(err).toContain(BACKUP_ID);
       });
