@@ -4,7 +4,7 @@ import BackupRestorer from "./backupRestorer";
 import BackupRestoreStatusGetter from "./backupRestoreStatusGetter";
 // import BackupGetter from "./backupGetter";
 
-export const Storage = {
+export const Backend = {
   FILESYSTEM: "filesystem",
   S3: "s3",
   GCS: "gcs",

@@ -1,5 +1,5 @@
 import { RestoreStatus } from ".";
-import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateStorageName } from "./validation";
+import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateBackend } from "./validation";
 
 const WAIT_INTERVAL = 1000;
 
@@ -7,10 +7,10 @@ export default class BackupRestorer {
 
   includeClassNames;
   excludeClassNames;
-  storageName;
+  backend;
   backupId;
   waitForCompletion;
-  errors = [];
+  errors;
 
   constructor(client, statusGetter) {
     this.client = client;
@@ -35,8 +35,8 @@ export default class BackupRestorer {
     return this;
   }
 
-  withStorageName(storageName) {
-    this.storageName = storageName;
+  withBackend(backend) {
+    this.backend = backend;
     return this;
   }
 
@@ -54,7 +54,7 @@ export default class BackupRestorer {
     this.errors = [
       ...validateIncludeClassNames(this.includeClassNames),
       ...validateExcludeClassNames(this.excludeClassNames),
-      ...validateStorageName(this.storageName),
+      ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
     ];
   }
@@ -88,7 +88,7 @@ export default class BackupRestorer {
       this._restore(payload)
         .then(restoreResponse => {
           this.statusGetter
-            .withStorageName(this.storageName)
+            .withBackend(this.backend)
             .withBackupId(this.backupId);
 
           const loop = () => {
@@ -112,7 +112,7 @@ export default class BackupRestorer {
   }
 
   _path() {
-    return `/backups/${this.storageName}/${this.backupId}/restore`;
+    return `/backups/${this.backend}/${this.backupId}/restore`;
   }
 
   _merge(restoreStatusResponse, restoreResponse) {
@@ -123,8 +123,8 @@ export default class BackupRestorer {
     if ('path' in restoreStatusResponse) {
       merged.path = restoreStatusResponse.path
     }
-    if ('storageName' in restoreStatusResponse) {
-      merged.storageName = restoreStatusResponse.storageName
+    if ('backend' in restoreStatusResponse) {
+      merged.backend = restoreStatusResponse.backend
     }
     if ('status' in restoreStatusResponse) {
       merged.status = restoreStatusResponse.status

@@ -1,21 +1,21 @@
-import { validateStorageName } from "./validation";
+import { validateBackend } from "./validation";
 
 export default class BackupGetter {
 
-  storageName;
-  errors = [];
+  backend;
+  errors;
 
   constructor(client) {
     this.client = client;
   }
 
-  withStorageName(storageName) {
-    this.storageName = storageName;
+  withBackend(backend) {
+    this.backend = backend;
     return this;
   }
 
   validate() {
-    this.errors = validateStorageName(this.storageName);
+    this.errors = validateBackend(this.backend);
   }
 
   do() {
@@ -26,10 +26,10 @@ export default class BackupGetter {
       );
     }
 
-    return this.client.get(this._path(this.storageName));
+    return this.client.get(this._path());
   }
 
-  _path(storageName) {
-    return `/backups/${storageName}`;
+  _path() {
+    return `/backups/${this.backend}`;
   }
 }

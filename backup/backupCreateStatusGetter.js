@@ -1,17 +1,17 @@
-import { validateBackupId, validateStorageName } from "./validation";
+import { validateBackupId, validateBackend } from "./validation";
 
 export default class BackupCreateStatusGetter {
 
-  storageName;
+  backend;
   backupId;
-  errors = [];
+  errors;
 
   constructor(client) {
     this.client = client;
   }
 
-  withStorageName(storageName) {
-    this.storageName = storageName;
+  withBackend(backend) {
+    this.backend = backend;
     return this;
   }
 
@@ -22,7 +22,7 @@ export default class BackupCreateStatusGetter {
 
   validate() {
     this.errors = [
-      ...validateStorageName(this.storageName),
+      ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
     ];
   }
@@ -38,6 +38,6 @@ export default class BackupCreateStatusGetter {
   }
 
   _path() {
-    return `/backups/${this.storageName}/${this.backupId}`;
+    return `/backups/${this.backend}/${this.backupId}`;
   }
 }

@@ -32,9 +32,9 @@ export function validateExcludeClassNames(classNames) {
   return [];
 }
 
-export function validateStorageName(storageName) {
-  if (!isValidStringProperty(storageName)) {
-    return ["string storageName must set - set with .withStorageName(storageName)"];
+export function validateBackend(backend) {
+  if (!isValidStringProperty(backend)) {
+    return ["string backend must set - set with .withBackend(backend)"];
   }
   return [];
 }

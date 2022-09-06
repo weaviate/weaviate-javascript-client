@@ -1,11 +1,11 @@
-const { Storage, CreateStatus, RestoreStatus, default: backup } = require(".");
+const { Backend, CreateStatus, RestoreStatus } = require(".");
 const weaviate = require("../index");
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
 const DOCKER_COMPOSE_BACKUPS_DIR = "/tmp/backups";
 
 describe("create and restore backup with waiting", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -20,7 +20,7 @@ describe("create and restore backup with waiting", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -30,7 +30,7 @@ describe("create and restore backup with waiting", () => {
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
         // TODO remove/leave snapshot.json
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(createResponse.storageName).toBe(STORAGE_NAME);
+        expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
@@ -41,14 +41,14 @@ describe("create and restore backup with waiting", () => {
 
   it("checks create status", () => {
     return client.backup.createStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(createStatusResponse => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
         // TODO remove/leave snapshot.json
         expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(createStatusResponse.storageName).toBe(STORAGE_NAME);
+        expect(createStatusResponse.backend).toBe(BACKEND);
         expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
@@ -65,7 +65,7 @@ describe("create and restore backup with waiting", () => {
   it("restores backup", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -75,7 +75,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
         // TODO remove/leave snapshot.json
         expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(restoreResponse.storageName).toBe(STORAGE_NAME);
+        expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
@@ -86,14 +86,14 @@ describe("create and restore backup with waiting", () => {
 
   it("checks restore status", () => {
     return client.backup.restoreStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(restoreStatusResponse => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
         // TODO remove/leave snapshot.json
         expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(restoreStatusResponse.storageName).toBe(STORAGE_NAME);
+        expect(restoreStatusResponse.backend).toBe(BACKEND);
         expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
@@ -104,7 +104,7 @@ describe("create and restore backup with waiting", () => {
 });
 
 describe("create and restore backup without waiting", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -119,7 +119,7 @@ describe("create and restore backup without waiting", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(createResponse => {
@@ -128,7 +128,7 @@ describe("create and restore backup without waiting", () => {
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
         // TODO remove/leave snapshot.json
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(createResponse.storageName).toBe(STORAGE_NAME);
+        expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.STARTED);
         expect(createResponse.error).toBeUndefined();
       })
@@ -138,7 +138,7 @@ describe("create and restore backup without waiting", () => {
   it("waits until created", () => {
     return new Promise((resolve, reject) => {
       const statusGetter = client.backup.createStatusGetter()
-        .withStorageName(STORAGE_NAME)
+        .withBackend(BACKEND)
         .withBackupId(BACKUP_ID);
       const loop = () => {
         statusGetter.do()
@@ -157,7 +157,7 @@ describe("create and restore backup without waiting", () => {
       expect(createStatusResponse.id).toBe(BACKUP_ID);
       // TODO remove/leave snapshot.json
       expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-      expect(createStatusResponse.storageName).toBe(STORAGE_NAME);
+      expect(createStatusResponse.backend).toBe(BACKEND);
       expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
       expect(createStatusResponse.error).toBeUndefined();
     })
@@ -176,7 +176,7 @@ describe("create and restore backup without waiting", () => {
   it("restores backup", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(restoreResponse => {
@@ -186,7 +186,7 @@ describe("create and restore backup without waiting", () => {
         // TODO remove/leave snapshot.json
         // FIXME
         // expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(restoreResponse.storageName).toBe(STORAGE_NAME);
+        expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.STARTED);
         expect(restoreResponse.error).toBeUndefined();
       })
@@ -196,7 +196,7 @@ describe("create and restore backup without waiting", () => {
   it("waits until restored", () => {
     return new Promise((resolve, reject) => {
       const statusGetter = client.backup.restoreStatusGetter()
-        .withStorageName(STORAGE_NAME)
+        .withBackend(BACKEND)
         .withBackupId(BACKUP_ID);
       const loop = () => {
         statusGetter.do()
@@ -215,7 +215,7 @@ describe("create and restore backup without waiting", () => {
       expect(restoreStatusResponse.id).toBe(BACKUP_ID);
       // TODO remove/leave snapshot.json
       expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-      expect(restoreStatusResponse.storageName).toBe(STORAGE_NAME);
+      expect(restoreStatusResponse.backend).toBe(BACKEND);
       expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
       expect(restoreStatusResponse.error).toBeUndefined();
     })
@@ -228,7 +228,7 @@ describe("create and restore backup without waiting", () => {
 });
 
 describe("create and restore 1 of 2 classes", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -245,7 +245,7 @@ describe("create and restore 1 of 2 classes", () => {
 
   it("creates backup", () => {
     return client.backup.creator()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -256,7 +256,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createResponse.classes).toContain(SOUP_CLASS_NAME);
         // TODO remove/leave snapshot.json
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(createResponse.storageName).toBe(STORAGE_NAME);
+        expect(createResponse.backend).toBe(BACKEND);
         expect(createResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
@@ -270,14 +270,14 @@ describe("create and restore 1 of 2 classes", () => {
 
   it("checks create status", () => {
     return client.backup.createStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(createStatusResponse => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
         // TODO remove/leave snapshot.json
         expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(createStatusResponse.storageName).toBe(STORAGE_NAME);
+        expect(createStatusResponse.backend).toBe(BACKEND);
         expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
@@ -294,7 +294,7 @@ describe("create and restore 1 of 2 classes", () => {
   it("restores backup", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -304,7 +304,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
         // TODO remove/leave snapshot.json
         expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(restoreResponse.storageName).toBe(STORAGE_NAME);
+        expect(restoreResponse.backend).toBe(BACKEND);
         expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
@@ -318,14 +318,14 @@ describe("create and restore 1 of 2 classes", () => {
 
   it("checks restore status", () => {
     return client.backup.restoreStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(restoreStatusResponse => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
         // TODO remove/leave snapshot.json
         expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}/snapshot.json`);
-        expect(restoreStatusResponse.storageName).toBe(STORAGE_NAME);
+        expect(restoreStatusResponse.backend).toBe(BACKEND);
         expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
@@ -335,8 +335,8 @@ describe("create and restore 1 of 2 classes", () => {
   it("cleans up", () => cleanupTestFood(client));
 });
 
-describe("fail creating backup on not existing storage", () => {
-  const STORAGE_NAME = "not-existing-storage";
+describe("fail creating backup on not existing backend", () => {
+  const BACKEND = "not-existing-backend";
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -349,21 +349,21 @@ describe("fail creating backup on not existing storage", () => {
   it("fails creating", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on create backup"))
       .catch(err => {
         expect(err).toContain(422);
-        expect(err).toContain(STORAGE_NAME);
+        expect(err).toContain(BACKEND);
       });
   });
 
   it("cleans up", () => cleanupTestFood(client));
 });
 
-describe("fail checking create status on not existing storage", () => {
-  const STORAGE_NAME = "not-existing-storage";
+describe("fail checking create status on not existing backend", () => {
+  const BACKEND = "not-existing-backend";
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -375,23 +375,23 @@ describe("fail checking create status on not existing storage", () => {
 
   it("fails checking create status", () => {
     return client.backup.createStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on create status"))
       .catch(err => {
         // FIXME 422
         expect(err).toContain(500);
-        expect(err).toContain(STORAGE_NAME);
+        expect(err).toContain(BACKEND);
       });
   });
 
   it("cleans up", () => cleanupTestFood(client));
 });
 
-describe("fail restoring backup on not existing storage", () => {
+describe("fail restoring backup on not existing backend", () => {
   const CLASS_NAME = "not-existing-class";
-  const STORAGE_NAME = "not-existing-storage";
+  const BACKEND = "not-existing-backend";
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -404,13 +404,13 @@ describe("fail restoring backup on not existing storage", () => {
   it("fails restoring", () => {
     return client.backup.restorer()
       .withIncludeClassNames(CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on restore backup"))
       .catch(err => {
         expect(err).toContain(422);
-        expect(err).toContain(STORAGE_NAME);
+        expect(err).toContain(BACKEND);
       });
   });
 
@@ -419,7 +419,7 @@ describe("fail restoring backup on not existing storage", () => {
 
 describe("fail creating backup for not existing class", () => {
   const CLASS_NAME = "not-existing-class";
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -432,7 +432,7 @@ describe("fail creating backup for not existing class", () => {
   it("fails creating", () => {
     return client.backup.creator()
       .withIncludeClassNames(CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on create backup"))
@@ -446,7 +446,7 @@ describe("fail creating backup for not existing class", () => {
 });
 
 describe("fail restoring backup for existing class", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -459,7 +459,7 @@ describe("fail restoring backup for existing class", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -469,7 +469,7 @@ describe("fail restoring backup for existing class", () => {
   it("fails restoring", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on restore backup"))
@@ -483,7 +483,7 @@ describe("fail restoring backup for existing class", () => {
 });
 
 describe("fail creating existing backup", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -496,7 +496,7 @@ describe("fail creating existing backup", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -506,7 +506,7 @@ describe("fail creating existing backup", () => {
   it("fails creating", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on create backup"))
@@ -520,7 +520,7 @@ describe("fail creating existing backup", () => {
 });
 
 describe("fail checking create status for not existing backup", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -532,7 +532,7 @@ describe("fail checking create status for not existing backup", () => {
 
   it("fails checking create status", () => {
     return client.backup.createStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on create status"))
@@ -546,7 +546,7 @@ describe("fail checking create status for not existing backup", () => {
 });
 
 describe("fail restoring not existing backup", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -559,7 +559,7 @@ describe("fail restoring not existing backup", () => {
   it("fails restoring", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on restore backup"))
@@ -573,7 +573,7 @@ describe("fail restoring not existing backup", () => {
 });
 
 describe("fail checking restore status for not started restore", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -586,7 +586,7 @@ describe("fail checking restore status for not started restore", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -595,7 +595,7 @@ describe("fail checking restore status for not started restore", () => {
 
   it("fails checking restore status", () => {
     return client.backup.restoreStatusGetter()
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on restore status"))
@@ -603,7 +603,7 @@ describe("fail checking restore status for not started restore", () => {
         // FIXME 404
         expect(err).toContain(500);
         // TODO adjust to error message
-        expect(err).toContain(STORAGE_NAME);
+        expect(err).toContain(BACKEND);
         expect(err).toContain(BACKUP_ID);
       });
   });
@@ -612,7 +612,7 @@ describe("fail checking restore status for not started restore", () => {
 });
 
 describe("fail creating backup for both include and exclude classes", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -626,7 +626,7 @@ describe("fail creating backup for both include and exclude classes", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
       .withExcludeClassNames(SOUP_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -642,7 +642,7 @@ describe("fail creating backup for both include and exclude classes", () => {
 });
 
 describe("fail restoring backup for both include and exclude classes", () => {
-  const STORAGE_NAME = Storage.FILESYSTEM;
+  const BACKEND = Backend.FILESYSTEM;
   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 
   const client = weaviate.client({
@@ -655,7 +655,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME, SOUP_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
@@ -673,7 +673,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
     return client.backup.restorer()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
       .withExcludeClassNames(SOUP_CLASS_NAME)
-      .withStorageName(STORAGE_NAME)
+      .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
       .then(() => fail("should fail on restore"))
@@ -688,7 +688,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 });
 
 // describe("get all exising backups", () => {
-//   const STORAGE_NAME = Storage.FILESYSTEM;
+//   const BACKEND = Backend.FILESYSTEM;
 //   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 //   const BACKUP_ID_PIZZA = BACKUP_ID + "-pizza";
 //   const BACKUP_ID_SOUP = BACKUP_ID + "-soup";
@@ -703,7 +703,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 //   it("creates backup pizza", () => {
 //     return client.backup.creator()
 //       .withIncludeClassNames(PIZZA_CLASS_NAME)
-//       .withStorageName(STORAGE_NAME)
+//       .withBackend(BACKEND)
 //       .withBackupId(BACKUP_ID_PIZZA)
 //       .withWaitForCompletion(true)
 //       .do()
@@ -713,7 +713,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 //   it("creates backup soup", () => {
 //     return client.backup.creator()
 //       .withIncludeClassNames(SOUP_CLASS_NAME)
-//       .withStorageName(STORAGE_NAME)
+//       .withBackend(BACKEND)
 //       .withBackupId(BACKUP_ID_SOUP)
 //       .withWaitForCompletion(true)
 //       .do()
@@ -722,7 +722,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 
 //   it("get all", () => {
 //     return client.backup.getter()
-//       .withStorageName(STORAGE_NAME)
+//       .withBackend(BACKEND)
 //       .do()
 //       .then(allResponse => {
 //         expect(allResponse).toHaveLength(2);

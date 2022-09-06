@@ -1,5 +1,5 @@
 import { CreateStatus } from ".";
-import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateStorageName } from "./validation";
+import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateBackend } from "./validation";
 
 const WAIT_INTERVAL = 1000;
 
@@ -7,10 +7,10 @@ export default class BackupCreator {
 
   includeClassNames;
   excludeClassNames;
-  storageName;
+  backend;
   backupId;
   waitForCompletion;
-  errors = [];
+  errors;
 
   constructor(client, statusGetter) {
     this.client = client;
@@ -35,8 +35,8 @@ export default class BackupCreator {
     return this;
   }
 
-  withStorageName(storageName) {
-    this.storageName = storageName;
+  withBackend(backend) {
+    this.backend = backend;
     return this;
   }
 
@@ -54,7 +54,7 @@ export default class BackupCreator {
     this.errors = [
       ...validateIncludeClassNames(this.includeClassNames),
       ...validateExcludeClassNames(this.excludeClassNames),
-      ...validateStorageName(this.storageName),
+      ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
     ];
   }
@@ -89,7 +89,7 @@ export default class BackupCreator {
       this._create(payload)
         .then(createResponse => {
           this.statusGetter
-            .withStorageName(this.storageName)
+            .withBackend(this.backend)
             .withBackupId(this.backupId);
 
           const loop = () => {
@@ -113,7 +113,7 @@ export default class BackupCreator {
   }
 
   _path() {
-    return `/backups/${this.storageName}`;
+    return `/backups/${this.backend}`;
   }
 
   _merge(createStatusResponse, createResponse) {
@@ -124,8 +124,8 @@ export default class BackupCreator {
     if ('path' in createStatusResponse) {
       merged.path = createStatusResponse.path
     }
-    if ('storageName' in createStatusResponse) {
-      merged.storageName = createStatusResponse.storageName
+    if ('backend' in createStatusResponse) {
+      merged.backend = createStatusResponse.backend
     }
     if ('status' in createStatusResponse) {
       merged.status = createStatusResponse.status
