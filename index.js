@@ -7,6 +7,7 @@ import misc from "./misc/index.js";
 import c11y from "./c11y/index.js";
 import { KIND_THINGS, KIND_ACTIONS } from "./kinds";
 import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion.js";
+import backup from "./backup/index.js";
 
 const app = {
   client: function (params) {
@@ -40,6 +41,7 @@ const app = {
       batch: batch(httpClient, dbVersionSupport),
       misc: misc(httpClient, dbVersionProvider),
       c11y: c11y(httpClient),
+      backup: backup(httpClient),
     };
   },
 
