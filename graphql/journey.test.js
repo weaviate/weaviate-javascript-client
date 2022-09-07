@@ -1,4 +1,3 @@
-import { Operator } from "../filters/operator";
 import weaviate from "../index";
 
 describe("the graphql journey", () => {
@@ -30,7 +29,7 @@ describe("the graphql journey", () => {
       .withFields("title url wordCount")
       .withNearText({ concepts: ["news"], certainty: 0.1 })
       .withWhere({
-        operator: Operator.GREATER_THAN_EQUAL,
+        operator: weaviate.filters.Operator.GREATER_THAN_EQUAL,
         path: ["wordCount"],
         valueInt: 50,
       })
@@ -53,7 +52,7 @@ describe("the graphql journey", () => {
       .withFields("title url wordCount")
       .withNearText({ concepts: ["news"], distance: 0.9 })
       .withWhere({
-        operator: Operator.GREATER_THAN_EQUAL,
+        operator: weaviate.filters.Operator.GREATER_THAN_EQUAL,
         path: ["wordCount"],
         valueInt: 50,
       })
@@ -247,7 +246,7 @@ describe("the graphql journey", () => {
       .withWhere({
         path: ["title"],
         valueString: "apple",
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
       })
       .withLimit(10)
       .withFields("meta { count }")
@@ -379,7 +378,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearVector({ vector: searchVec, certainty: 0.7 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -400,7 +399,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearVector({ vector: searchVec, distance: 0.3 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -419,7 +418,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.7 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -438,7 +437,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.3 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -457,7 +456,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearText({ concepts: ["Article"], certainty: 0.7 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -476,7 +475,7 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearText({ concepts: ["Article"], distance: 0.3 })
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
         valueString: "abefd256-8574-442b-9293-9205193737ee",
       })
@@ -503,7 +502,7 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(objectLimit);
       })
-      .catch((e) => fail("it should not have error'd" + e)); 
+      .catch((e) => fail("it should not have error'd" + e));
   });
 
   test("graphql aggregate method with objectLimit (with distance)", () => {
@@ -520,7 +519,7 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(objectLimit);
       })
-      .catch((e) => fail("it should not have error'd" + e)); 
+      .catch((e) => fail("it should not have error'd" + e));
   });
 
   test("graphql aggregate method with bad objectLimit input (with certainty)", () => {
@@ -680,14 +679,14 @@ describe("the graphql journey", () => {
         expect(res.data.Get.Article.length).toBeGreaterThan(0)
         return res
       });
-    
+
     return client.graphql
       .get()
       .withClassName("Article")
       .withFields("_additional { id creationTimeUnix }")
       .withWhere({
-        path: ["_creationTimeUnix"], 
-        operator: Operator.EQUAL, 
+        path: ["_creationTimeUnix"],
+        operator: weaviate.filters.Operator.EQUAL,
         valueString: expected.data.Get.Article[0]._additional.creationTimeUnix
       })
       .do()
@@ -708,14 +707,14 @@ describe("the graphql journey", () => {
         expect(res.data.Get.Article.length).toBeGreaterThan(0)
         return res
       });
-    
+
     return client.graphql
       .get()
       .withClassName("Article")
       .withFields("_additional { id lastUpdateTimeUnix }")
       .withWhere({
-        path: ["_lastUpdateTimeUnix"], 
-        operator: Operator.EQUAL, 
+        path: ["_lastUpdateTimeUnix"],
+        operator: weaviate.filters.Operator.EQUAL,
         valueString: expected.data.Get.Article[0]._additional.lastUpdateTimeUnix
       })
       .do()

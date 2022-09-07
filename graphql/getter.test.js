@@ -1,5 +1,5 @@
 import Getter from "./getter";
-import { Operator } from "../filters/operator";
+import { Operator } from "../filters/consts";
 
 test("a simple query without params", () => {
   const mockClient = {
@@ -1271,7 +1271,7 @@ describe("sort filters", () => {
       `{name}}}`;
 
     const sort = [
-      { path: ["property1"], order: "asc" }, 
+      { path: ["property1"], order: "asc" },
       { path: ["property2"], order: "asc" },
       { path: ["property3"], order: "desc" }
     ]

@@ -1,4 +1,4 @@
-import { RestoreStatus } from ".";
+import { RestoreStatus } from "./consts";
 import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames, validateBackend } from "./validation";
 
 const WAIT_INTERVAL = 1000;

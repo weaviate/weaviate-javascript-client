@@ -1,12 +1,11 @@
-const { Backend, CreateStatus, RestoreStatus } = require(".");
 const weaviate = require("../index");
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
 const DOCKER_COMPOSE_BACKUPS_DIR = "/tmp/backups";
 
 describe("create and restore backup with waiting", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -30,7 +29,7 @@ describe("create and restore backup with waiting", () => {
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
-        expect(createResponse.status).toBe(CreateStatus.SUCCESS);
+        expect(createResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on create backup: " + err));
@@ -47,7 +46,7 @@ describe("create and restore backup with waiting", () => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
         expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createStatusResponse.backend).toBe(BACKEND);
-        expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
+        expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on create status: " + err));
@@ -73,7 +72,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
-        expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
+        expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on restore backup: " + err));
@@ -90,7 +89,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
         expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreStatusResponse.backend).toBe(BACKEND);
-        expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
+        expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on restore status: " + err));
@@ -100,8 +99,8 @@ describe("create and restore backup with waiting", () => {
 });
 
 describe("create and restore backup without waiting", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -124,7 +123,7 @@ describe("create and restore backup without waiting", () => {
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
-        expect(createResponse.status).toBe(CreateStatus.STARTED);
+        expect(createResponse.status).toBe(weaviate.backup.CreateStatus.STARTED);
         expect(createResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on create backup: " + err));
@@ -138,7 +137,7 @@ describe("create and restore backup without waiting", () => {
       const loop = () => {
         statusGetter.do()
           .then(createStatusResponse => {
-            if (createStatusResponse.status == CreateStatus.SUCCESS || createStatusResponse.status == CreateStatus.FAILED) {
+            if (createStatusResponse.status == weaviate.backup.CreateStatus.SUCCESS || createStatusResponse.status == weaviate.backup.CreateStatus.FAILED) {
               resolve(createStatusResponse);
             } else {
               setTimeout(loop, 100);
@@ -152,7 +151,7 @@ describe("create and restore backup without waiting", () => {
       expect(createStatusResponse.id).toBe(BACKUP_ID);
       expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
       expect(createStatusResponse.backend).toBe(BACKEND);
-      expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
+      expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
       expect(createStatusResponse.error).toBeUndefined();
     })
     .catch(err => fail("should not fail on create status: " + err))
@@ -179,7 +178,7 @@ describe("create and restore backup without waiting", () => {
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
-        expect(restoreResponse.status).toBe(RestoreStatus.STARTED);
+        expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.STARTED);
         expect(restoreResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on restore backup: " + err));
@@ -193,7 +192,7 @@ describe("create and restore backup without waiting", () => {
       const loop = () => {
         statusGetter.do()
           .then(restoreStatusResponse => {
-            if (restoreStatusResponse.status == RestoreStatus.SUCCESS || restoreStatusResponse.status == RestoreStatus.FAILED) {
+            if (restoreStatusResponse.status == weaviate.backup.RestoreStatus.SUCCESS || restoreStatusResponse.status == weaviate.backup.RestoreStatus.FAILED) {
               resolve(restoreStatusResponse);
             } else {
               setTimeout(loop, 100);
@@ -207,7 +206,7 @@ describe("create and restore backup without waiting", () => {
       expect(restoreStatusResponse.id).toBe(BACKUP_ID);
       expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
       expect(restoreStatusResponse.backend).toBe(BACKEND);
-      expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
+      expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
       expect(restoreStatusResponse.error).toBeUndefined();
     })
     .catch(err => fail("should not fail on restore backup: " + err));
@@ -219,8 +218,8 @@ describe("create and restore backup without waiting", () => {
 });
 
 describe("create and restore 1 of 2 classes", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -247,7 +246,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createResponse.classes).toContain(SOUP_CLASS_NAME);
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createResponse.backend).toBe(BACKEND);
-        expect(createResponse.status).toBe(CreateStatus.SUCCESS);
+        expect(createResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on create backup: " + err));
@@ -267,7 +266,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createStatusResponse.id).toBe(BACKUP_ID);
         expect(createStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(createStatusResponse.backend).toBe(BACKEND);
-        expect(createStatusResponse.status).toBe(CreateStatus.SUCCESS);
+        expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on create status: " + err));
@@ -293,7 +292,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
         expect(restoreResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreResponse.backend).toBe(BACKEND);
-        expect(restoreResponse.status).toBe(RestoreStatus.SUCCESS);
+        expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on restore backup: " + err));
@@ -313,7 +312,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreStatusResponse.id).toBe(BACKUP_ID);
         expect(restoreStatusResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
         expect(restoreStatusResponse.backend).toBe(BACKEND);
-        expect(restoreStatusResponse.status).toBe(RestoreStatus.SUCCESS);
+        expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
       .catch(err => fail("should not fail on restore status: " + err));
@@ -324,7 +323,7 @@ describe("create and restore 1 of 2 classes", () => {
 
 describe("fail creating backup on not existing backend", () => {
   const BACKEND = "not-existing-backend";
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -351,7 +350,7 @@ describe("fail creating backup on not existing backend", () => {
 
 describe("fail checking create status on not existing backend", () => {
   const BACKEND = "not-existing-backend";
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -378,7 +377,7 @@ describe("fail checking create status on not existing backend", () => {
 describe("fail restoring backup on not existing backend", () => {
   const CLASS_NAME = "not-existing-class";
   const BACKEND = "not-existing-backend";
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -405,8 +404,8 @@ describe("fail restoring backup on not existing backend", () => {
 
 describe("fail creating backup for not existing class", () => {
   const CLASS_NAME = "not-existing-class";
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -432,8 +431,8 @@ describe("fail creating backup for not existing class", () => {
 });
 
 describe("fail restoring backup for existing class", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -469,8 +468,8 @@ describe("fail restoring backup for existing class", () => {
 });
 
 describe("fail creating existing backup", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -506,8 +505,8 @@ describe("fail creating existing backup", () => {
 });
 
 describe("fail checking create status for not existing backup", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -532,8 +531,8 @@ describe("fail checking create status for not existing backup", () => {
 });
 
 describe("fail restoring not existing backup", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -559,8 +558,8 @@ describe("fail restoring not existing backup", () => {
 });
 
 describe("fail checking restore status for not started restore", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -596,8 +595,8 @@ describe("fail checking restore status for not started restore", () => {
 });
 
 describe("fail creating backup for both include and exclude classes", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -626,8 +625,8 @@ describe("fail creating backup for both include and exclude classes", () => {
 });
 
 describe("fail restoring backup for both include and exclude classes", () => {
-  const BACKEND = Backend.FILESYSTEM;
-  const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+  const BACKUP_ID = randomBackupId()
 
   const client = weaviate.client({
     scheme: "http",
@@ -672,8 +671,8 @@ describe("fail restoring backup for both include and exclude classes", () => {
 });
 
 // describe("get all exising backups", () => {
-//   const BACKEND = Backend.FILESYSTEM;
-//   const BACKUP_ID = "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+//   const BACKEND = weaviate.backup.Backend.FILESYSTEM;
+//   const BACKUP_ID = randomBackupId()
 //   const BACKUP_ID_PIZZA = BACKUP_ID + "-pizza";
 //   const BACKUP_ID_SOUP = BACKUP_ID + "-soup";
 
@@ -737,4 +736,8 @@ function assertThatAllFoodObjectsExist(client, className, number) {
       .do()
       .then(data => expect(data.data.Get[className].length).toBe(number))
       .catch(err => fail(number + " objects should exist: " + err));
+}
+
+function randomBackupId() {
+  return "backup-id-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 }
