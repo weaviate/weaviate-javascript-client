@@ -1,6 +1,7 @@
 import Aggregator from "./aggregator";
 import Getter from "./getter";
 import Explorer from "./explorer";
+import Raw from "./raw";
 
 const graphql = (client) => {
   return {
