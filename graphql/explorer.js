@@ -3,6 +3,7 @@ import NearVector from "./nearVector";
 import NearObject from "./nearObject";
 import NearImage from "./nearImage";
 import Ask from "./ask";
+import Raw from "./raw";
 import { DEFAULT_KIND, validateKind } from "../kinds";
 
 export default class Explorer {
