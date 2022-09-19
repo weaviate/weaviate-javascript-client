@@ -7,7 +7,7 @@ test("a simple raw query", () => {
 
   const expectedQuery = `{Get{Person{name}}}`;
 
-  new Raw(mockClient, expectedQuery).do();
+  new Raw(mockClient).withQuery(expectedQuery).do();
 
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
@@ -18,6 +18,6 @@ test("reject empty raw query", () => {
     };
     
         new Raw(mockClient, "").do().catch(err => {
-            expect(err).toMatchObject(new Error("invalid usage: query must be set - set with .raw(query)"));
+            expect(err).toMatchObject(new Error("invalid usage: query must be set - set with .raw().withQuery(query)"));
         });
   });

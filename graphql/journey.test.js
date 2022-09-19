@@ -15,7 +15,8 @@ describe("the graphql journey", () => {
 
   test("graphql raw method", () => {
     return client.graphql
-      .raw(" {Get{Article{title url wordCount}}}")
+      .raw()
+      .withQuery("{Get{Article{title url wordCount}}}")
       .do()
       .then(function (result) {
         expect(result.data.Get.Article.length).toEqual(3);

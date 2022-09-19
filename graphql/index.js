@@ -8,7 +8,7 @@ const graphql = (client) => {
     get: () => new Getter(client),
     aggregate: () => new Aggregator(client),
     explore: () => new Explorer(client),
-    raw: (query) => new Raw(client, query),
+    raw: (query) => new Raw(client),
   };
 };
 

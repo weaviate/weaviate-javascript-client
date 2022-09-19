@@ -1,11 +1,16 @@
 export default class RawGraphQL {
     
-    constructor(client, query) {
+    constructor(client, quer) {
         this.client = client;
         this.errors = [];
-        this.query = query;
     }
 
+    withQuery = (query) => {
+        this.query = query;
+        return this;
+      };
+
+      
     validateIsSet = (prop, name, setter) => {
         if (prop == undefined || prop == null || prop.length == 0) {
             this.errors = [
@@ -19,7 +24,7 @@ export default class RawGraphQL {
         this.validateIsSet(
             this.query,
             "query",
-            ".raw(query)"
+            ".raw().withQuery(query)"
         );
     };
 
