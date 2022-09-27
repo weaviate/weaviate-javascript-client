@@ -12,6 +12,18 @@ describe("the graphql journey", () => {
     return setup(client);
   });
 
+
+  test("graphql raw method", () => {
+    return client.graphql
+      .raw()
+      .withQuery("{Get{Article{title url wordCount}}}")
+      .do()
+      .then(function (result) {
+        expect(result.data.Get.Article.length).toEqual(3);
+      });
+  });
+
+
   test("graphql get method with minimal fields", () => {
     return client.graphql
       .get()
