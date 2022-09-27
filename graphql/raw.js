@@ -8,7 +8,7 @@ export default class RawGraphQL {
     withQuery = (query) => {
         this.query = query;
         return this;
-      };
+    };
 
       
     validateIsSet = (prop, name, setter) => {
