@@ -1,16 +1,5 @@
 import { isValidStringProperty } from "../validation/string";
 
-export const Output = {
-  VERBOSE: "verbose",
-  MINIMAL: "minimal",
-};
-
-export const Status = {
-  SUCCESS: "SUCCESS",
-  FAILED: "FAILED",
-  DRYRUN: "DRYRUN",
-};
-
 export default class ObjectsBatchDeleter {
   className;
   whereFilter;

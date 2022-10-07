@@ -1,6 +1,4 @@
-const { Operator } = require("../filters/operator");
 const weaviate = require("../index");
-const { Output, Status } = require("./objectsBatchDeleter");
 
 const thingClassName = "BatchJourneyTestThing";
 const otherThingClassName = "BatchJourneyTestOtherThing";
@@ -333,21 +331,21 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(thingClassName)
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         valueString: "bar1",
         path: ["stringProp"]
       })
       .withDryRun(true)
-      .withOutput(Output.VERBOSE)
+      .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .do()
       .then(result => {
         expect(result.dryRun).toBe(true);
-        expect(result.output).toBe(Output.VERBOSE);
+        expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
         expect(result.match).toEqual({
           class: thingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: Operator.EQUAL,
+            operator: weaviate.filters.Operator.EQUAL,
             valueString: "bar1",
             path: ["stringProp"],
           },
@@ -359,7 +357,7 @@ describe("batch deleting", () => {
           limit: 10000,
           objects: [{
             id: thingIds[1],
-            status: Status.DRYRUN,
+            status: weaviate.batch.DeleteResultStatus.DRYRUN,
           }],
         });
       })
@@ -370,21 +368,21 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: Operator.LIKE,
+        operator: weaviate.filters.Operator.LIKE,
         valueString: "foo3",
         path: ["stringProp"]
       })
       .withDryRun(true)
-      .withOutput(Output.MINIMAL)
+      .withOutput(weaviate.batch.DeleteOutput.MINIMAL)
       .do()
       .then(result => {
         expect(result.dryRun).toBe(true);
-        expect(result.output).toBe(Output.MINIMAL);
+        expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: Operator.LIKE,
+            operator: weaviate.filters.Operator.LIKE,
             valueString: "foo3",
             path: ["stringProp"],
           },
@@ -404,19 +402,19 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: Operator.EQUAL,
+        operator: weaviate.filters.Operator.EQUAL,
         valueString: "doesNotExist",
         path: ["stringProp"]
       })
       .do()
       .then(result => {
         expect(result.dryRun).toBe(false);
-        expect(result.output).toBe(Output.MINIMAL);
+        expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: Operator.EQUAL,
+            operator: weaviate.filters.Operator.EQUAL,
             valueString: "doesNotExist",
             path: ["stringProp"],
           },
@@ -437,20 +435,20 @@ describe("batch deleting", () => {
       .objectsBatchDeleter()
       .withClassName(otherThingClassName)
       .withWhere({
-        operator: Operator.LESS_THAN,
+        operator: weaviate.filters.Operator.LESS_THAN,
         valueString: inAMinute,
         path: ["_creationTimeUnix"]
       })
-      .withOutput(Output.VERBOSE)
+      .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .do()
       .then(result => {
         expect(result.dryRun).toBe(false);
-        expect(result.output).toBe(Output.VERBOSE);
+        expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
             operands: null, // FIXME should not be received
-            operator: Operator.LESS_THAN,
+            operator: weaviate.filters.Operator.LESS_THAN,
             valueString: inAMinute,
             path: ["_creationTimeUnix"],
           },
@@ -462,11 +460,11 @@ describe("batch deleting", () => {
         expect(result.results.objects).toHaveLength(2)
         expect(result.results.objects).toContainEqual({
           id: otherThingIds[0],
-          status: Status.SUCCESS,
+          status: weaviate.batch.DeleteResultStatus.SUCCESS,
         });
         expect(result.results.objects).toContainEqual({
           id: otherThingIds[1],
-          status: Status.SUCCESS,
+          status: weaviate.batch.DeleteResultStatus.SUCCESS,
         });
       })
   })

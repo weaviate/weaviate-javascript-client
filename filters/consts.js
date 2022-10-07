@@ -11,3 +11,9 @@ export const Operator = {
   LESS_THAN_EQUAL: "LessThanEqual",
   WITHIN_GEO_RANGE: "WithinGeoRange",
 }
+
+const filtersConsts = {
+  Operator,
+};
+
+export default filtersConsts;
