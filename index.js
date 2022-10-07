@@ -11,6 +11,7 @@ import backup from "./backup/index.js";
 import backupConsts from "./backup/consts.js";
 import batchConsts from "./batch/consts.js";
 import filtersConsts from "./filters/consts.js";
+import miscConsts from "./misc/consts.js";
 
 const app = {
   client: function (params) {
@@ -55,6 +56,7 @@ const app = {
   backup: backupConsts,
   batch: batchConsts,
   filters: filtersConsts,
+  misc: miscConsts,
 };
 
 function initDbVersionProvider(httpClient) {
