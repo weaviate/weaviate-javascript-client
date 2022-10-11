@@ -2,7 +2,7 @@ import LiveChecker from "./liveChecker";
 import ReadyChecker from "./readyChecker";
 import MetaGetter from "./metaGetter";
 import OpenidConfigurationGetter from "./openidConfigurationGetter";
-import NodesGetter from "./nodesGetter";
+import NodesStatusGetter from "./nodesStatusGetter";
 
 const misc = (client, dbVersionProvider) => {
   return {
@@ -10,7 +10,7 @@ const misc = (client, dbVersionProvider) => {
     readyChecker: () => new ReadyChecker(client, dbVersionProvider),
     metaGetter: () => new MetaGetter(client),
     openidConfigurationGetter: () => new OpenidConfigurationGetter(client),
-    nodesGetter: () => new NodesGetter(client),
+    nodesStatusGetter: () => new NodesStatusGetter(client),
   };
 };
 

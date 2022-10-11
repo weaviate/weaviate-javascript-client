@@ -1,8 +1,8 @@
 const weaviate = require("../index");
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
-const EXPECTED_WEAVIATE_VERSION = "1.15.3"
-const EXPECTED_WEAVIATE_GIT_HASH = "ee3a274"
+const EXPECTED_WEAVIATE_VERSION = "1.15.4"
+const EXPECTED_WEAVIATE_GIT_HASH = "cdf91cb"
 
 describe("misc endpoints", () => {
   const client = weaviate.client({
@@ -85,11 +85,11 @@ describe("misc nodes endpoints", () => {
 
   it("get nodes status of empty db", () => {
     return client.misc
-      .nodesGetter()
+      .nodesStatusGetter()
       .do()
-      .then(nodesResponse => {
-        expect(nodesResponse.nodes).toHaveLength(1);
-        const node = nodesResponse.nodes[0];
+      .then(nodesStatusResponse => {
+        expect(nodesStatusResponse.nodes).toHaveLength(1);
+        const node = nodesStatusResponse.nodes[0];
         expect(node.name).toMatch(/.+/);
         expect(node.version).toEqual(EXPECTED_WEAVIATE_VERSION);
         expect(node.gitHash).toEqual(EXPECTED_WEAVIATE_GIT_HASH);
@@ -105,11 +105,11 @@ describe("misc nodes endpoints", () => {
 
   it("get nodes status of food db", () => {
     return client.misc
-      .nodesGetter()
+      .nodesStatusGetter()
       .do()
-      .then(nodesResponse => {
-        expect(nodesResponse.nodes).toHaveLength(1);
-        const node = nodesResponse.nodes[0];
+      .then(nodesStatusResponse => {
+        expect(nodesStatusResponse.nodes).toHaveLength(1);
+        const node = nodesStatusResponse.nodes[0];
         expect(node.name).toMatch(/.+/);
         expect(node.version).toEqual(EXPECTED_WEAVIATE_VERSION);
         expect(node.gitHash).toEqual(EXPECTED_WEAVIATE_GIT_HASH);
