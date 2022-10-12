@@ -456,11 +456,12 @@ describe("fail restoring backup for existing class", () => {
       .withIncludeClassNames(PIZZA_CLASS_NAME)
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
+      .withWaitForCompletion(true)
       .do()
-      .then(() => fail("should fail on restore backup"))
-      .catch(err => {
-        expect(err).toContain(422);
-        expect(err).toContain(PIZZA_CLASS_NAME);
+      .then(resp => {
+        expect(resp.error).toContain("already exists");
+        expect(resp.error).toContain(PIZZA_CLASS_NAME);
+        expect(resp.status).toBe(weaviate.backup.RestoreStatus.FAILED);
       });
   });
 
@@ -586,7 +587,6 @@ describe("fail checking restore status for not started restore", () => {
       .then(() => fail("should fail on restore status"))
       .catch(err => {
         expect(err).toContain(404);
-        expect(err).toContain(BACKEND);
         expect(err).toContain(BACKUP_ID);
       });
   });
@@ -731,11 +731,11 @@ function assertThatAllSoupsExist(client) {
 
 function assertThatAllFoodObjectsExist(client, className, number) {
   return client.graphql.get()
-      .withClassName(className)
-      .withFields("name")
-      .do()
-      .then(data => expect(data.data.Get[className].length).toBe(number))
-      .catch(err => fail(number + " objects should exist: " + err));
+    .withClassName(className)
+    .withFields("name")
+    .do()
+    .then(data => expect(data.data.Get[className].length).toBe(number))
+    .catch(err => fail(number + " objects should exist: " + err));
 }
 
 function randomBackupId() {

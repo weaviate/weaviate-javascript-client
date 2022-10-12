@@ -1,4 +1,5 @@
 const weaviate = require("../index");
+
 describe("misc endpoints", () => {
   const client = weaviate.client({
     scheme: "http",
