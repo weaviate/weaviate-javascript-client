@@ -11,7 +11,8 @@ import backup from "./backup/index.js";
 import backupConsts from "./backup/consts.js";
 import batchConsts from "./batch/consts.js";
 import filtersConsts from "./filters/consts.js";
-import miscConsts from "./misc/consts.js";
+import cluster from "./cluster/index.js";
+import clusterConsts from "./cluster/consts.js";
 
 const app = {
   client: function (params) {
@@ -46,6 +47,7 @@ const app = {
       misc: misc(httpClient, dbVersionProvider),
       c11y: c11y(httpClient),
       backup: backup(httpClient),
+      cluster: cluster(httpClient),
     };
   },
 
@@ -56,7 +58,7 @@ const app = {
   backup: backupConsts,
   batch: batchConsts,
   filters: filtersConsts,
-  misc: miscConsts,
+  cluster: clusterConsts,
 };
 
 function initDbVersionProvider(httpClient) {
