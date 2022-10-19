@@ -4,8 +4,8 @@ export const NodeStatus = {
   UNAVAILABLE: "UNAVAILABLE",
 };
 
-const miscConsts = {
+const clusterConsts = {
   NodeStatus,
 };
 
-export default miscConsts;
+export default clusterConsts;
