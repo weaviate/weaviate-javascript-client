@@ -4,7 +4,6 @@ import NearObject from "./nearObject";
 import NearImage from "./nearImage";
 import Ask from "./ask";
 import Raw from "./raw";
-import { DEFAULT_KIND, validateKind } from "../kinds";
 
 export default class Explorer {
   constructor(client) {
@@ -85,14 +84,6 @@ export default class Explorer {
         ...this.errors,
         `${name} must be set - set with ${setter}`,
       ];
-    }
-  };
-
-  validateKind = () => {
-    try {
-      validateKind(this.kind);
-    } catch (e) {
-      this.errors = [...this.errors, e.toString()];
     }
   };
 

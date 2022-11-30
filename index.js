@@ -6,7 +6,6 @@ import classifications from "./classifications/index.js";
 import batch from "./batch/index.js";
 import misc from "./misc/index.js";
 import c11y from "./c11y/index.js";
-import { KIND_THINGS, KIND_ACTIONS } from "./kinds";
 import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion.js";
 import backup from "./backup/index.js";
 import backupConsts from "./backup/consts.js";
@@ -44,9 +43,6 @@ const app = {
   },
 
   // constants
-  KIND_THINGS,
-  KIND_ACTIONS,
-
   backup: backupConsts,
   batch: batchConsts,
   filters: filtersConsts,

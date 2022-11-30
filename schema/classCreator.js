@@ -1,5 +1,3 @@
-import { DEFAULT_KIND, validateKind } from "../kinds";
-
 export default class ClassCreator {
   constructor(client) {
     this.client = client;
