@@ -1,3 +1,4 @@
+import Connection from "./connection/index.js"
 import graphql from "./graphql/index.js";
 import schema from "./schema/index.js";
 import data from "./data/index.js";
@@ -25,29 +26,20 @@ const app = {
     // check if headers are set
     if (!params.headers) params.headers = {};
 
-    const graphqlClient = require("graphql-client")({
-      url: params.scheme + "://" + params.host + "/v1/graphql",
-      headers: params.headers,
-    });
-
-    const httpClient = require("./httpClient.js")({
-      baseUri: params.scheme + "://" + params.host + "/v1",
-      headers: params.headers,
-    });
-
-    const dbVersionProvider = initDbVersionProvider(httpClient);
+    const conn = new Connection(params);
+    const dbVersionProvider = initDbVersionProvider(conn.http);
     const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
     return {
-      graphql: graphql(graphqlClient),
-      schema: schema(httpClient),
-      data: data(httpClient, dbVersionSupport),
-      classifications: classifications(httpClient),
-      batch: batch(httpClient, dbVersionSupport),
-      misc: misc(httpClient, dbVersionProvider),
-      c11y: c11y(httpClient),
-      backup: backup(httpClient),
-      cluster: cluster(httpClient),
+      graphql: graphql(conn),
+      schema: schema(conn),
+      data: data(conn, dbVersionSupport),
+      classifications: classifications(conn),
+      batch: batch(conn, dbVersionSupport),
+      misc: misc(conn, dbVersionProvider),
+      c11y: c11y(conn),
+      backup: backup(conn),
+      cluster: cluster(conn),
     };
   },
 
