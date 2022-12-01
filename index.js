@@ -26,7 +26,7 @@ const app = {
     if (!params.headers) params.headers = {};
 
     const conn = new Connection(params);
-    const dbVersionProvider = initDbVersionProvider(conn.http);
+    const dbVersionProvider = initDbVersionProvider(conn);
     const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
     return {
@@ -49,8 +49,8 @@ const app = {
   cluster: clusterConsts,
 };
 
-function initDbVersionProvider(httpClient) {
-  const metaGetter = misc(httpClient).metaGetter();
+function initDbVersionProvider(conn) {
+  const metaGetter = misc(conn).metaGetter();
   const versionGetter = () => {
     return metaGetter.do()
       .then(result => result.version)

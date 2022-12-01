@@ -1,47 +1,87 @@
+import { Authenticator } from './auth.js';
+
 export default class Connection {
   constructor(params) {
-    this.gql = require("graphql-client")({
-      url: params.scheme + "://" + params.host + "/v1/graphql",
-      headers: params.headers,
-    });
+    this.http = require("./httpClient.js")(params);
+    this.gql = require("./gqlClient.js")(params)
 
-    this.http = require("./httpClient.js")({
-      baseUri: params.scheme + "://" + params.host + "/v1",
-      headers: params.headers,
-    });
-
-    this.authClientSecret = params.authClientSecret;
+    this.authEnabled = (params.authClientSecret !== undefined)
+    if (this.authEnabled) {
+      this.auth = new Authenticator(this.http, params.authClientSecret);
+    }
   }
 
   post = (path, payload, expectReturnContent = true) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.post(path, payload, expectReturnContent, token))
+    }
     return this.http.post(path, payload, expectReturnContent);
   };
 
   put = (path, payload, expectReturnContent = true) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.put(path, payload, expectReturnContent, token))
+    }
     return this.http.put(path, payload, expectReturnContent);
   };
 
   patch = (path, payload) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.patch(path, payload, token))
+    }
     return this.http.patch(path, payload);
   };
 
   delete = (path, payload, expectReturnContent = false) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.delete(path, payload, expectReturnContent, token))
+    }
     return this.http.delete(path, payload, expectReturnContent)
   };
   
   head = (path, payload) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.head(path, payload, token))
+    }
     return this.http.head(path, payload);
   };
 
   get = (path, expectReturnContent = true) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.get(path, expectReturnContent, token))
+    }
     return this.http.get(path, expectReturnContent);
   };
 
   getRaw = (path) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => this.http.getRaw(path, token));
+    }
     return this.http.getRaw(path);
   };
 
   query = (query) => {
+    if (this.authEnabled) {
+      return this.login().then(
+        token => {
+          var headers = {Authorization: `Bearer ${token}`};
+          return this.gql.query(query, headers);
+        });
+    }
     return this.gql.query(query);
+  };
+
+  login = async () => {
+    if (Date.now() >= this.auth.expirationEpoch) {
+      await this.auth.refresh();
+    }
+    return this.auth.bearer;
   };
 }

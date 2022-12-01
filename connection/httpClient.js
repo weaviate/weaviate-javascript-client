@@ -1,76 +1,115 @@
 const fetch = require("isomorphic-fetch");
 
 const client = (config) => {
-  const url = makeUrl(config.baseUri);
+  const baseUri = `${config.scheme}://${config.host}/v1`
+  const url = makeUrl(baseUri);
 
   return {
-    post: (path, payload, expectReturnContent = true) => {
-      return fetch(url(path), {
+    post: (path, payload, expectReturnContent = true, bearerToken = "") => {
+      var request = {
         method: "POST",
         headers: {
           ...config.headers,
           "content-type": "application/json",
         },
         body: JSON.stringify(payload),
-      }).then(makeCheckStatus(expectReturnContent));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken)
+      return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    put: (path, payload, expectReturnContent = true) => {
-      return fetch(url(path), {
+    put: (path, payload, expectReturnContent = true,  bearerToken = "") => {
+      var request = {
         method: "PUT",
         headers: {
           ...config.headers,
           "content-type": "application/json",
         },
         body: JSON.stringify(payload),
-      }).then(makeCheckStatus(expectReturnContent));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    patch: (path, payload) => {
-      return fetch(url(path), {
+    patch: (path, payload, bearerToken = "") => {
+      var request = {
         method: "PATCH",
         headers: {
           ...config.headers,
           "content-type": "application/json",
         },
         body: JSON.stringify(payload),
-      }).then(makeCheckStatus(false));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request).then(makeCheckStatus(false));
     },
-    delete: (path, payload, expectReturnContent = false) => {
-      return fetch(url(path), {
+    delete: (path, payload, expectReturnContent = false, bearerToken = "") => {
+      var request = {
         method: "DELETE",
         headers: {
           ...config.headers,
           "content-type": "application/json",
         },
         body: payload ? JSON.stringify(payload) : undefined,
-      }).then(makeCheckStatus(expectReturnContent));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    head: (path, payload) => {
-      return fetch(url(path), {
+    head: (path, payload, bearerToken = "") => {
+      var request = {
         method: "HEAD",
         headers: {
           ...config.headers,
           "content-type": "application/json",
         },
         body: payload ? JSON.stringify(payload) : undefined,
-      }).then(handleHeadResponse(false, true));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request).then(handleHeadResponse(false, true));
     },
-    get: (path, expectReturnContent = true) => {
-      return fetch(url(path), {
+    get: (path, expectReturnContent = true, bearerToken = "") => {
+      var request = {
         method: "GET",
         headers: {
           ...config.headers,
         },
-      }).then(makeCheckStatus(expectReturnContent));
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    getRaw: (path) => {
+    getRaw: (path, bearerToken = "") => {
       // getRaw does not handle the status leaving this to the caller
-      return fetch(url(path), {
+      var request = {
         method: "GET",
         headers: {
           ...config.headers,
         },
-      });
+      };
+      addAuthHeaderIfNeeded(request, bearerToken);
+      return fetch(url(path), request);
     },
+    externalGet: (externalUrl) => {
+      return fetch(externalUrl, {
+        method: "GET",
+        headers: {
+          ...config.headers,
+        },
+      }).then(makeCheckStatus(true));
+    },
+    externalPost: (externalUrl, body, contentType) => {
+      if (contentType == undefined || contentType == "") {
+        contentType = "application/json";
+      }
+      var request = {
+        method: "POST",
+        headers: {
+          ...config.headers,
+          "content-type": contentType
+        }
+      };
+      if (body != null) {
+        request.body = body;
+      }
+      return fetch(externalUrl, request).then(makeCheckStatus(true));
+    }
   };
 };
 
@@ -102,6 +141,12 @@ const handleHeadResponse = (expectResponseBody) => (res) => {
     return res.status == 204
   }
   return makeCheckStatus(expectResponseBody)
+}
+
+function addAuthHeaderIfNeeded(request, bearerToken) {
+  if (bearerToken != "") {
+    request.headers.Authorization = `Bearer ${bearerToken}`;
+  }
 }
 
 module.exports = client;
