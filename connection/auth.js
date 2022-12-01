@@ -1,12 +1,3 @@
-export class AuthCredentials {}
-
-export class AuthUserPasswordCredentials extends AuthCredentials {
-  constructor(username, password) {
-    this.username = username;
-    this.password = password;
-  }
-}
-
 export class Authenticator {
   constructor(http, creds) {
     this.http = http;
@@ -16,12 +7,54 @@ export class Authenticator {
   }
 
   refresh = () => {
+    if (this.creds instanceof AuthUserPasswordCredentials) {
+      return new UserPasswordAuthenticator(this.http, this.creds, this.getOpenidConfig)
+        .refresh()
+        .then(resp => {
+          this.bearer = resp.bearer;
+          this.expirationEpoch = resp.expirationEpoch;
+        });
+    }
+
+    // TODO: Future authentication flows go here
+
+    throw new Error("unsupported credential type");
+  };
+
+  getOpenidConfig = () => {
     return this.http.get("/.well-known/openid-configuration")
-      .then(localOpenIdConfig => this.getRemoteOpenIdConfig(localOpenIdConfig))
-      .then(remoteOpenIdConfig => this.requestAccessToken(remoteOpenIdConfig))
+      .then(async openidConfig => {
+        var provider = await this.http.externalGet(openidConfig.href)
+        return {
+          clientId: openidConfig.clientId,
+          provider: provider 
+        };
+      });
+  };
+}
+
+export class AuthUserPasswordCredentials {
+  constructor(creds) {
+    this.username = creds.username;
+    this.password = creds.password;
+  }
+}
+
+class UserPasswordAuthenticator {
+  constructor(http, creds, configFn) {
+    this.http = http;
+    this.creds = creds;
+    this.configFn = configFn;
+  }
+
+  refresh = () => {
+    return this.configFn()
+      .then(config => this.requestAccessToken(config))
       .then(tokenResp => {
-        this.bearer = tokenResp.access_token;
-        this.expirationEpoch = Date.now() + tokenResp.expires_in + 2
+        return {
+          bearer: tokenResp.access_token,
+          expirationEpoch: Date.now() + tokenResp.expires_in - 2 // -2 for some lag time
+        };
       })
       .catch(err => {
         console.debug(`failed: ${err}`);
@@ -29,21 +62,16 @@ export class Authenticator {
           new Error(`failed to refresh access token: ${err}`)
         );
       });
-  };
+  }
 
-  getRemoteOpenIdConfig = (localOpenIdConfig) => {
-    this.clientId = localOpenIdConfig.clientId;
-    return this.http.externalGet(localOpenIdConfig.href)
-  };
-
-  requestAccessToken = (remoteOpenIdConfig) => {
-    if (!remoteOpenIdConfig.grant_types_supported.includes("password")) {
+  requestAccessToken = (openidConfig) => {
+    if (!openidConfig.provider.grant_types_supported.includes("password")) {
       throw new Error("grant_type password not supported")
     }
-    var url = remoteOpenIdConfig.token_endpoint
+    var url = openidConfig.provider.token_endpoint
     var params = new URLSearchParams({
       grant_type: "password",
-      client_id: this.clientId,
+      client_id: openidConfig.clientId,
       username: this.creds.username,
       password: this.creds.password
     })
