@@ -49,6 +49,7 @@ class UserPasswordAuthenticator {
   }
 
   refresh = () => {
+    this.validateOpenidConfig();
     return this.requestAccessToken()
       .then(tokenResp => {
         return {
@@ -64,9 +65,6 @@ class UserPasswordAuthenticator {
   }
 
   requestAccessToken = () => {
-    if (!this.openidConfig.provider.grant_types_supported.includes("password")) {
-      throw new Error("grant_type password not supported");
-    }
     var url = this.openidConfig.provider.token_endpoint;
     var params = new URLSearchParams({
       grant_type: "password",
@@ -77,4 +75,16 @@ class UserPasswordAuthenticator {
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
   };
+
+  validateOpenidConfig = () => {
+    if (this.openidConfig.provider.grant_types_supported === undefined ||
+      !this.openidConfig.provider.grant_types_supported.includes("password")) {
+        throw new Error("grant_type password not supported");
+      }
+    if (this.openidConfig.provider.token_endpoint.includes(
+      "https://login.microsoftonline.com")) {
+        throw new Error("microsoft/azure recommends to avoid authentication using "+
+          "username and password, so this method is not supported by this client");
+      }
+  }
 }
