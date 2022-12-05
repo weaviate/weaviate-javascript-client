@@ -6,9 +6,11 @@ export class Authenticator {
     this.expirationEpoch = 0
   }
 
-  refresh = () => {
+  refresh = async (localConfig) => {
+    var config = await this.getOpenidConfig(localConfig);
+  
     if (this.creds instanceof AuthUserPasswordCredentials) {
-      return new UserPasswordAuthenticator(this.http, this.creds, this.getOpenidConfig)
+      return new UserPasswordAuthenticator(this.http, this.creds, config)
         .refresh()
         .then(resp => {
           this.bearer = resp.bearer;
@@ -21,13 +23,12 @@ export class Authenticator {
     throw new Error("unsupported credential type");
   };
 
-  getOpenidConfig = () => {
-    return this.http.get("/.well-known/openid-configuration")
-      .then(async openidConfig => {
-        var provider = await this.http.externalGet(openidConfig.href)
+  getOpenidConfig = async (localConfig) => {
+    return this.http.externalGet(localConfig.href)
+      .then(openidProviderConfig => {
         return {
-          clientId: openidConfig.clientId,
-          provider: provider 
+          clientId: localConfig.clientId, 
+          provider: openidProviderConfig
         };
       });
   };
@@ -41,15 +42,14 @@ export class AuthUserPasswordCredentials {
 }
 
 class UserPasswordAuthenticator {
-  constructor(http, creds, configFn) {
+  constructor(http, creds, config) {
     this.http = http;
     this.creds = creds;
-    this.configFn = configFn;
+    this.openidConfig = config;
   }
 
   refresh = () => {
-    return this.configFn()
-      .then(config => this.requestAccessToken(config))
+    return this.requestAccessToken()
       .then(tokenResp => {
         return {
           bearer: tokenResp.access_token,
@@ -57,24 +57,23 @@ class UserPasswordAuthenticator {
         };
       })
       .catch(err => {
-        console.debug(`failed: ${err}`);
         return Promise.reject(
           new Error(`failed to refresh access token: ${err}`)
         );
       });
   }
 
-  requestAccessToken = (openidConfig) => {
-    if (!openidConfig.provider.grant_types_supported.includes("password")) {
-      throw new Error("grant_type password not supported")
+  requestAccessToken = () => {
+    if (!this.openidConfig.provider.grant_types_supported.includes("password")) {
+      throw new Error("grant_type password not supported");
     }
-    var url = openidConfig.provider.token_endpoint
+    var url = this.openidConfig.provider.token_endpoint;
     var params = new URLSearchParams({
       grant_type: "password",
-      client_id: openidConfig.clientId,
+      client_id: this.openidConfig.clientId,
       username: this.creds.username,
       password: this.creds.password
-    })
+    });
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
   };

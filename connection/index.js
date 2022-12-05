@@ -1,4 +1,5 @@
 import { Authenticator } from './auth.js';
+import OpenidConfigurationGetter from "../misc/openidConfigurationGetter.js";
 
 export default class Connection {
   constructor(params) {
@@ -79,8 +80,16 @@ export default class Connection {
   };
 
   login = async () => {
+    var localConfig = await new OpenidConfigurationGetter(this.http).do()
+      .then(resp => resp);
+
+    if (localConfig === undefined) {
+      console.warn("client is configured for authentication, but server is not");
+      return "";
+    }
+
     if (Date.now() >= this.auth.expirationEpoch) {
-      await this.auth.refresh();
+      await this.auth.refresh(localConfig);
     }
     return this.auth.bearer;
   };
