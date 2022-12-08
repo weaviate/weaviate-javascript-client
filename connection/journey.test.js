@@ -6,8 +6,8 @@ const weaviate = require("../index");
 describe("connection", () => {
   it("makes a logged-in request with username/password", async () => {
     if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
-      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set")
-      return
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set");
+      return;
     }
 
     const client = weaviate.client({
@@ -30,8 +30,8 @@ describe("connection", () => {
 
   it("makes a logged-in request with access token", async () => {
     if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
-      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set")
-      return
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set");
+      return;
     }
 
     const dummy = new Connection({
@@ -66,8 +66,8 @@ describe("connection", () => {
 
   it("uses refresh token to fetch new access token", async () => {
     if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
-      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set")
-      return
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set");
+      return;
     }
 
     const dummy = new Connection({
@@ -95,9 +95,51 @@ describe("connection", () => {
 
     return conn.login()
       .then(resp => {
-        expect(resp).toBeDefined()
-        expect(resp != "").toBeTruthy()
+        expect(resp).toBeDefined();
+        expect(resp != "").toBeTruthy();
       })
       .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("fails to access auth-enabled server without client auth", async () => {
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8083"
+    });
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then(res => {
+        fail(`should not have succeeded. received: ${res}`);
+      })
+      .catch(e => {
+        expect(e).toContain("401");
+        expect(e).toContain("anonymous access not enabled");
+      });
+  })
+
+  it("warns when client auth is configured, but server auth is not", async () => {
+    const logSpy = jest.spyOn(console, 'warn');
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8080",
+      authClientSecret: new AuthUserPasswordCredentials({
+        username: "some-user",
+        password: "passwd"
+      })
+    });
+
+    await client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    expect(logSpy).toHaveBeenCalledWith(
+      "client is configured for authentication, but server is not");
   })
 })
