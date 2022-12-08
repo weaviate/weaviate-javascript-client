@@ -29,6 +29,11 @@ describe("connection", () => {
   })
 
   it("makes a logged-in request with access token", async () => {
+    if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set")
+      return
+    }
+
     const dummy = new Connection({
       scheme: "http",
       host: "localhost:8083",
@@ -60,6 +65,11 @@ describe("connection", () => {
   })
 
   it("uses refresh token to fetch new access token", async () => {
+    if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set")
+      return
+    }
+
     const dummy = new Connection({
       scheme: "http",
       host: "localhost:8083",
