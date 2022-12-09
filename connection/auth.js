@@ -86,7 +86,8 @@ class UserPasswordAuthenticator {
       grant_type: "password",
       client_id: this.openidConfig.clientId,
       username: this.creds.username,
-      password: this.creds.password
+      password: this.creds.password,
+      scope: "openid offline_access"
     });
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
