@@ -87,6 +87,7 @@ describe("connection", () => {
       host: "localhost:8083",
       authClientSecret: new AuthAccessTokenCredentials({
         accessToken: dummy.auth.bearerToken,
+        expiresIn: 1,
         refreshToken: dummy.auth.refreshToken
       })
     });
@@ -141,5 +142,30 @@ describe("connection", () => {
 
     expect(logSpy).toHaveBeenCalledWith(
       "client is configured for authentication, but server is not");
+  })
+
+  it("warns when client access token expires, no refresh token provided", async () => {
+    const logSpy = jest.spyOn(console, 'warn');
+
+    const conn = new Connection({
+      scheme: "http",
+      host: "localhost:8083",
+      authClientSecret: new AuthAccessTokenCredentials({
+        accessToken: "abcd1234",
+        expiresIn: 1
+      })
+    });
+    // force the use of refreshToken
+    conn.auth.expirationEpoch = 0
+
+    await conn.login()
+      .then(resp => {
+        expect(resp).toBeDefined();
+        expect(resp ).toEqual("abcd1234");
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+    
+    expect(logSpy).toHaveBeenCalledWith(
+      "AuthAccessTokenCredentials not provided with refreshToken, cannot refresh");
   })
 })

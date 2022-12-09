@@ -93,7 +93,7 @@ class UserPasswordAuthenticator {
   };
 
   validateOpenidConfig = () => {
-    if (this.openidConfig.provider.grant_types_supported === undefined ||
+    if (this.openidConfig.provider.grant_types_supported !== undefined &&
       !this.openidConfig.provider.grant_types_supported.includes("password")) {
         throw new Error("grant_type password not supported");
       }
@@ -107,10 +107,20 @@ class UserPasswordAuthenticator {
 
 export class AuthAccessTokenCredentials {
   constructor(creds) {
-    this.accessToken = creds.accessToken
-    this.expirationEpoch = Date.now() + creds.expiresIn -2 // -2 for some lag
-    this.refreshToken = creds.refreshToken
+    this.validate(creds);
+    this.accessToken = creds.accessToken;
+    this.expirationEpoch = Date.now() + creds.expiresIn -2; // -2 for some lag
+    this.refreshToken = creds.refreshToken;
   }
+
+  validate = (creds) => {
+    if (creds.expiresIn === undefined) {
+      throw new Error("AuthAccessTokenCredentials: expiresIn is required");
+    }
+    if (!Number.isInteger(creds.expiresIn) || creds.expiresIn <= 0) {
+      throw new Error("AuthAccessTokenCredentials: expiresIn must be int > 0");
+    }
+  };
 }
 
 class AccessTokenAuthenticator {
