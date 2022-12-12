@@ -5,12 +5,13 @@ export class Authenticator {
     this.bearerToken = "";
     this.refreshToken = "";
     this.expirationEpoch = 0
+    this.refreshRunning = false;
 
     // If the authentication method is access token,
     // our bearer token is already available for use
     if (this.creds instanceof AuthAccessTokenCredentials) {
       this.bearerToken = this.creds.accessToken;
-      this.expirationEpoch = Date.now() + this.creds.expiresIn - 2; // -2 for some lag
+      this.expirationEpoch = calcExpirationEpoch(this.creds.expiresIn);
       this.refreshToken = this.creds.refreshToken;
     }
   }
@@ -35,6 +36,10 @@ export class Authenticator {
         this.bearerToken = resp.bearerToken;
         this.expirationEpoch = resp.expirationEpoch;
         this.refreshToken = resp.refreshToken;
+        if (!this.refreshRunning) {
+          this.runBackgroundTokenRefresh(authenticator);
+          this.refreshRunning = true;
+        }
       });
   };
 
@@ -46,6 +51,19 @@ export class Authenticator {
           provider: openidProviderConfig
         };
       });
+  };
+
+  runBackgroundTokenRefresh = (authenticator) => {
+    setInterval(async () => { 
+      // check every 30s if the token will expire in <= 1m,
+      // if so, refresh
+      if (this.expirationEpoch - Date.now() <= 60_000) {
+        var resp = await authenticator.refresh();
+        this.bearerToken = resp.bearerToken;
+        this.expirationEpoch = resp.expirationEpoch;
+        this.refreshToken = resp.refreshToken;
+      }
+    }, 30_000)
   };
 }
 
@@ -69,7 +87,7 @@ class UserPasswordAuthenticator {
       .then(tokenResp => {
         return {
           bearerToken: tokenResp.access_token,
-          expirationEpoch: Date.now() + tokenResp.expires_in - 2, // -2 for some lag time
+          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
@@ -110,7 +128,7 @@ export class AuthAccessTokenCredentials {
   constructor(creds) {
     this.validate(creds);
     this.accessToken = creds.accessToken;
-    this.expirationEpoch = Date.now() + creds.expiresIn -2; // -2 for some lag
+    this.expirationEpoch = calcExpirationEpoch(creds.expiresIn);
     this.refreshToken = creds.refreshToken;
   }
 
@@ -144,7 +162,7 @@ class AccessTokenAuthenticator {
       .then(tokenResp => {
         return {
           bearerToken: tokenResp.access_token,
-          expirationEpoch: Date.now() + tokenResp.expires_in - 2, // -2 for some lag time
+          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
@@ -172,4 +190,8 @@ class AccessTokenAuthenticator {
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
   };
+}
+
+function calcExpirationEpoch(expiresIn) {
+  return Date.now() + ((expiresIn - 2) * 1000) // -2 for some lag
 }
