@@ -1,3 +1,4 @@
+---
 version: '3.4'
 services:
   weaviate:
@@ -25,3 +26,4 @@ services:
       EXTENSIONS_STORAGE_ORIGIN: http://weaviate:8080
       NEIGHBOR_OCCURRENCE_IGNORE_PERCENTILE: 5
       ENABLE_COMPOUND_SPLITTING: 'false'
+...

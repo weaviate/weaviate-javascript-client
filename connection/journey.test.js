@@ -4,7 +4,31 @@ import Connection from "./index.js";
 const weaviate = require("../index");
 
 describe("connection", () => {
-  it("makes a logged-in request with username/password", async () => {
+  it("makes an Okta logged-in request with username/password", async () => {
+    if (process.env.OKTA_DUMMY_CI_PW == undefined || process.env.OKTA_DUMMY_CI_PW == "") {
+      console.warn("Skipping because `OKTA_DUMMY_CI_PW` is not set");
+      return;
+    }
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8082",
+      authClientSecret: new AuthUserPasswordCredentials({
+        username: "test@test.de",
+        password: process.env.OKTA_DUMMY_CI_PW
+      })
+    });
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();;
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("makes a WCS logged-in request with username/password", async () => {
     if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
       console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set");
       return;
