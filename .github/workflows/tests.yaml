@@ -17,6 +17,9 @@ jobs:
       with:
         node-version: '16.x'
     - name: "Run tests"
+      env:
+        OKTA_DUMMY_CI_PW: ${{ secrets.OKTA_DUMMY_CI_PW }}
+        WCS_DUMMY_CI_PW: ${{ secrets.WCS_DUMMY_CI_PW }}
       run: |
         npm install
         ci/run_dependencies.sh

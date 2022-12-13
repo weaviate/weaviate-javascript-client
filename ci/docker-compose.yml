@@ -1,7 +1,8 @@
+---
 version: '3.4'
 services:
   weaviate:
-    image: semitechnologies/weaviate:1.16.0
+    image: semitechnologies/weaviate:1.16.5
     restart: on-failure:0
     ports:
       - "8080:8080"
@@ -25,3 +26,4 @@ services:
       EXTENSIONS_STORAGE_ORIGIN: http://weaviate:8080
       NEIGHBOR_OCCURRENCE_IGNORE_PERCENTILE: 5
       ENABLE_COMPOUND_SPLITTING: 'false'
+...

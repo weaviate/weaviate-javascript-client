@@ -6,6 +6,11 @@ describe("misc endpoints", () => {
     host: "localhost:8080",
   });
 
+  const auth_client = weaviate.client({
+    scheme: "http",
+    host: "localhost:8083"
+  })
+
   it("reports as live", () => {
     return client.misc
       .liveChecker()
@@ -70,5 +75,16 @@ describe("misc endpoints", () => {
         expect(res).toBeUndefined();
       })
       .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("shows oidc config when set", () => {
+    return auth_client.misc
+      .openidConfigurationGetter()
+      .do()
+      .then((res) => {
+        expect(res.clientId).toEqual("wcs")
+        expect(res.href).toContain(".well-known/openid-configuration")
+        expect(res.scopes).toEqual(["openid","email"])
+      })
   });
 });

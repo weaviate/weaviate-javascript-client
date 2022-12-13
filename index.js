@@ -1,3 +1,4 @@
+import Connection from "./connection/index.js"
 import graphql from "./graphql/index.js";
 import schema from "./schema/index.js";
 import data from "./data/index.js";
@@ -5,7 +6,6 @@ import classifications from "./classifications/index.js";
 import batch from "./batch/index.js";
 import misc from "./misc/index.js";
 import c11y from "./c11y/index.js";
-import { KIND_THINGS, KIND_ACTIONS } from "./kinds";
 import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion.js";
 import backup from "./backup/index.js";
 import backupConsts from "./backup/consts.js";
@@ -25,44 +25,32 @@ const app = {
     // check if headers are set
     if (!params.headers) params.headers = {};
 
-    const graphqlClient = require("graphql-client")({
-      url: params.scheme + "://" + params.host + "/v1/graphql",
-      headers: params.headers,
-    });
-
-    const httpClient = require("./httpClient.js")({
-      baseUri: params.scheme + "://" + params.host + "/v1",
-      headers: params.headers,
-    });
-
-    const dbVersionProvider = initDbVersionProvider(httpClient);
+    const conn = new Connection(params);
+    const dbVersionProvider = initDbVersionProvider(conn);
     const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
     return {
-      graphql: graphql(graphqlClient),
-      schema: schema(httpClient),
-      data: data(httpClient, dbVersionSupport),
-      classifications: classifications(httpClient),
-      batch: batch(httpClient, dbVersionSupport),
-      misc: misc(httpClient, dbVersionProvider),
-      c11y: c11y(httpClient),
-      backup: backup(httpClient),
-      cluster: cluster(httpClient),
+      graphql: graphql(conn),
+      schema: schema(conn),
+      data: data(conn, dbVersionSupport),
+      classifications: classifications(conn),
+      batch: batch(conn, dbVersionSupport),
+      misc: misc(conn, dbVersionProvider),
+      c11y: c11y(conn),
+      backup: backup(conn),
+      cluster: cluster(conn),
     };
   },
 
   // constants
-  KIND_THINGS,
-  KIND_ACTIONS,
-
   backup: backupConsts,
   batch: batchConsts,
   filters: filtersConsts,
   cluster: clusterConsts,
 };
 
-function initDbVersionProvider(httpClient) {
-  const metaGetter = misc(httpClient).metaGetter();
+function initDbVersionProvider(conn) {
+  const metaGetter = misc(conn).metaGetter();
   const versionGetter = () => {
     return metaGetter.do()
       .then(result => result.version)
