@@ -17,8 +17,9 @@ export class ObjectsPath {
   buildCheck(id, className) {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-  buildGetOne(id, className, additionals) {
-    return this.build({id, className, additionals}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
+  buildGetOne(id, className, additionals, consistencyLevel, nodeName) {
+    return this.build({id, className, additionals, consistencyLevel, nodeName}, 
+      [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
   buildGet(className, limit, additionals) {
     return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
@@ -72,6 +73,12 @@ export class ObjectsPath {
     const queryParams = [];
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
+    }
+    if (isValidStringProperty(params.nodeName)) {
+      queryParams.push(`node_name=${params.nodeName}`);
+    }
+    if (isValidStringProperty(params.consistencyLevel)) {
+      queryParams.push(`consistency_level=${params.consistencyLevel}`);
     }
     if (queryParams.length > 0) {
       return `${path}?${queryParams.join("&")}`;

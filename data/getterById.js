@@ -25,6 +25,16 @@ export default class GetterById {
 
   withVector = () => this.extendAdditionals("vector");
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
+  withNodeName = (nodeName) => {
+    this.nodeName = nodeName;
+    return this;
+  };
+
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
       this.errors = [
@@ -38,6 +48,11 @@ export default class GetterById {
     this.validateId();
   };
 
+  buildPath = () => {
+    return this.objectsPath.buildGetOne(this.id, this.className,
+      this.additionals, this.consistencyLevel, this.nodeName)
+  }
+
   do = () => {
     this.validate();
     if (this.errors.length > 0) {
@@ -46,7 +61,7 @@ export default class GetterById {
       );
     }
 
-    return this.objectsPath.buildGetOne(this.id, this.className, this.additionals)
+    return this.buildPath()
       .then(this.client.get);
   };
 }
