@@ -609,7 +609,7 @@ describe("data", () => {
       .withClassName(thingClassName)
       .withId(id)
       .withVector()
-      .withConsistencyLevel("QUORUM")
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
       .buildPath()
       .then(path => {
         expect(path).toContain("?include=vector");
