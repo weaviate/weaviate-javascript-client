@@ -1,8 +1,8 @@
 const weaviate = require("../index");
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
-const EXPECTED_WEAVIATE_VERSION = "1.16.5"
-const EXPECTED_WEAVIATE_GIT_HASH = "438e826"
+const EXPECTED_WEAVIATE_VERSION = "1.17.0-prealpha"
+const EXPECTED_WEAVIATE_GIT_HASH = "29e987d"
 
 describe("cluster nodes endpoint", () => {
   const client = weaviate.client({
