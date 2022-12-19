@@ -13,6 +13,7 @@ import batchConsts from "./batch/consts.js";
 import filtersConsts from "./filters/consts.js";
 import cluster from "./cluster/index.js";
 import clusterConsts from "./cluster/consts.js";
+import replicationConsts from "./data/replication/consts.js";
 
 const app = {
   client: function (params) {
@@ -47,6 +48,7 @@ const app = {
   batch: batchConsts,
   filters: filtersConsts,
   cluster: clusterConsts,
+  replication: replicationConsts,
 };
 
 function initDbVersionProvider(conn) {

@@ -584,6 +584,40 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   });
 
+  it("forms a get by id query with node_name set", () => {
+    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+
+    return client.data
+      .getterById()
+      .withClassName(thingClassName)
+      .withId(id)
+      .withVector()
+      .withNodeName("node1")
+      .buildPath()
+      .then(path => {
+        expect(path).toContain("?include=vector");
+        expect(path).toContain("&node_name=node1");
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("forms a get by id query with consistency_level set", () => {
+    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+
+    return client.data
+      .getterById()
+      .withClassName(thingClassName)
+      .withId(id)
+      .withVector()
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
+      .buildPath()
+      .then(path => {
+        expect(path).toContain("?include=vector");
+        expect(path).toContain("consistency_level=QUORUM");
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
   it("tears down and cleans up", () => {
     return Promise.all([
       client.schema.classDeleter().withClassName(thingClassName).do(),
