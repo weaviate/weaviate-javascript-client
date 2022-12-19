@@ -151,6 +151,58 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e));
   });
 
+  test("graphql get bm25 with query (without properties)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withBm25({ query: "Article", })
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get bm25 with query (with properties)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withBm25({ query: "Article", properties: ["title", "url"]})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get hybrid with query (no vector)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withHybrid({ query: "Apple", alpha: 3})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get hybrid with query (with vector)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withHybrid({ query: "Apple", alpha: 0.3, vector: [0.1, 0.2, 0.3]})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
   test("graphql get with nearText (with certainty)", () => {
     return client.graphql
       .get()

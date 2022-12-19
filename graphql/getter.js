@@ -1,6 +1,8 @@
 import Where from "./where";
 import NearText from "./nearText";
 import NearVector from "./nearVector";
+import Bm25 from "./bm25";
+import Hybrid from "./hybrid";
 import NearObject from "./nearObject";
 import NearImage from "./nearImage";
 import Ask from "./ask";
@@ -59,6 +61,27 @@ export default class Getter {
 
     return this;
   };
+
+  withBm25 = (bm25Obj) => {
+    try {
+      this.bm25String = new Bm25(bm25Obj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
+    return this;
+  };
+
+  withHybrid = (hybridObj) => {
+    try {
+      this.hybridString = new Hybrid(hybridObj).toString();
+    } catch (e) {
+      this.errors = [...this.errors, e];
+    }
+
+    return this;
+  };
+
 
   withNearObject = (nearObjectObj) => {
     if (this.includesNearMediaFilter) {

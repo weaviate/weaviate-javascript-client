@@ -2,7 +2,7 @@
 version: '3.4'
 services:
   weaviate:
-    image: semitechnologies/weaviate:preview-replace-shardingconfig-replicas-with-replication-factor-29e987d
+    image: semitechnologies/weaviate:1.17.0-prealpha-e8b5ccb
     restart: on-failure:0
     ports:
       - "8080:8080"

@@ -451,6 +451,7 @@ function newClassObject(className) {
       desiredVirtualCount: 128,
       function: "murmur3",
       key: "_id",
+      replicas: 1,
       strategy: "hash",
       virtualPerPhysical: 128,
     },
