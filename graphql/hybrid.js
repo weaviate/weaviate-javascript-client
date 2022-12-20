@@ -1,32 +1,27 @@
+import { isValidNumber, isValidNumberArray } from "../validation/number";
+import { isValidStringProperty } from "../validation/string";
+
 export default class GraphQLHybrid {
+
   constructor(hybridObj) {
     this.source = hybridObj;
   }
 
-  toString(wrap = true) {
+  toString() {
     this.parse();
     this.validate();
 
     let args = [`query:${JSON.stringify(this.query)}`]; // query must always be set
 
-    if (this.alpha) {
+    if (this.alpha !== undefined) {
       args = [...args, `alpha:${JSON.stringify(this.alpha)}`];
     }
 
-    if (this.vector) {
+    if (this.vector !== undefined) {
       args = [...args, `vector:${JSON.stringify(this.vector)}`];
     }
 
-    if (!wrap) {
-      return `${args.join(",")}`;
-    }
     return `{${args.join(",")}}`;
-  }
-
-  validate() {
-    if (!this.query) {
-      throw new Error("hybrid filter: query cannot be empty");
-    }
   }
 
   parse() {
@@ -42,21 +37,13 @@ export default class GraphQLHybrid {
           this.parseVector(this.source[key]);
           break;
         default:
-          throw new Error("hybrid filter: unrecognized key '" + key + "'");
+          throw new Error(`hybrid filter: unrecognized key '${key}'`);
       }
     }
   }
 
-  parseVector(vector) {
-    if (!Array.isArray(vector)) {
-      throw new Error("hybrid filter: vector must be an array");
-    }
-
-    this.vector = vector;
-  }
-
   parseQuery(query) {
-    if (typeof query !== "string") {
+    if (!isValidStringProperty(query)) {
       throw new Error("hybrid filter: query must be a string");
     }
 
@@ -64,10 +51,24 @@ export default class GraphQLHybrid {
   }
 
   parseAlpha(alpha) {
-    if (typeof alpha !== "number") {
+    if (!isValidNumber(alpha)) {
       throw new Error("hybrid filter: alpha must be a number");
     }
 
     this.alpha = alpha;
+  }
+
+  parseVector(vector) {
+    if (!isValidNumberArray(vector) || vector.length == 0) {
+      throw new Error("hybrid filter: vector must be an array of numbers");
+    }
+
+    this.vector = vector;
+  }
+
+  validate() {
+    if (!this.query) {
+      throw new Error("hybrid filter: query cannot be empty");
+    }
   }
 }

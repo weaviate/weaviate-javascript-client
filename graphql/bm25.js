@@ -1,25 +1,22 @@
+import { isValidStringArray, isValidStringProperty } from "../validation/string";
+
 export default class GraphQLBm25 {
+
   constructor(bm25Obj) {
     this.source = bm25Obj;
   }
 
-  toString(wrap = true) {
+  toString() {
     this.parse();
     this.validate();
 
     let args = [`query:${JSON.stringify(this.query)}`]; // query must always be set
-   
-    if (this.properties) {
+
+    if (this.properties !== undefined) {
       args = [...args, `properties:${JSON.stringify(this.properties)}`];
     }
 
     return `{${args.join(",")}}`;
-  }
-
-  validate() {
-    if (!this.query) {
-      throw new Error("bm25 filter: query cannot be empty");
-    }
   }
 
   parse() {
@@ -32,26 +29,30 @@ export default class GraphQLBm25 {
           this.parseProperties(this.source[key]);
           break;
         default:
-          throw new Error("bm25 filter: unrecognized key '" + key + "'");
+          throw new Error(`bm25 filter: unrecognized key '${key}'`);
       }
     }
   }
 
- 
-  parseProperties(properties) {
-    if (!Array.isArray(properties)) {
-      throw new Error("bm25 filter: properties must be an array");
-    }
-
-    this.properties = properties;
-  }
-
   parseQuery(query) {
-    if (typeof query !== "string") {
-      throw new Error("bm25 filter: query must be a number");
+    if (!isValidStringProperty(query)) {
+      throw new Error("bm25 filter: query must be a string");
     }
 
     this.query = query;
   }
 
+  parseProperties(properties) {
+    if (!isValidStringArray(properties)) {
+      throw new Error("bm25 filter: properties must be an array of strings");
+    }
+
+    this.properties = properties;
+  }
+
+  validate() {
+    if (!this.query) {
+      throw new Error("bm25 filter: query cannot be empty");
+    }
+  }
 }

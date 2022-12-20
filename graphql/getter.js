@@ -195,8 +195,10 @@ export default class Getter {
       this.nearTextString ||
       this.nearObjectString ||
       this.nearVectorString ||
-      this.askString ||
       this.nearImageString ||
+      this.askString ||
+      this.bm25String ||
+      this.hybridString ||
       this.limit ||
       this.offset ||
       this.groupString ||
@@ -226,6 +228,14 @@ export default class Getter {
 
       if (this.nearVectorString) {
         args = [...args, `nearVector:${this.nearVectorString}`];
+      }
+
+      if (this.bm25String) {
+        args = [...args, `bm25:${this.bm25String}`];
+      }
+
+      if (this.hybridString) {
+        args = [...args, `hybrid:${this.hybridString}`];
       }
 
       if (this.groupString) {
