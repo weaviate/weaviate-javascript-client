@@ -173,9 +173,8 @@ describe("schema", () => {
                   removals: null
                 }
               },
-              moduleConfig: { 
-                'text2vec-contextionary': 
-                { 
+              moduleConfig: {
+                'text2vec-contextionary': {
                   vectorizeClassName: true
                 }
               },
@@ -188,6 +187,9 @@ describe("schema", () => {
                 key: "_id",
                 strategy: "hash",
                 virtualPerPhysical: 128,
+              },
+              replicationConfig: {
+                factor: 1,
               },
             },
           ],
@@ -333,7 +335,7 @@ describe("schema", () => {
 
   it("creates a class with bm25 and stopwords config", async () => {
     var newClass = {
-      class: 'EmptyClass', 
+      class: 'EmptyClass',
       properties: [{dataType: ["string"],name: 'stringProp'}]
     }
 
@@ -356,6 +358,37 @@ describe("schema", () => {
       .then(res => {
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
+      });
+
+    return deleteClass(client, newClass.class);
+  });
+
+  it("creates a class with explicit replication config", async () => {
+    const replicationFactor = 2;
+    var newClass = newClassObject("SomeClass");
+    newClass.replicationConfig.factor = replicationFactor;
+
+    await client.schema
+      .classCreator()
+      .withClass(newClass)
+      .do()
+      .then(res => {
+        expect(res).toHaveProperty('replicationConfig.factor', replicationFactor);
+      });
+
+    return deleteClass(client, newClass.class);
+  });
+
+  it("creates a class with implicit replication config", async () => {
+    var newClass = newClassObject("SomeClass");
+    delete newClass.replicationConfig
+
+    await client.schema
+      .classCreator()
+      .withClass(newClass)
+      .do()
+      .then(res => {
+        expect(res).toHaveProperty('replicationConfig.factor', 1);
       });
 
     return deleteClass(client, newClass.class);
@@ -420,6 +453,9 @@ function newClassObject(className) {
       key: "_id",
       strategy: "hash",
       virtualPerPhysical: 128,
+    },
+    replicationConfig: {
+      factor: 1,
     },
   };
 }
