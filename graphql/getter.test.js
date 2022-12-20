@@ -1377,3 +1377,231 @@ describe("invalid sort filters", () => {
     });
   });
 });
+
+describe("bm25 valid searchers", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  test("query and no properties", () => {
+    const expectedQuery =
+      `{Get{Person` + `(bm25:{query:"accountant"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withBm25({ query: "accountant" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and properties", () => {
+    const expectedQuery =
+      `{Get{Person` + `(bm25:{query:"accountant",properties:["profession","position"]})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withBm25({ query: "accountant", properties: ["profession", "position"] })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and empty properties", () => {
+    const expectedQuery =
+      `{Get{Person` + `(bm25:{query:"accountant",properties:[]})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withBm25({ query: "accountant", properties: [] })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+});
+
+describe("bm25 invalid searchers", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const tests = [
+    {
+      title: "an empty bm25",
+      bm25: {},
+      msg: "bm25 filter: query cannot be empty",
+    },
+    {
+      title: "an empty query",
+      bm25: { query: ""},
+      msg: "bm25 filter: query must be a string",
+    },
+    {
+      title: "query of wrong type",
+      bm25: { query: {} },
+      msg: "bm25 filter: query must be a string",
+    },
+    {
+      title: "an empty property",
+      bm25: { query: "query", properties: [""] },
+      msg: "bm25 filter: properties must be an array of strings",
+    },
+    {
+      title: "property of wrong type",
+      bm25: { query: "query", properties: [123] },
+      msg: "bm25 filter: properties must be an array of strings",
+    },
+    {
+      title: "properties of wrong type",
+      bm25: { query: "query", properties: {} },
+      msg: "bm25 filter: properties must be an array of strings",
+    },
+  ];
+
+  tests.forEach((t) => {
+    test(t.title, () => {
+      new Getter(mockClient)
+        .withClassName("Person")
+        .withFields("name")
+        .withBm25(t.bm25)
+        .do()
+        .then(() => fail("it should have error'd"))
+        .catch((e) => {
+          expect(e.toString()).toContain(t.msg);
+        });
+    });
+  });
+});
+
+
+describe("hybrid valid searchers", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  test("query and no alpha, no vector", () => {
+    const expectedQuery =
+      `{Get{Person` + `(hybrid:{query:"accountant"})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withHybrid({ query: "accountant" })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and alpha, no vector", () => {
+    const expectedQuery =
+      `{Get{Person` + `(hybrid:{query:"accountant",alpha:0.75})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withHybrid({ query: "accountant", alpha: 0.75 })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and alpha 0, no vector", () => {
+    const expectedQuery =
+      `{Get{Person` + `(hybrid:{query:"accountant",alpha:0})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withHybrid({ query: "accountant", alpha: 0 })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and vector, no alpha", () => {
+    const expectedQuery =
+      `{Get{Person` + `(hybrid:{query:"accountant",vector:[1,2,3]})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withHybrid({ query: "accountant", vector: [1,2,3] })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+
+  test("query and alpha and vector", () => {
+    const expectedQuery =
+      `{Get{Person` + `(hybrid:{query:"accountant",alpha:0.75,vector:[1,2,3]})` + `{name}}}`;
+
+    new Getter(mockClient)
+      .withClassName("Person")
+      .withFields("name")
+      .withHybrid({ query: "accountant", alpha: 0.75, vector: [1,2,3] })
+      .do();
+
+    expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+  });
+});
+
+describe("hybrid invalid searchers", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const tests = [
+    {
+      title: "an empty hybrid",
+      hybrid: {},
+      msg: "hybrid filter: query cannot be empty",
+    },
+    {
+      title: "an empty query",
+      hybrid: { query: ""},
+      msg: "hybrid filter: query must be a string",
+    },
+    {
+      title: "query of wrong type",
+      hybrid: { query: {} },
+      msg: "hybrid filter: query must be a string",
+    },
+    {
+      title: "alpha on wrong type",
+      hybrid: { query: "query", alpha: "alpha" },
+      msg: "hybrid filter: alpha must be a number",
+    },
+    {
+      title: "an empty vector",
+      hybrid: { query: "query", vector: [] },
+      msg: "hybrid filter: vector must be an array of numbers",
+    },
+    {
+      title: "vector element of wrong type",
+      hybrid: { query: "query", vector: ["vector"] },
+      msg: "hybrid filter: vector must be an array of numbers",
+    },
+    {
+      title: "vector of wrong type",
+      hybrid: { query: "query", vector: {} },
+      msg: "hybrid filter: vector must be an array of numbers",
+    },
+  ];
+
+  tests.forEach((t) => {
+    test(t.title, () => {
+      new Getter(mockClient)
+        .withClassName("Person")
+        .withFields("name")
+        .withHybrid(t.hybrid)
+        .do()
+        .then(() => fail("it should have error'd"))
+        .catch((e) => {
+          expect(e.toString()).toContain(t.msg);
+        });
+    });
+  });
+});

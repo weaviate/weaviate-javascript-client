@@ -151,6 +151,86 @@ describe("the graphql journey", () => {
       .catch((e) => fail("it should not have error'd" + e));
   });
 
+  test("graphql get bm25 with query (without properties)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withBm25({ query: "Article" })
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get bm25 with query (with properties)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withBm25({ query: "Apple", properties: ["title", "url"]})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(1);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get bm25 with query (with properties not having searched query)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withBm25({ query: "Apple", properties: ["url"]})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(0);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get hybrid with query (no vector, alpha 0)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withHybrid({ query: "apple", alpha: 0})  // TODO change to Apple
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(1);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get hybrid with query (no vector, alpha 0.5)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withHybrid({ query: "apple", alpha: 0.5})  // TODO change to Apple
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
+  test("graphql get hybrid with query (with vector)", () => {
+    const dummyVec300x0 = Array.apply(null, Array(300)).map(() => 0);
+
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withHybrid({ query: "Apple", alpha: 0.5, vector: dummyVec300x0})
+      .withFields("_additional { id }")
+      .do()
+      .then((res) => {
+        expect(res.data.Get.Article.length).toBe(3);
+      })
+      .catch((e) => fail("it should not have error'd" + e));
+  });
+
   test("graphql get with nearText (with certainty)", () => {
     return client.graphql
       .get()
