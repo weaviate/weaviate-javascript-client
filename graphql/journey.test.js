@@ -168,7 +168,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withBm25({ query: "Apple", properties: ["title", "url"]})
+      .withBm25({ query: "Apple", properties: ["title", "url"] })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -181,7 +181,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withBm25({ query: "Apple", properties: ["url"]})
+      .withBm25({ query: "Apple", properties: ["url"] })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -194,7 +194,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "apple", alpha: 0})  // TODO change to Apple
+      .withHybrid({ query: "apple", alpha: 0 })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -207,7 +207,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "apple", alpha: 0.5})  // TODO change to Apple
+      .withHybrid({ query: "Apple", alpha: 0.5 })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -222,7 +222,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "Apple", alpha: 0.5, vector: dummyVec300x0})
+      .withHybrid({ query: "Apple", alpha: 0.5, vector: dummyVec300x0 })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
