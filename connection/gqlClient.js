@@ -1,10 +1,12 @@
-const client = (config) => {
+import graphqlClient from 'graphql-client';
+
+export const gqlClient = (config) => {
     const scheme = config.scheme
     const host = config.host
     const defaultHeaders = config.headers
     return {
       query: (query, headers = {}) => {
-      var gql = require("graphql-client")({
+      var gql = graphqlClient({
         url: `${scheme}://${host}/v1/graphql`,
         headers: {
           ...defaultHeaders,
@@ -16,4 +18,4 @@ const client = (config) => {
   }
 }
 
-module.exports = client;
+export default gqlClient;

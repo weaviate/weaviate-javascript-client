@@ -15,6 +15,8 @@ import cluster from "./cluster/index.js";
 import clusterConsts from "./cluster/consts.js";
 import replicationConsts from "./data/replication/consts.js";
 
+require('babel-polyfill')
+
 const app = {
   client: function (params) {
     // check if the URL is set
