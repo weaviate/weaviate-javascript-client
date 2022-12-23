@@ -14,6 +14,9 @@ import filtersConsts from "./filters/consts.js";
 import cluster from "./cluster/index.js";
 import clusterConsts from "./cluster/consts.js";
 import replicationConsts from "./data/replication/consts.js";
+import { AuthAccessTokenCredentials, AuthUserPasswordCredentials } from "./connection/auth.js";
+
+require('babel-polyfill')
 
 const app = {
   client: function (params) {
@@ -66,4 +69,8 @@ function initDbVersionProvider(conn) {
 }
 
 export default app;
+export { AuthUserPasswordCredentials, AuthAccessTokenCredentials };
 module.exports = app;
+module.exports.AuthUserPasswordCredentials = AuthUserPasswordCredentials;
+module.exports.AuthAccessTokenCredentials = AuthAccessTokenCredentials;
+

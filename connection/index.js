@@ -1,10 +1,13 @@
 import { Authenticator } from './auth.js';
 import OpenidConfigurationGetter from "../misc/openidConfigurationGetter.js";
 
+import httpClient from './httpClient';
+import gqlClient from './gqlClient';
+
 export default class Connection {
   constructor(params) {
-    this.http = require("./httpClient.js")(params);
-    this.gql = require("./gqlClient.js")(params)
+    this.http = httpClient(params);
+    this.gql = gqlClient(params)
 
     this.authEnabled = (params.authClientSecret !== undefined)
     if (this.authEnabled) {
