@@ -6,6 +6,12 @@ export default {
     file: "lib.js",
     format: "umd",
     name: "weaviate-client",
+    exports: "named",
+    globals: {
+      "isomorphic-fetch": "fetch",
+      "graphql-request": "request",
+    }
   },
-  plugins: [babel({ babelHelpers: "bundled" })],
+  external: [/@babel\/runtime/, "isomorphic-fetch", "graphql-request"],
+  plugins: [babel({ babelHelpers: "runtime" })],
 };
