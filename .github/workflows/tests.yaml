@@ -11,17 +11,24 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # all LTSes + current
+        # https://github.com/nodejs/Release#release-schedule
+        node: [ 14, 16, 18, 19 ]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '16.x'
+        node-version: ${{ matrix.node }}
     - name: "Run tests"
       env:
         OKTA_DUMMY_CI_PW: ${{ secrets.OKTA_DUMMY_CI_PW }}
         WCS_DUMMY_CI_PW: ${{ secrets.WCS_DUMMY_CI_PW }}
+      # for some reason graphql is not available on node 14 if not explicitly installed
       run: |
-        npm install
+        npm ci
+        if ${{ matrix.node == 14 }}; then npm install graphql; fi
         ci/run_dependencies.sh
         npm test
         ci/stop_dependencies.sh
@@ -35,7 +42,8 @@ jobs:
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          # latest LTS
+          node-version: 18
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci && npm run build
       - run: npm publish
