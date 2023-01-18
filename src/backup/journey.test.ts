@@ -1,11 +1,8 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'weaviate'.
 const weaviate = require("../index");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'createTest... Remove this comment to see the full error message
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
 const DOCKER_COMPOSE_BACKUPS_DIR = "/tmp/backups";
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("create and restore backup with waiting", () => {
   const BACKEND = weaviate.backup.Backend.FILESYSTEM;
   const BACKUP_ID = randomBackupId()
@@ -15,13 +12,10 @@ describe("create and restore backup with waiting", () => {
     host: "localhost:8080",
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("sets up", () => createTestFoodSchemaAndData(client));
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("asserts data exist", () => assertThatAllPizzasExist(client));
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("creates backup", () => {
     return client.backup.creator()
       .withIncludeClassNames(PIZZA_CLASS_NAME)
@@ -30,26 +24,17 @@ describe("create and restore backup with waiting", () => {
       .withWaitForCompletion(true)
       .do()
       .then((createResponse: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.id).toBe(BACKUP_ID);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.classes).toHaveLength(1)
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.classes).toContain(PIZZA_CLASS_NAME);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.path).toBe(`${DOCKER_COMPOSE_BACKUPS_DIR}/${BACKUP_ID}`);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.backend).toBe(BACKEND);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(createResponse.error).toBeUndefined();
       })
-      // @ts-expect-error TS(2304): Cannot find name 'fail'.
       .catch((err: any) => fail("should not fail on create backup: " + err));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("asserts data still exist", () => assertThatAllPizzasExist(client));
 
   // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
