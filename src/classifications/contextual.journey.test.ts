@@ -5,24 +5,20 @@ const targetSavoryId = "b7a64fbd-7c22-44ac-afbb-8d1432b8061b";
 const unclassifiedOneId = "89024ad4-3434-4daa-bfde-a5c6fc4b7f33";
 const unclassifiedTwoId = "afed0b20-bc9a-44c0-84af-09bb6214b3b7";
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("a classification journey", () => {
   // this journey test is more minimal compared to the kNN one, as a lot of
   // things that are already tested there, don't need to be tested again.
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("knn - using the client's wait method", () => {
     const client = weaviate.client({
       scheme: "http",
       host: "localhost:8080",
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("setups the schema and data", () => setup(client));
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it(
       "triggers a classification with waiting",
       async () => {
@@ -36,19 +32,15 @@ describe("a classification journey", () => {
           .withWaitTimeout(60 * 1000)
           .do()
           .then((res: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.status).toEqual("completed");
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.type).toEqual("text2vec-contextionary-contextual");
             id = res.id;
           })
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .catch((e: any) => fail("it should not have errord: " + e));
       },
       60 * 1000 // jest timeout
     );
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("tears down and cleans up", () => cleanup(client));
   });
 });

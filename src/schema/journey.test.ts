@@ -1,7 +1,5 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'weaviate'.
-const weaviate = require("../index");
+import weaviate from "../index"
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("schema", () => {
   const client = weaviate.client({
     scheme: "http",
@@ -10,31 +8,26 @@ describe("schema", () => {
 
   const classObj = newClassObject('MyThingClass');
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("creates a thing class (implicitly)", () => {
     return client.schema
       .classCreator()
       .withClass(classObj)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toEqual(classObj);
       });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("gets an existing class", () => {
     return client.schema
       .classGetter()
       .withClassName(classObj.class)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toEqual(classObj);
       });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("fails to create class with property having not supported tokenization", () => {
     const doomedClass = newClassObject("DoomedClass");
     doomedClass.properties[0].tokenization = "not-supported";
@@ -43,12 +36,10 @@ describe("schema", () => {
       .classCreator()
       .withClass(doomedClass)
       .do()
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       .catch((err: any) => expect(err).toEqual("usage error (422): {\"code\":606,\"message\":\"tokenization in body should be one of [word field]\"}")
       );
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("extends the thing class with a new property", () => {
     const className = "MyThingClass";
     const prop = {
@@ -69,12 +60,10 @@ describe("schema", () => {
       .withProperty(prop)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toEqual(prop);
       });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("fails to extend the thing class with property having not supported tokenization (1)", () => {
     const className = "MyThingClass";
     const prop = {
@@ -94,12 +83,10 @@ describe("schema", () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       .catch((err: any) => expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'field' is not allowed for data type 'text'\"}]}")
       );
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("fails to extend the thing class with property having not supported tokenization (2)", () => {
     const className = "MyThingClass";
     const prop = {
@@ -119,18 +106,15 @@ describe("schema", () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       .catch((err: any) => expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'word' is not allowed for data type 'int[]'\"}]}")
       );
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("retrieves the schema and it matches the expectations", () => {
     return client.schema
       .getter()
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toEqual({
           classes: [
             {
@@ -210,7 +194,6 @@ describe("schema", () => {
       });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("gets the shards of an existing class", () => {
     return client.schema
       .shardsGetter()
@@ -218,18 +201,14 @@ describe("schema", () => {
       .do()
       .then((res: any) => {
         res.forEach((shard: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(shard.status).toEqual("READY");
         });
       });
   })
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("updates a shard of an existing class to readonly", async () => {
     var shards = await getShards(client, classObj.class);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(Array.isArray(shards)).toBe(true);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(shards.length).toEqual(1);
 
     return client.schema
@@ -239,17 +218,13 @@ describe("schema", () => {
       .withStatus("READONLY")
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res.status).toEqual("READONLY");
     });
   })
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("updates a shard of an existing class to ready", async () => {
     var shards = await getShards(client, classObj.class);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(Array.isArray(shards)).toBe(true);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(shards.length).toEqual(1);
 
     return client.schema
@@ -259,24 +234,20 @@ describe("schema", () => {
       .withStatus("READY")
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res.status).toEqual("READY");
     });
   })
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("deletes an existing class", () => {
     return client.schema
       .classDeleter()
       .withClassName(classObj.class)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toEqual(undefined);
       });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("updates all shards in a class", async () => {
     var shardCount = 3;
     var newClass = newClassObject('NewClass');
@@ -287,14 +258,11 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('shardingConfig.actualCount', 3);
       });
 
     var shards = await getShards(client, newClass.class);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(Array.isArray(shards)).toBe(true);
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(shards.length).toEqual(shardCount);
 
     await client.schema
@@ -303,10 +271,8 @@ describe("schema", () => {
       .withStatus("READONLY")
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res.length).toEqual(shardCount)
         res.forEach((obj: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(obj.status).toEqual("READONLY")
         });
       });
@@ -317,10 +283,8 @@ describe("schema", () => {
       .withStatus("READY")
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res.length).toEqual(shardCount)
         res.forEach((obj: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(obj.status).toEqual("READY")
         });
       });
@@ -328,7 +292,6 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   })
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("has updated values of bm25 config", async () => {
     var newClass = newClassObject('NewClass');
     var bm25Config = {k1: 1.13, b: 0.222};
@@ -340,14 +303,12 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
       });
 
     return deleteClass(client, newClass.class);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("has updated values of stopwords config", async () => {
     var newClass = newClassObject('SpaceClass');
     var stopwordConfig = {
@@ -356,7 +317,6 @@ describe("schema", () => {
       removals: ["a", "the"]
     };
 
-    // @ts-expect-error TS(2322): Type '{ preset: string; additions: string[]; remov... Remove this comment to see the full error message
     newClass.invertedIndexConfig.stopwords = stopwordConfig;
 
     await client.schema
@@ -364,14 +324,12 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
       });
 
     return deleteClass(client, newClass.class);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("creates a class with bm25 and stopwords config", async () => {
     var newClass = {
       class: 'EmptyClass',
@@ -385,7 +343,6 @@ describe("schema", () => {
       removals: ["a", "the"]
     };
 
-    // @ts-expect-error TS(2339): Property 'invertedIndexConfig' does not exist on t... Remove this comment to see the full error message
     newClass.invertedIndexConfig = {
       bm25: bm25Config,
       stopwords: stopwordConfig
@@ -396,16 +353,13 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
       });
 
     return deleteClass(client, newClass.class);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("creates a class with explicit replication config", async () => {
     const replicationFactor = 2;
     var newClass = newClassObject("SomeClass");
@@ -416,17 +370,13 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('replicationConfig.factor', replicationFactor);
       });
 
     return deleteClass(client, newClass.class);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
-  it("creates a class with implicit replication config", async () => {
     var newClass = newClassObject("SomeClass");
-    // @ts-expect-error TS(2790): The operand of a 'delete' operator must be optiona... Remove this comment to see the full error message
     delete newClass.replicationConfig
 
     await client.schema
@@ -434,7 +384,6 @@ describe("schema", () => {
       .withClass(newClass)
       .do()
       .then((res: any) => {
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(res).toHaveProperty('replicationConfig.factor', 1);
       });
 
@@ -442,7 +391,7 @@ describe("schema", () => {
   });
 });
 
-function newClassObject(className: any) {
+function newClassObject(className: string) {
   return {
     class: className,
     properties: [
@@ -523,7 +472,6 @@ function deleteClass(client: any, className: any) {
     .withClassName(className)
     .do()
     .then((res: any) => {
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(res).toEqual(undefined);
     });
 }

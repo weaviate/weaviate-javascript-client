@@ -1,7 +1,6 @@
 import { AuthUserPasswordCredentials, AuthAccessTokenCredentials } from './auth.js';
 import Connection from "./index.js";
-
-const weaviate = require("../index");
+import weaviate from "../index"
 
 describe("connection", () => {
   it("makes an Okta logged-in request with username/password", async () => {

@@ -3,7 +3,7 @@ export default class RawGraphQL {
     errors: any;
     query: any;
 
-    constructor(client: any, quer: any) {
+    constructor(client: any) {
         this.client = client;
         this.errors = [];
     }

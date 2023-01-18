@@ -4,3 +4,5 @@ config.yaml
 lib.js
 weaviate-data/
 build/
+.vscode/
+.idea/
