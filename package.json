@@ -9,17 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semi-technologies/weaviate-javascript-client.git"
+    "url": "git+https://github.com/weaviate/weaviate-javascript-client.git"
   },
   "keywords": [
     "weaviate"
   ],
-  "author": "SeMI Technologies",
+  "author": "Weaviate",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/semi-technologies/weaviate-javascript-client/issues"
+    "url": "https://github.com/weaviate/weaviate-javascript-client/issues"
   },
-  "homepage": "https://github.com/semi-technologies/weaviate-javascript-client#readme",
+  "homepage": "https://github.com/weaviate/weaviate-javascript-client#readme",
   "dependencies": {
     "@babel/runtime": "^7.20.7",
     "graphql-request": "^5.1.0",

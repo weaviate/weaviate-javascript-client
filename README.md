@@ -9,14 +9,12 @@ A javascript client for easy interaction with a weaviate instance.
 ## Support
 
 - [Stackoverflow for questions](https://stackoverflow.com/questions/tagged/weaviate).
-- [Github for issues](https://github.com/semi-technologies/weaviate-javascript-client/issues).
+- [Github for issues](https://github.com/weaviate/weaviate-javascript-client/issues).
 
 ## Contributing
 
-- [How to Contribute](https://github.com/semi-technologies/weaviate-javascript-client/blob/master/CONTRIBUTE.md).
+- [How to Contribute](https://github.com/weaviate/weaviate-javascript-client/blob/master/CONTRIBUTE.md).
 
 ## Build Status
 
-| Branch |                                                                                                 Status                                                                                                 |
-| ------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| Master | [![Build Status](https://travis-ci.com/semi-technologies/weaviate-javascript-client.svg?token=1qdvi3hJanQcWdqEstmy&branch=master)](https://travis-ci.com/semi-technologies/weaviate-javascript-client) |
+[![Build Status](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml)
