@@ -1,5 +1,5 @@
-import { Authenticator } from './auth.js';
-import OpenidConfigurationGetter from "../misc/openidConfigurationGetter.js";
+import { Authenticator } from './auth';
+import OpenidConfigurationGetter from "../misc/openidConfigurationGetter";
 
 import httpClient from './httpClient';
 import gqlClient from './gqlClient';

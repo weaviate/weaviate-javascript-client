@@ -1,10 +1,8 @@
 import Getter from "./getter";
 import { Operator } from "../filters/consts";
 
-// @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test("a simple query without params", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -12,14 +10,11 @@ test("a simple query without params", () => {
 
   new Getter(mockClient).withClassName("Person").withFields("name").do();
 
-  // @ts-expect-error TS(2304): Cannot find name 'expect'.
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test("a simple query with a limit", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -31,14 +26,11 @@ test("a simple query with a limit", () => {
     .withLimit(7)
     .do();
 
-  // @ts-expect-error TS(2304): Cannot find name 'expect'.
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test("a simple query with a limit and offset", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -51,14 +43,11 @@ test("a simple query with a limit and offset", () => {
     .withLimit(7)
     .do();
 
-  // @ts-expect-error TS(2304): Cannot find name 'expect'.
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test("a simple query with a group", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -70,16 +59,12 @@ test("a simple query with a group", () => {
     .withGroup({ type: "merge", force: 0.7 })
     .do();
 
-  // @ts-expect-error TS(2304): Cannot find name 'expect'.
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("where filters", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid where filter", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -94,16 +79,13 @@ describe("where filters", () => {
       .withWhere({ operator: Operator.EQUAL, valueString: "John Doe", path: ["name"] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
   // to prevent a regression on
   // https://github.com/semi-technologies/weaviate-javascript-client/issues/6
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a where filter containing a geo query", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -132,14 +114,11 @@ describe("where filters", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nested where filter", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -164,14 +143,11 @@ describe("where filters", () => {
       .withWhere(nestedWhere)
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid nested where filters", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -209,7 +185,6 @@ describe("where filters", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
@@ -217,11 +192,9 @@ describe("where filters", () => {
           .withWhere(t.where)
           .do()
           .then(() => {
-            // @ts-expect-error TS(2304): Cannot find name 'fail'.
             fail("it should have error'd");
           })
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -229,12 +202,9 @@ describe("where filters", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("nearText searchers", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearText", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -247,14 +217,11 @@ describe("nearText searchers", () => {
       .withNearText({ concepts: ["foo", "bar"] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -274,14 +241,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -301,14 +265,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters and autocorrect (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -329,14 +290,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters and autocorrect (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -357,14 +315,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearText and autocorrect set to false", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -377,14 +332,11 @@ describe("nearText searchers", () => {
       .withNearText({ concepts: ["foo", "bar"], autocorrect: false })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveTo with objects parameter (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -403,14 +355,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveTo with objects parameter (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -429,14 +378,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveAwayFrom with objects parameter (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -455,14 +401,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveAwayFrom with objects parameter (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -481,14 +424,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveTo and moveAway with objects parameter (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -508,14 +448,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with moveTo and moveAway with objects parameter (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -535,14 +472,11 @@ describe("nearText searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid nearText searchers", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -667,17 +601,14 @@ describe("nearText searchers", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
           .withFields("name")
           .withNearText(t.nearText)
           .do()
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .then(() => fail("it should have error'd"))
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -685,12 +616,9 @@ describe("nearText searchers", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("nearVector searchers", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearVector", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -703,14 +631,11 @@ describe("nearVector searchers", () => {
       .withNearVector({ vector: [0.1234, 0.9876] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -728,14 +653,11 @@ describe("nearVector searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("with optional parameters (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -753,14 +675,11 @@ describe("nearVector searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid nearVector searchers", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -793,17 +712,14 @@ describe("nearVector searchers", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
           .withFields("name")
           .withNearVector(t.nearVector)
           .do()
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .then(() => fail("it should have error'd"))
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -811,12 +727,9 @@ describe("nearVector searchers", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("nearObject searchers", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearObject with id", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -829,14 +742,11 @@ describe("nearObject searchers", () => {
       .withNearObject({ id: "some-uuid" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearObject with beacon", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -849,14 +759,11 @@ describe("nearObject searchers", () => {
       .withNearObject({ beacon: "weaviate/some-uuid" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearObject with all params (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -873,14 +780,11 @@ describe("nearObject searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearObject with all params (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -897,14 +801,11 @@ describe("nearObject searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid nearObject searchers", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -937,17 +838,14 @@ describe("nearObject searchers", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
           .withFields("name")
           .withNearObject(t.nearObject)
           .do()
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .then(() => fail("it should have error'd"))
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -955,12 +853,9 @@ describe("nearObject searchers", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("ask searchers", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -973,14 +868,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question and properties", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -993,14 +885,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?", properties: ["prop1", "prop2"] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question, properties, certainty", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1017,14 +906,11 @@ describe("ask searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question, properties, distance", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1041,14 +927,11 @@ describe("ask searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with all params (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1067,14 +950,11 @@ describe("ask searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with all params (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1093,14 +973,11 @@ describe("ask searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question and autocorrect", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1113,14 +990,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?", autocorrect: true })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question and autocorrect set to false", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1133,14 +1007,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?", autocorrect: false })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question and rerank", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1153,14 +1024,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?", rerank: true })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid ask with question and rerank set to false", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1173,14 +1041,11 @@ describe("ask searchers", () => {
       .withAsk({ question: "What is Weaviate?", rerank: false })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid ask searchers", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1218,17 +1083,14 @@ describe("ask searchers", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
           .withFields("name")
           .withAsk(t.ask)
           .do()
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .then(() => fail("it should have error'd"))
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -1236,12 +1098,9 @@ describe("ask searchers", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("nearImage searchers", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearImage with image", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1254,14 +1113,11 @@ describe("nearImage searchers", () => {
       .withNearImage({ image: "iVBORw0KGgoAAAANS" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearImage with all params (with certainty)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1277,14 +1133,11 @@ describe("nearImage searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearImage with all params (with distance)", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1300,14 +1153,11 @@ describe("nearImage searchers", () => {
       })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid nearImage with base64 encoded image", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1320,14 +1170,11 @@ describe("nearImage searchers", () => {
       .withNearImage({ image: "data:image/png;base64,iVBORw0KGgoAAAANS" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("queries with invalid nearImage searchers", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1355,17 +1202,14 @@ describe("nearImage searchers", () => {
     ];
 
     tests.forEach((t) => {
-      // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
       test(t.title, () => {
         new Getter(mockClient)
           .withClassName("Person")
           .withFields("name")
           .withNearImage(t.nearImage)
           .do()
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           .then(() => fail("it should have error'd"))
           .catch((e: any) => {
-            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -1373,12 +1217,9 @@ describe("nearImage searchers", () => {
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("sort filters", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid sort filter", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1395,14 +1236,11 @@ describe("sort filters", () => {
       .withSort(sort)
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid array of sort filter", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1419,14 +1257,11 @@ describe("sort filters", () => {
       .withSort(sort)
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("a query with a valid array of sort filters", () => {
     const mockClient = {
-      // @ts-expect-error TS(2304): Cannot find name 'jest'.
       query: jest.fn(),
     };
 
@@ -1447,15 +1282,12 @@ describe("sort filters", () => {
       .withSort(sort)
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("invalid sort filters", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -1532,31 +1364,25 @@ describe("invalid sort filters", () => {
     },
   ]
   tests.forEach((t) => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test(t.name, () => {
       new Getter(mockClient)
         .withClassName("Person")
         .withFields("name")
         .withSort(t.sort)
         .do()
-        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         .then(() => fail("it should have error'd"))
         .catch((e: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(e.toString()).toEqual(t.msg);
         });
     });
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("bm25 valid searchers", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and no properties", () => {
     const expectedQuery =
       `{Get{Person` + `(bm25:{query:"accountant"})` + `{name}}}`;
@@ -1567,11 +1393,9 @@ describe("bm25 valid searchers", () => {
       .withBm25({ query: "accountant" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and properties", () => {
     const expectedQuery =
       `{Get{Person` + `(bm25:{query:"accountant",properties:["profession","position"]})` + `{name}}}`;
@@ -1582,11 +1406,9 @@ describe("bm25 valid searchers", () => {
       .withBm25({ query: "accountant", properties: ["profession", "position"] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and empty properties", () => {
     const expectedQuery =
       `{Get{Person` + `(bm25:{query:"accountant",properties:[]})` + `{name}}}`;
@@ -1597,15 +1419,12 @@ describe("bm25 valid searchers", () => {
       .withBm25({ query: "accountant", properties: [] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("bm25 invalid searchers", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -1643,17 +1462,14 @@ describe("bm25 invalid searchers", () => {
   ];
 
   tests.forEach((t) => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test(t.title, () => {
       new Getter(mockClient)
         .withClassName("Person")
         .withFields("name")
         .withBm25(t.bm25)
         .do()
-        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         .then(() => fail("it should have error'd"))
         .catch((e: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(e.toString()).toContain(t.msg);
         });
     });
@@ -1661,14 +1477,11 @@ describe("bm25 invalid searchers", () => {
 });
 
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("hybrid valid searchers", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and no alpha, no vector", () => {
     const expectedQuery =
       `{Get{Person` + `(hybrid:{query:"accountant"})` + `{name}}}`;
@@ -1679,11 +1492,9 @@ describe("hybrid valid searchers", () => {
       .withHybrid({ query: "accountant" })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and alpha, no vector", () => {
     const expectedQuery =
       `{Get{Person` + `(hybrid:{query:"accountant",alpha:0.75})` + `{name}}}`;
@@ -1694,11 +1505,9 @@ describe("hybrid valid searchers", () => {
       .withHybrid({ query: "accountant", alpha: 0.75 })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and alpha 0, no vector", () => {
     const expectedQuery =
       `{Get{Person` + `(hybrid:{query:"accountant",alpha:0})` + `{name}}}`;
@@ -1709,11 +1518,9 @@ describe("hybrid valid searchers", () => {
       .withHybrid({ query: "accountant", alpha: 0 })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and vector, no alpha", () => {
     const expectedQuery =
       `{Get{Person` + `(hybrid:{query:"accountant",vector:[1,2,3]})` + `{name}}}`;
@@ -1724,11 +1531,9 @@ describe("hybrid valid searchers", () => {
       .withHybrid({ query: "accountant", vector: [1,2,3] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test("query and alpha and vector", () => {
     const expectedQuery =
       `{Get{Person` + `(hybrid:{query:"accountant",alpha:0.75,vector:[1,2,3]})` + `{name}}}`;
@@ -1739,15 +1544,12 @@ describe("hybrid valid searchers", () => {
       .withHybrid({ query: "accountant", alpha: 0.75, vector: [1,2,3] })
       .do();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
   });
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("hybrid invalid searchers", () => {
   const mockClient = {
-    // @ts-expect-error TS(2304): Cannot find name 'jest'.
     query: jest.fn(),
   };
 
@@ -1790,17 +1592,14 @@ describe("hybrid invalid searchers", () => {
   ];
 
   tests.forEach((t) => {
-    // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
     test(t.title, () => {
       new Getter(mockClient)
         .withClassName("Person")
         .withFields("name")
         .withHybrid(t.hybrid)
         .do()
-        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         .then(() => fail("it should have error'd"))
         .catch((e: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(e.toString()).toContain(t.msg);
         });
     });

@@ -8,7 +8,6 @@ const graphql = (client: any) => {
     get: () => new Getter(client),
     aggregate: () => new Aggregator(client),
     explore: () => new Explorer(client),
-    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
     raw: () => new Raw(client),
   };
 };

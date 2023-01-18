@@ -5,21 +5,17 @@ const targetSavoryId = "e5da0127-327e-4184-85b8-7b9d1af4a850";
 const unclassifiedOneId = "8bde517e-01a7-47c9-8db6-d09a2e8d3db7";
 const unclassifiedTwoId = "39a04208-b6b6-4df4-9aba-caed9e0df2c3";
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("a classification journey", () => {
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("knn - manually polling the status", () => {
     const client = weaviate.client({
       scheme: "http",
       host: "localhost:8080",
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("setups the schema and data", () => setup(client));
 
     let id: any; // will be assigned by weaviate, see then block in scheduler
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("triggers a classification without waiting", () => {
       return client.classifications
         .scheduler()
@@ -30,31 +26,26 @@ describe("a classification journey", () => {
         .withBasedOnProperties(["description"])
         .do()
         .then((res: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(res.id).toBeDefined();
           id = res.id;
         })
-        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         .catch((e: any) => fail("it should not have errord: " + e));
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("is now completed", () => {
       return client.classifications
         .getter()
         .withId(id)
         .do()
         .then((res: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(res.status).toEqual("completed");
         });
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("eventually turns to completed", () => {
       const timeout = 5 * 1000;
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve: any, reject) => {
         setTimeout(reject, timeout);
         setInterval(() => {
           client.classifications
@@ -62,15 +53,12 @@ describe("a classification journey", () => {
             .withId(id)
             .do()
             .then((res: any) => {
-              // @ts-expect-error TS(2794): Expected 1 arguments, but got 0. Did you forget to... Remove this comment to see the full error message
               res.status == "completed" && resolve();
             });
         }, 500);
-      // @ts-expect-error TS(2304): Cannot find name 'fail'.
       }).catch(() => fail("timed out"));
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("waits for es index updates to have refreshed", () => {
       return new Promise((resolve) => setTimeout(resolve, 1200));
     });
@@ -102,23 +90,19 @@ describe("a classification journey", () => {
     //   ]);
     // });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("tears down and cleans up", () => cleanup(client));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("knn - using the client's wait method", () => {
     const client = weaviate.client({
       scheme: "http",
       host: "localhost:8080",
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("setups the schema and data", () => setup(client));
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("triggers a classification without waiting", async () => {
       return client.classifications
         .scheduler()
@@ -131,15 +115,12 @@ describe("a classification journey", () => {
         .withWaitTimeout(60 * 1000)
         .do()
         .then((res: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(res.status).toEqual("completed");
           id = res.id;
         })
-        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         .catch((e: any) => fail("it should not have errord: " + e));
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("waits for es index updates to have refreshed", () => {
       return new Promise((resolve) => setTimeout(resolve, 1200));
     });
@@ -171,21 +152,17 @@ describe("a classification journey", () => {
     //   ]);
     // });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("tears down and cleans up", () => cleanup(client));
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("knn - running into a timeout", () => {
     const client = weaviate.client({
       scheme: "http",
       host: "localhost:8080",
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("setups the schema and data", () => setup(client));
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("fails a classification with an impossibly small timeout", () => {
       return client.classifications
         .scheduler()
@@ -198,11 +175,9 @@ describe("a classification journey", () => {
         .withWaitTimeout(1) // that's going to be difficult ;-)
         .do()
         .then((res: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'fail'.
           fail("it should have error'd");
         })
         .catch((e: any) => {
-          // @ts-expect-error TS(2304): Cannot find name 'expect'.
           expect(e).toEqual(
             new Error(
               "classification didn't finish within configured timeout, " +
@@ -212,12 +187,10 @@ describe("a classification journey", () => {
         });
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("wait with tear down until the classification actually finishes", () => {
       return new Promise((resolve) => setTimeout(resolve, 1000));
     });
 
-    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("tears down and cleans up", () => cleanup(client));
   });
 });

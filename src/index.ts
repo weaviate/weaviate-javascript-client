@@ -1,20 +1,20 @@
-import Connection from "./connection/index.js"
-import graphql from "./graphql/index.js";
-import schema from "./schema/index.js";
-import data from "./data/index.js";
-import classifications from "./classifications/index.js";
-import batch from "./batch/index.js";
-import misc from "./misc/index.js";
-import c11y from "./c11y/index.js";
-import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion.js";
-import backup from "./backup/index.js";
-import backupConsts from "./backup/consts.js";
-import batchConsts from "./batch/consts.js";
-import filtersConsts from "./filters/consts.js";
-import cluster from "./cluster/index.js";
-import clusterConsts from "./cluster/consts.js";
-import replicationConsts from "./data/replication/consts.js";
-import { AuthAccessTokenCredentials, AuthUserPasswordCredentials } from "./connection/auth.js";
+import Connection from "./connection/index"
+import graphql from "./graphql/index";
+import schema from "./schema/index";
+import data from "./data/index";
+import classifications from "./classifications/index";
+import batch from "./batch/index";
+import misc from "./misc/index";
+import c11y from "./c11y/index";
+import { DbVersionProvider, DbVersionSupport } from "./utils/dbVersion";
+import backup from "./backup/index";
+import backupConsts from "./backup/consts";
+import batchConsts from "./batch/consts";
+import filtersConsts from "./filters/consts";
+import cluster from "./cluster/index";
+import clusterConsts from "./cluster/consts";
+import replicationConsts from "./data/replication/consts";
+import { AuthAccessTokenCredentials, AuthUserPasswordCredentials } from "./connection/auth";
 
 const app = {
   client: function (params: any) {

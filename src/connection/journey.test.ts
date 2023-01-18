@@ -1,5 +1,5 @@
-import { AuthUserPasswordCredentials, AuthAccessTokenCredentials } from './auth.js';
-import Connection from "./index.js";
+import { AuthUserPasswordCredentials, AuthAccessTokenCredentials } from './auth';
+import Connection from "./index";
 import weaviate from "../index"
 
 describe("connection", () => {

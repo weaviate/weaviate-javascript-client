@@ -330,7 +330,7 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   });
 
-  it("creates a class with bm25 and stopwords config", async () => {
+    it("creates a class with bm25 and stopwords config", async () => {
     var newClass = {
       class: 'EmptyClass',
       properties: [{dataType: ["string"],name: 'stringProp'}]
@@ -376,6 +376,7 @@ describe("schema", () => {
     return deleteClass(client, newClass.class);
   });
 
+  it("creates a class with implicit replication config", async () => {
     var newClass = newClassObject("SomeClass");
     delete newClass.replicationConfig
 
