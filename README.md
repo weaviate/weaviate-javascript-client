@@ -13,8 +13,8 @@ A javascript client for easy interaction with a weaviate instance.
 
 ## Contributing
 
-- [How to Contribute](https://github.com/weaviate/weaviate-javascript-client/blob/master/CONTRIBUTE.md).
+- [How to Contribute](https://github.com/weaviate/weaviate-javascript-client/blob/main/CONTRIBUTE.md).
 
 ## Build Status
 
-[![Build Status](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml)
+[![Build Status](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/weaviate/weaviate-javascript-client/actions/workflows/.github/workflows/tests.yaml)
