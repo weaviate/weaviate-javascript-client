@@ -27,6 +27,9 @@ export class Authenticator {
       case AuthAccessTokenCredentials:
         authenticator = new AccessTokenAuthenticator(this.http, this.creds, config);
         break;
+      case AuthClientCredentials:
+        authenticator = new ClientCredentialsAuthenticator(this.http, this.creds, config);
+        break;
       default:
         throw new Error("unsupported credential type");
     }
@@ -190,6 +193,14 @@ class AccessTokenAuthenticator {
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
   };
+}
+
+export class AuthClientCredentials {
+  
+}
+
+class ClientCredentialsAuthenticator {
+
 }
 
 function calcExpirationEpoch(expiresIn) {
