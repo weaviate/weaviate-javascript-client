@@ -1,10 +1,13 @@
 export default class ConceptsGetter {
-  constructor(client) {
+  client: any;
+  concept: any;
+  errors: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -13,7 +16,7 @@ export default class ConceptsGetter {
     }
   };
 
-  withConcept = (concept) => {
+  withConcept = (concept: any) => {
     this.concept = concept;
     return this;
   };

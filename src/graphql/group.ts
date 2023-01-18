@@ -1,10 +1,11 @@
 export default class GraphQLGroup {
-  constructor(source) {
+  source: any;
+  constructor(source: any) {
     this.source = source;
   }
 
   toString() {
-    let parts = [];
+    let parts: any = [];
 
     if (this.source.type) {
       // value is a graphQL enum, so doesn't need to be quoted

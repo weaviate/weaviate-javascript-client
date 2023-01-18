@@ -1,12 +1,13 @@
 export default class OpenidConfigurationGetterGetter {
-  constructor(client) {
+  client: any;
+  constructor(client: any) {
     this.client = client;
   }
 
   do = () => {
     return this.client
       .getRaw("/.well-known/openid-configuration")
-      .then((res) => {
+      .then((res: any) => {
         if (res.status < 400) {
           return res.json();
         }

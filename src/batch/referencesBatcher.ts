@@ -1,5 +1,9 @@
 export default class ReferencesBatcher {
-  constructor(client, beaconPath) {
+  beaconPath: any;
+  client: any;
+  errors: any;
+  references: any;
+  constructor(client: any, beaconPath: any) {
     this.client = client;
     this.beaconPath = beaconPath;
     this.references = [];
@@ -13,7 +17,7 @@ export default class ReferencesBatcher {
    *  - withReferences(ref1)
    * @param  {...any} references
    */
-  withReferences(...references) {
+  withReferences(...references: any[]) {
     let refs = references;
     if (references.length && Array.isArray(references[0])) {
       refs = references[0];
@@ -22,7 +26,7 @@ export default class ReferencesBatcher {
     return this;
   }
 
-  withReference(reference) {
+  withReference(reference: any) {
     return this.withReferences(reference);
   }
 
@@ -50,16 +54,16 @@ export default class ReferencesBatcher {
       );
     }
     const path = `/batch/references`;
-    const payloadPromise = Promise.all(this.references.map(ref => this.rebuildReferencePromise(ref)));
+    const payloadPromise = Promise.all(this.references.map((ref: any) => this.rebuildReferencePromise(ref)));
 
     return payloadPromise.then(payload => this.client.post(path, payload));
   };
 
-  rebuildReferencePromise(reference) {
+  rebuildReferencePromise(reference: any) {
     return this.beaconPath.rebuild(reference.to)
-      .then(beaconTo => ({
-        from: reference.from,
-        to: beaconTo
-      }));
+      .then((beaconTo: any) => ({
+      from: reference.from,
+      to: beaconTo
+    }));
   }
 }

@@ -1,5 +1,11 @@
 export class Authenticator {
-  constructor(http, creds) {
+  bearerToken: any;
+  creds: any;
+  expirationEpoch: any;
+  http: any;
+  refreshRunning: any;
+  refreshToken: any;
+  constructor(http: any, creds: any) {
     this.http = http;
     this.creds = creds;
     this.bearerToken = "";
@@ -11,15 +17,16 @@ export class Authenticator {
     // our bearer token is already available for use
     if (this.creds instanceof AuthAccessTokenCredentials) {
       this.bearerToken = this.creds.accessToken;
+      // @ts-expect-error TS(2339): Property 'expiresIn' does not exist on type 'AuthA... Remove this comment to see the full error message
       this.expirationEpoch = calcExpirationEpoch(this.creds.expiresIn);
       this.refreshToken = this.creds.refreshToken;
     }
   }
 
-  refresh = async (localConfig) => {
+  refresh = async (localConfig: any) => {
     var config = await this.getOpenidConfig(localConfig);
 
-    var authenticator;
+    var authenticator: any;
     switch (this.creds.constructor) {
       case AuthUserPasswordCredentials:
         authenticator = new UserPasswordAuthenticator(this.http, this.creds, config);
@@ -32,7 +39,7 @@ export class Authenticator {
     }
 
     return authenticator.refresh()
-      .then(resp => {
+      .then((resp: any) => {
         this.bearerToken = resp.bearerToken;
         this.expirationEpoch = resp.expirationEpoch;
         this.refreshToken = resp.refreshToken;
@@ -43,9 +50,9 @@ export class Authenticator {
       });
   };
 
-  getOpenidConfig = async (localConfig) => {
+  getOpenidConfig = async (localConfig: any) => {
     return this.http.externalGet(localConfig.href)
-      .then(openidProviderConfig => {
+      .then((openidProviderConfig: any) => {
         return {
           clientId: localConfig.clientId, 
           provider: openidProviderConfig
@@ -53,7 +60,7 @@ export class Authenticator {
       });
   };
 
-  runBackgroundTokenRefresh = (authenticator) => {
+  runBackgroundTokenRefresh = (authenticator: any) => {
     setInterval(async () => { 
       // check every 30s if the token will expire in <= 1m,
       // if so, refresh
@@ -68,14 +75,19 @@ export class Authenticator {
 }
 
 export class AuthUserPasswordCredentials {
-  constructor(creds) {
+  password: any;
+  username: any;
+  constructor(creds: any) {
     this.username = creds.username;
     this.password = creds.password;
   }
 }
 
 class UserPasswordAuthenticator {
-  constructor(http, creds, config) {
+  creds: any;
+  http: any;
+  openidConfig: any;
+  constructor(http: any, creds: any, config: any) {
     this.http = http;
     this.creds = creds;
     this.openidConfig = config;
@@ -84,14 +96,14 @@ class UserPasswordAuthenticator {
   refresh = () => {
     this.validateOpenidConfig();
     return this.requestAccessToken()
-      .then(tokenResp => {
+      .then((tokenResp: any) => {
         return {
           bearerToken: tokenResp.access_token,
           expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
-      .catch(err => {
+      .catch((err: any) => {
         return Promise.reject(
           new Error(`failed to refresh access token: ${err}`)
         );
@@ -125,14 +137,17 @@ class UserPasswordAuthenticator {
 }
 
 export class AuthAccessTokenCredentials {
-  constructor(creds) {
+  accessToken: any;
+  expirationEpoch: any;
+  refreshToken: any;
+  constructor(creds: any) {
     this.validate(creds);
     this.accessToken = creds.accessToken;
     this.expirationEpoch = calcExpirationEpoch(creds.expiresIn);
     this.refreshToken = creds.refreshToken;
   }
 
-  validate = (creds) => {
+  validate = (creds: any) => {
     if (creds.expiresIn === undefined) {
       throw new Error("AuthAccessTokenCredentials: expiresIn is required");
     }
@@ -143,7 +158,10 @@ export class AuthAccessTokenCredentials {
 }
 
 class AccessTokenAuthenticator {
-  constructor(http, creds, config) {
+  creds: any;
+  http: any;
+  openidConfig: any;
+  constructor(http: any, creds: any, config: any) {
     this.http = http;
     this.creds = creds;
     this.openidConfig = config;
@@ -159,14 +177,14 @@ class AccessTokenAuthenticator {
     }
     this.validateOpenidConfig();
     return this.requestAccessToken()
-      .then(tokenResp => {
+      .then((tokenResp: any) => {
         return {
           bearerToken: tokenResp.access_token,
           expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
-      .catch(err => {
+      .catch((err: any) => {
         return Promise.reject(
           new Error(`failed to refresh access token: ${err}`)
         );
@@ -192,6 +210,6 @@ class AccessTokenAuthenticator {
   };
 }
 
-function calcExpirationEpoch(expiresIn) {
+function calcExpirationEpoch(expiresIn: any) {
   return Date.now() + ((expiresIn - 2) * 1000) // -2 for some lag
 }

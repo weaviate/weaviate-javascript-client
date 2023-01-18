@@ -84,26 +84,26 @@ const soupObjects = [{
   },
 }];
 
-export function createTestFoodSchema(client) {
+export function createTestFoodSchema(client: any) {
   return Promise.all([
     client.schema.classCreator().withClass(pizzaClass).do(),
     client.schema.classCreator().withClass(soupClass).do(),
   ]);
 }
 
-export function createTestFoodData(client) {
+export function createTestFoodData(client: any) {
   return client.batch.objectsBatcher()
     .withObjects(pizzaObjects)
     .withObjects(soupObjects)
     .do();
 }
 
-export function createTestFoodSchemaAndData(client) {
+export function createTestFoodSchemaAndData(client: any) {
   return createTestFoodSchema(client)
     .then(() => createTestFoodData(client));
 }
 
-export function cleanupTestFood(client) {
+export function cleanupTestFood(client: any) {
   return Promise.all([
     client.schema.classDeleter().withClassName(PIZZA_CLASS_NAME).do(),
     client.schema.classDeleter().withClassName(SOUP_CLASS_NAME).do(),

@@ -2,8 +2,12 @@ import { isValidNumber, isValidNumberArray } from "../validation/number";
 import { isValidStringProperty } from "../validation/string";
 
 export default class GraphQLHybrid {
+  alpha: any;
+  query: any;
+  source: any;
+  vector: any;
 
-  constructor(hybridObj) {
+  constructor(hybridObj: any) {
     this.source = hybridObj;
   }
 
@@ -42,7 +46,7 @@ export default class GraphQLHybrid {
     }
   }
 
-  parseQuery(query) {
+  parseQuery(query: any) {
     if (!isValidStringProperty(query)) {
       throw new Error("hybrid filter: query must be a string");
     }
@@ -50,7 +54,7 @@ export default class GraphQLHybrid {
     this.query = query;
   }
 
-  parseAlpha(alpha) {
+  parseAlpha(alpha: any) {
     if (!isValidNumber(alpha)) {
       throw new Error("hybrid filter: alpha must be a number");
     }
@@ -58,7 +62,7 @@ export default class GraphQLHybrid {
     this.alpha = alpha;
   }
 
-  parseVector(vector) {
+  parseVector(vector: any) {
     if (!isValidNumberArray(vector) || vector.length == 0) {
       throw new Error("hybrid filter: vector must be an array of numbers");
     }

@@ -1,9 +1,9 @@
-export function isValidStringProperty(input) {
+export function isValidStringProperty(input: any) {
   return typeof input == "string" &&
     input.length > 0
 }
 
-export function isValidStringArray(input) {
+export function isValidStringArray(input: any) {
   if (Array.isArray(input)) {
     for (let i in input) {
       if (!isValidStringProperty(input[i])) {

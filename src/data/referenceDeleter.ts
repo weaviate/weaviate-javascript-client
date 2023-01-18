@@ -1,32 +1,40 @@
 export default class ReferenceDeleter {
-  constructor(client, referencesPath, beaconPath) {
+  beaconPath: any;
+  className: any;
+  client: any;
+  errors: any;
+  id: any;
+  refProp: any;
+  reference: any;
+  referencesPath: any;
+  constructor(client: any, referencesPath: any, beaconPath: any) {
     this.client = client;
     this.referencesPath = referencesPath;
     this.beaconPath = beaconPath;
     this.errors = [];
   }
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  withClassName(className) {
+  withClassName(className: any) {
     this.className = className;
     return this;
   }
 
-  withReference = (ref) => {
+  withReference = (ref: any) => {
     this.reference = ref;
     return this;
   };
 
-  withReferenceProperty = (refProp) => {
+  withReferenceProperty = (refProp: any) => {
     this.refProp = refProp;
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

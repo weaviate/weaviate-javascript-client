@@ -1,17 +1,21 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class PropertyCreator {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  property: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withProperty = (property) => {
+  withProperty = (property: any) => {
     this.property = property;
     return this;
   };

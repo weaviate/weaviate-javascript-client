@@ -1,36 +1,44 @@
 export default class GetterById {
-  constructor(client, objectsPath) {
+  additionals: any;
+  className: any;
+  client: any;
+  consistencyLevel: any;
+  errors: any;
+  id: any;
+  nodeName: any;
+  objectsPath: any;
+  constructor(client: any, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
     this.additionals = [];
   }
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  extendAdditionals = (prop) => {
+  extendAdditionals = (prop: any) => {
     this.additionals = [...this.additionals, prop];
     return this;
   };
 
-  withAdditional = (additionalFlag) => this.extendAdditionals(additionalFlag);
+  withAdditional = (additionalFlag: any) => this.extendAdditionals(additionalFlag);
 
   withVector = () => this.extendAdditionals("vector");
 
-  withConsistencyLevel = (cl) => {
+  withConsistencyLevel = (cl: any) => {
     this.consistencyLevel = cl;
     return this;
   };
 
-  withNodeName = (nodeName) => {
+  withNodeName = (nodeName: any) => {
     this.nodeName = nodeName;
     return this;
   };

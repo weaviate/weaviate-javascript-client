@@ -5,23 +5,35 @@ import NearObject from "./nearObject";
 import { isValidPositiveIntProperty } from "../validation/number";
 
 export default class Aggregator {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  fields: any;
+  groupBy: any;
+  includesNearMediaFilter: any;
+  limit: any;
+  nearObjectString: any;
+  nearTextString: any;
+  nearVectorString: any;
+  objectLimit: any;
+  whereString: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
     this.includesNearMediaFilter = false
   }
 
-  withFields = (fields) => {
+  withFields = (fields: any) => {
     this.fields = fields;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withWhere = (whereObj) => {
+  withWhere = (whereObj: any) => {
     try {
       this.whereString = new Where(whereObj).toString();
     } catch (e) {
@@ -30,7 +42,7 @@ export default class Aggregator {
     return this;
   };
 
-  withNearText = (nearTextObj) => {
+  withNearText = (nearTextObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -47,7 +59,7 @@ export default class Aggregator {
     return this;
   };
 
-  withNearObject = (nearObjectObj) => {
+  withNearObject = (nearObjectObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -64,7 +76,7 @@ export default class Aggregator {
     return this;
   };
 
-  withNearVector = (nearVectorObj) => {
+  withNearVector = (nearVectorObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -81,7 +93,7 @@ export default class Aggregator {
     return this;
   };
 
-  withObjectLimit = (objectLimit) => {
+  withObjectLimit = (objectLimit: any) => {
     if (!isValidPositiveIntProperty(objectLimit)) {
       throw new Error(
         "objectLimit must be a non-negative integer"
@@ -92,12 +104,12 @@ export default class Aggregator {
     return this;
   };
 
-  withLimit = (limit) => {
+  withLimit = (limit: any) => {
     this.limit = limit;
     return this;
   };
 
-  withGroupBy = (groupBy) => {
+  withGroupBy = (groupBy: any) => {
     this.groupBy = groupBy;
     return this;
   };
@@ -113,7 +125,7 @@ export default class Aggregator {
     }
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -150,7 +162,7 @@ export default class Aggregator {
       this.limit || 
       this.groupBy
     ) {
-      let args = [];
+      let args: any = [];
 
       if (this.whereString) {
         args = [...args, `where:${this.whereString}`];
@@ -189,4 +201,5 @@ export default class Aggregator {
   };
 }
 
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = Aggregator;

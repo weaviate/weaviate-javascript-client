@@ -1,13 +1,13 @@
 import { GraphQLClient } from 'graphql-request'
 
-export const gqlClient = (config) => {
+export const gqlClient = (config: any) => {
     const scheme = config.scheme
     const host = config.host
     const defaultHeaders = config.headers
     return {
       // for backward compatibility with replaced graphql-client lib,
       // results are wrapped into { data: data }
-      query: (query, headers = {}) => {
+      query: (query: any, headers = {}) => {
         return new GraphQLClient(`${scheme}://${host}/v1/graphql`, {
           headers: {
             ...defaultHeaders,
@@ -17,7 +17,7 @@ export const gqlClient = (config) => {
         .request(query)
         .then(data => ({ data }));
     }
-  }
+  };
 }
 
 export default gqlClient;

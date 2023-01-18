@@ -3,7 +3,7 @@ import ReadyChecker from "./readyChecker";
 import MetaGetter from "./metaGetter";
 import OpenidConfigurationGetter from "./openidConfigurationGetter";
 
-const misc = (client, dbVersionProvider) => {
+const misc = (client: any, dbVersionProvider: any) => {
   return {
     liveChecker: () => new LiveChecker(client, dbVersionProvider),
     readyChecker: () => new ReadyChecker(client, dbVersionProvider),

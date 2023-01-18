@@ -1,5 +1,7 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'weaviate'.
 const weaviate = require("../index");
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'thingClass... Remove this comment to see the full error message
 const thingClassName = "BatchJourneyTestThing";
 const otherThingClassName = "BatchJourneyTestOtherThing";
 
@@ -67,12 +69,14 @@ const someReferences = [
   }
 ];
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("batch importing", () => {
   const client = weaviate.client({
     scheme: "http",
     host: "localhost:8080",
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("can add objects with different methods", () => {
     const batcher = client.batch.objectsBatcher()
       .withObject(someObjects[0])
@@ -80,16 +84,22 @@ describe("batch importing", () => {
       .withObjects(someObjects[2], someObjects[3])
       .withObjects([someObjects[4], someObjects[5]]);
 
+    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(batcher.objects).toHaveLength(someObjects.length);
-    batcher.objects.forEach((obj, i) => {
+    batcher.objects.forEach((obj: any, i: any) => {
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(obj.class).toBe(someObjects[i].class);
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(obj.id).toBe(someObjects[i].id);
     })
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("sets up", () => setup(client));
 
+  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("import thing objects", () => {
+    // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
     describe("hand assembling the objects", () => {
       const toImport = [
         {
@@ -104,6 +114,7 @@ describe("batch importing", () => {
         },
       ];
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("imports them", () => {
         client.batch
           .objectsBatcher()
@@ -111,21 +122,26 @@ describe("batch importing", () => {
           .withObject(toImport[1])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          // @ts-expect-error TS(2304): Cannot find name 'fail'.
+          .catch((e: any) => fail("it should not have error'd " + e));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("waits for es index refresh", () => {
         return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("verifies they are now queryable", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[0]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[1]).withClassName(thingClassName).do(),
+        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
     describe("using the thing builder to assemble the objects", () => {
       const toImport = [
         client.data
@@ -142,29 +158,36 @@ describe("batch importing", () => {
           .payload(), // note the .payload(), not .do()!
       ];
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("imports them", () => {
         client.batch
           .objectsBatcher()
           .withObjects(toImport[0], toImport[1])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          // @ts-expect-error TS(2304): Cannot find name 'fail'.
+          .catch((e: any) => fail("it should not have error'd " + e));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("waits for es index refresh", () => {
         return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("verifies they are now queryable", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[2]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[3]).withClassName(thingClassName).do(),
+        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("import other thing objects", () => {
+    // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
     describe("hand assembling the objects", () => {
       const toImport = [
         {
@@ -179,42 +202,53 @@ describe("batch importing", () => {
         },
       ];
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("imports them", () => {
         client.batch
           .objectsBatcher()
           .withObjects([toImport[0], toImport[1]])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          // @ts-expect-error TS(2304): Cannot find name 'fail'.
+          .catch((e: any) => fail("it should not have error'd " + e));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("waits for es index refresh", () => {
         return new Promise((resolve) => setTimeout(resolve, 1000));
       });
 
+      // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
       it("verifies they are now queryable", () => {
         return Promise.all([
           client.data.getterById().withId(toImport[0].id).withClassName(toImport[0].class).do(),
           client.data.getterById().withId(toImport[1].id).withClassName(toImport[1].class).do(),
+        // @ts-expect-error TS(2304): Cannot find name 'fail'.
         ]).catch((e) => fail("it should not have error'd " + e));
       });
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
   describe("batch reference between the thing and otherThing objects", () => {
+    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("can add references with different methods", () => {
       const batcher = client.batch.referencesBatcher()
         .withReference(someReferences[0])
         .withReferences(someReferences[1], someReferences[2])
         .withReferences([someReferences[3]]);
 
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
       expect(batcher.references).toHaveLength(someReferences.length);
-      batcher.references.forEach((ref, i) => {
+      batcher.references.forEach((ref: any, i: any) => {
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(ref.from).toBe(someReferences[i].from);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(ref.to).toBe(someReferences[i].to);
       })
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("imports the refs with raw objects", () => {
       return client.batch
         .referencesBatcher()
@@ -227,14 +261,17 @@ describe("batch importing", () => {
           to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
         })
         .do()
-        .then((res) => {
-          res.forEach((elem) => {
+        .then((res: any) => {
+          res.forEach((elem: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e) => fail("it should not have error'd " + e));
+        // @ts-expect-error TS(2304): Cannot find name 'fail'.
+        .catch((e: any) => fail("it should not have error'd " + e));
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("imports more refs with a builder pattern", () => {
       const reference1 = client.batch
         .referencePayloadBuilder()
@@ -256,18 +293,22 @@ describe("batch importing", () => {
         .referencesBatcher()
         .withReferences(reference1, reference2)
         .do()
-        .then((res) => {
-          res.forEach((elem) => {
+        .then((res: any) => {
+          res.forEach((elem: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e) => fail("it should not have error'd " + e));
+        // @ts-expect-error TS(2304): Cannot find name 'fail'.
+        .catch((e: any) => fail("it should not have error'd " + e));
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("waits for es index refresh", () => {
       return new Promise((resolve) => setTimeout(resolve, 1000));
     });
 
+    // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
     it("verifies the refs are now set", () => {
       return Promise.all([
         client.data
@@ -275,7 +316,8 @@ describe("batch importing", () => {
           .withId(thingIds[0])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
@@ -285,7 +327,8 @@ describe("batch importing", () => {
           .withId(thingIds[1])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
@@ -295,7 +338,8 @@ describe("batch importing", () => {
           .withId(thingIds[2])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
@@ -305,27 +349,34 @@ describe("batch importing", () => {
           .withId(thingIds[3])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
+            // @ts-expect-error TS(2304): Cannot find name 'expect'.
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
           }),
+      // @ts-expect-error TS(2304): Cannot find name 'fail'.
       ]).catch((e) => fail("it should not have error'd " + e));
     });
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("tears down and cleans up", () => cleanup(client));
 });
 
+// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe("batch deleting", () => {
   const client = weaviate.client({
     scheme: "http",
     host: "localhost:8080",
   });
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("sets up schema", () => setup(client));
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("sets up data", () => setupData(client));
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("batch deletes with dryRun and verbose output", () =>
     client.batch
       .objectsBatchDeleter()
@@ -338,9 +389,12 @@ describe("batch deleting", () => {
       .withDryRun(true)
       .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .do()
-      .then(result => {
+      .then((result: any) => {
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.dryRun).toBe(true);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.match).toEqual({
           class: thingClassName,
           where: {
@@ -350,6 +404,7 @@ describe("batch deleting", () => {
             path: ["stringProp"],
           },
         })
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results).toEqual({
           successful: 0,
           failed: 0,
@@ -363,6 +418,7 @@ describe("batch deleting", () => {
       })
   )
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("batch deletes with dryRun and minimal output", () =>
     client.batch
       .objectsBatchDeleter()
@@ -375,9 +431,12 @@ describe("batch deleting", () => {
       .withDryRun(true)
       .withOutput(weaviate.batch.DeleteOutput.MINIMAL)
       .do()
-      .then(result => {
+      .then((result: any) => {
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.dryRun).toBe(true);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
@@ -387,6 +446,7 @@ describe("batch deleting", () => {
             path: ["stringProp"],
           },
         })
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results).toEqual({
           successful: 0,
           failed: 0,
@@ -397,6 +457,7 @@ describe("batch deleting", () => {
       })
   )
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("batch deletes but no matches with default dryRun and output", () =>
     client.batch
       .objectsBatchDeleter()
@@ -407,9 +468,12 @@ describe("batch deleting", () => {
         path: ["stringProp"]
       })
       .do()
-      .then(result => {
+      .then((result: any) => {
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.dryRun).toBe(false);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
@@ -419,6 +483,7 @@ describe("batch deleting", () => {
             path: ["stringProp"],
           },
         })
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results).toEqual({
           successful: 0,
           failed: 0,
@@ -429,6 +494,7 @@ describe("batch deleting", () => {
       })
   )
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("batch deletes with default dryRun", () => {
     const inAMinute = "" + (new Date().getTime() + 60 * 1000);
     return client.batch
@@ -441,9 +507,12 @@ describe("batch deleting", () => {
       })
       .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .do()
-      .then(result => {
+      .then((result: any) => {
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.dryRun).toBe(false);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.match).toEqual({
           class: otherThingClassName,
           where: {
@@ -453,36 +522,47 @@ describe("batch deleting", () => {
             path: ["_creationTimeUnix"],
           },
         })
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.successful).toBe(2);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.failed).toBe(0);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.matches).toBe(2);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.limit).toBe(10000);
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.objects).toHaveLength(2)
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.objects).toContainEqual({
           id: otherThingIds[0],
           status: weaviate.batch.DeleteResultStatus.SUCCESS,
         });
+        // @ts-expect-error TS(2304): Cannot find name 'expect'.
         expect(result.results.objects).toContainEqual({
           id: otherThingIds[1],
           status: weaviate.batch.DeleteResultStatus.SUCCESS,
         });
-      })
+      });
   })
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("batch deletes fails due to validation", () =>
     client.batch
       .objectsBatchDeleter()
       .withClassName("")
       .withWhere("shouldBeObject")
       .do()
-      .catch(err => expect(err.toString()).toBe("Error: invalid usage: string className must be set - set with .withClassName(className), object where must be set - set with .withWhere(whereFilter)"))
+      // @ts-expect-error TS(2304): Cannot find name 'expect'.
+      .catch((err: any) => expect(err.toString()).toBe("Error: invalid usage: string className must be set - set with .withClassName(className), object where must be set - set with .withWhere(whereFilter)"))
   )
 
+  // @ts-expect-error TS(2582): Cannot find name 'it'. Do you need to install type... Remove this comment to see the full error message
   it("tears down and cleans up", () => cleanup(client));
 });
 
 
-const setup = async (client) => {
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setup'.
+const setup = async (client: any) => {
   // first import the classes
   await Promise.all([
     client.schema
@@ -524,15 +604,14 @@ const setup = async (client) => {
     .do();
 };
 
-const setupData = (client) => {
+const setupData = (client: any) => {
   return client.batch
     .objectsBatcher()
     .withObjects(someObjects)
     .do();
 }
 
-const cleanup = (client) =>
-  Promise.all([
-    client.schema.classDeleter().withClassName(thingClassName).do(),
-    client.schema.classDeleter().withClassName(otherThingClassName).do(),
-  ]);
+const cleanup = (client: any) => Promise.all([
+  client.schema.classDeleter().withClassName(thingClassName).do(),
+  client.schema.classDeleter().withClassName(otherThingClassName).do(),
+]);

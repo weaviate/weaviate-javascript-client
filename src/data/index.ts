@@ -13,7 +13,7 @@ import ReferencePayloadBuilder from "./referencePayloadBuilder";
 import { ObjectsPath, ReferencesPath } from "./path";
 import { BeaconPath } from "../utils/beaconPath";
 
-const data = (client, dbVersionSupport) => {
+const data = (client: any, dbVersionSupport: any) => {
   const objectsPath = new ObjectsPath(dbVersionSupport);
   const referencesPath = new ReferencesPath(dbVersionSupport);
   const beaconPath = new BeaconPath(dbVersionSupport);

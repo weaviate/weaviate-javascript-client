@@ -1,23 +1,29 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class Merger {
-  constructor(client, objectsPath) {
+  className: any;
+  client: any;
+  errors: any;
+  id: any;
+  objectsPath: any;
+  properties: any;
+  constructor(client: any, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
   }
 
-  withProperties = (properties) => {
+  withProperties = (properties: any) => {
     this.properties = properties;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
@@ -58,6 +64,6 @@ export default class Merger {
     }
 
     return this.objectsPath.buildMerge(this.id, this.className)
-      .then(path => this.client.patch(path, this.payload()));
+      .then((path: any) => this.client.patch(path, this.payload()));
   };
 }

@@ -7,7 +7,7 @@ import ShardsGetter from "./shardsGetter";
 import ShardUpdater from "./shardUpdater";
 import ShardsUpdater from "./shardsUpdater";
 
-const schema = (client) => {
+const schema = (client: any) => {
   return {
     classCreator: () => new ClassCreator(client),
     classDeleter: () => new ClassDeleter(client),

@@ -1,15 +1,16 @@
 import { validateBackend } from "./validation";
 
 export default class BackupGetter {
+  client: any;
 
-  backend;
-  errors;
+  backend: any;
+  errors: any;
 
-  constructor(client) {
+  constructor(client: any) {
     this.client = client;
   }
 
-  withBackend(backend) {
+  withBackend(backend: any) {
     this.backend = backend;
     return this;
   }

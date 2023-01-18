@@ -3,13 +3,18 @@ import { getShards } from "./shardsGetter";
 import { updateShard } from "./shardUpdater";
 
 export default class ShardsUpdater {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  shards: any;
+  status: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
     this.shards = [];
   }
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
@@ -23,7 +28,7 @@ export default class ShardsUpdater {
     }
   };
 
-  withStatus = (status) => {
+  withStatus = (status: any) => {
     this.status = status
     return this;
   }
@@ -43,13 +48,13 @@ export default class ShardsUpdater {
   };
 
   updateShards = async () => {
-    var payload = []
+    var payload: any = []
     for (let i = 0; i < this.shards.length; i++) {
       await updateShard(this.client, this.className, this.shards[i].name, this.status)
-        .then(res => {
+        .then((res: any) => {
           payload.push({name: this.shards[i].name, status: res.status})
         })
-        .catch(err => this.errors = [...this.errors, err]);
+        .catch((err: any) => this.errors = [...this.errors, err]);
     }
 
     if (this.errors.length > 0) {
@@ -70,10 +75,10 @@ export default class ShardsUpdater {
     }
 
     return getShards(this.client, this.className)
-      .then(shards => this.shards = shards)
+      .then((shards: any) => this.shards = shards)
       .then(this.updateShards)
-      .then(payload => {return payload})
-      .catch(err => {
+      .then((payload: any) => {return payload})
+      .catch((err: any) => {
         return Promise.reject(err);
       });
   };

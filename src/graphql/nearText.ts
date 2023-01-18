@@ -1,5 +1,18 @@
 export default class GraphQLNearText {
-  constructor(nearTextObj) {
+  autocorrect: any;
+  certainty: any;
+  concepts: any;
+  distance: any;
+  moveAwayFrom: any;
+  moveAwayFromConcepts: any;
+  moveAwayFromForce: any;
+  moveAwayFromObjects: any;
+  moveTo: any;
+  moveToConcepts: any;
+  moveToForce: any;
+  moveToObjects: any;
+  source: any;
+  constructor(nearTextObj: any) {
     this.source = nearTextObj;
   }
 
@@ -18,7 +31,7 @@ export default class GraphQLNearText {
     }
 
     if (this.moveTo) {
-      let moveToArgs = []
+      let moveToArgs: any = []
       if (this.moveToConcepts) {
         moveToArgs = [...moveToArgs, `concepts:${JSON.stringify(this.moveToConcepts)}`];
       }
@@ -32,7 +45,7 @@ export default class GraphQLNearText {
     }
 
     if (this.moveAwayFrom) {
-      let moveAwayFromArgs = [];
+      let moveAwayFromArgs: any = [];
       if (this.moveAwayFromConcepts) {
         moveAwayFromArgs = [...moveAwayFromArgs, `concepts:${JSON.stringify(this.moveAwayFromConcepts)}`];
       }
@@ -107,7 +120,7 @@ export default class GraphQLNearText {
     }
   }
 
-  parseConcepts(concepts) {
+  parseConcepts(concepts: any) {
     if (!Array.isArray(concepts)) {
       throw new Error("nearText filter: concepts must be an array");
     }
@@ -115,7 +128,7 @@ export default class GraphQLNearText {
     this.concepts = concepts;
   }
 
-  parseCertainty(cert) {
+  parseCertainty(cert: any) {
     if (typeof cert !== "number") {
       throw new Error("nearText filter: certainty must be a number");
     }
@@ -123,7 +136,7 @@ export default class GraphQLNearText {
     this.certainty = cert;
   }
 
-  parseDistance(dist) {
+  parseDistance(dist: any) {
     if (typeof dist !== "number") {
       throw new Error("nearText filter: distance must be a number");
     }
@@ -131,7 +144,7 @@ export default class GraphQLNearText {
     this.distance = dist;
   }
 
-  parseMoveTo(target) {
+  parseMoveTo(target: any) {
     if (typeof target !== "object") {
       throw new Error("nearText filter: moveTo must be object");
     }
@@ -160,7 +173,7 @@ export default class GraphQLNearText {
     }
   }
 
-  parseMoveAwayFrom(target) {
+  parseMoveAwayFrom(target: any) {
     if (typeof target !== "object") {
       throw new Error("nearText filter: moveAwayFrom must be object");
     }
@@ -191,7 +204,7 @@ export default class GraphQLNearText {
     }
   }
 
-  parseAutocorrect(autocorrect) {
+  parseAutocorrect(autocorrect: any) {
     if (typeof autocorrect !== "boolean") {
       throw new Error("nearText filter: autocorrect must be a boolean");
     }
@@ -199,7 +212,7 @@ export default class GraphQLNearText {
     this.autocorrect = autocorrect;
   }
 
-  parseMoveObjects(move, objects) {
+  parseMoveObjects(move: any, objects: any) {
     let moveObjects = [];
     let errors = [];
     for (var i in objects) {

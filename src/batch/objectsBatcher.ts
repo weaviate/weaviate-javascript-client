@@ -1,5 +1,8 @@
 export default class ObjectsBatcher {
-  constructor(client) {
+  client: any;
+  errors: any;
+  objects: any;
+  constructor(client: any) {
     this.client = client;
     this.objects = [];
     this.errors = [];
@@ -12,7 +15,7 @@ export default class ObjectsBatcher {
    *  - withObjects(obj1)
    * @param  {...any} objects
    */
-  withObjects(...objects) {
+  withObjects(...objects: any[]) {
     let objs = objects;
     if (objects.length && Array.isArray(objects[0])) {
       objs = objects[0];
@@ -21,9 +24,9 @@ export default class ObjectsBatcher {
     return this;
   }
 
-  withObject(object) {
+  withObject(object: any) {
     return this.withObjects(object);
-  };
+  }
 
   payload = () => ({
     objects: this.objects,

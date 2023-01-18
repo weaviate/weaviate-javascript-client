@@ -1,25 +1,30 @@
 export default class ExtensionCreator {
-  constructor(client) {
+  client: any;
+  concept: any;
+  definition: any;
+  errors: any;
+  weight: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withConcept = (concept) => {
+  withConcept = (concept: any) => {
     this.concept = concept;
     return this;
   };
 
-  withDefinition = (definition) => {
+  withDefinition = (definition: any) => {
     this.definition = definition;
     return this;
   };
 
-  withWeight = (weight) => {
+  withWeight = (weight: any) => {
     this.weight = weight;
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

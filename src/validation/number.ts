@@ -1,16 +1,16 @@
-export function isValidIntProperty(input) {
+export function isValidIntProperty(input: any) {
   return Number.isInteger(input);
 }
 
-export function isValidPositiveIntProperty(input) {
+export function isValidPositiveIntProperty(input: any) {
   return isValidIntProperty(input) && input >= 0;
 }
 
-export function isValidNumber(input) {
+export function isValidNumber(input: any) {
   return typeof input == "number";
 }
 
-export function isValidNumberArray(input) {
+export function isValidNumberArray(input: any) {
   if (Array.isArray(input)) {
     for (let i in input) {
       if (!isValidNumber(input[i])) {

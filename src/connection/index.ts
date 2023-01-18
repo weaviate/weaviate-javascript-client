@@ -5,7 +5,11 @@ import httpClient from './httpClient';
 import gqlClient from './gqlClient';
 
 export default class Connection {
-  constructor(params) {
+  auth: any;
+  authEnabled: any;
+  gql: any;
+  http: any;
+  constructor(params: any) {
     this.http = httpClient(params);
     this.gql = gqlClient(params)
 
@@ -15,7 +19,7 @@ export default class Connection {
     }
   }
 
-  post = (path, payload, expectReturnContent = true) => {
+  post = (path: any, payload: any, expectReturnContent = true) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.post(path, payload, expectReturnContent, token))
@@ -23,7 +27,7 @@ export default class Connection {
     return this.http.post(path, payload, expectReturnContent);
   };
 
-  put = (path, payload, expectReturnContent = true) => {
+  put = (path: any, payload: any, expectReturnContent = true) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.put(path, payload, expectReturnContent, token))
@@ -31,7 +35,7 @@ export default class Connection {
     return this.http.put(path, payload, expectReturnContent);
   };
 
-  patch = (path, payload) => {
+  patch = (path: any, payload: any) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.patch(path, payload, token))
@@ -39,15 +43,15 @@ export default class Connection {
     return this.http.patch(path, payload);
   };
 
-  delete = (path, payload, expectReturnContent = false) => {
+  delete = (path: any, payload: any, expectReturnContent = false) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.delete(path, payload, expectReturnContent, token))
     }
     return this.http.delete(path, payload, expectReturnContent)
   };
-  
-  head = (path, payload) => {
+
+  head = (path: any, payload: any) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.head(path, payload, token))
@@ -55,7 +59,7 @@ export default class Connection {
     return this.http.head(path, payload);
   };
 
-  get = (path, expectReturnContent = true) => {
+  get = (path: any, expectReturnContent = true) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.get(path, expectReturnContent, token))
@@ -63,7 +67,7 @@ export default class Connection {
     return this.http.get(path, expectReturnContent);
   };
 
-  getRaw = (path) => {
+  getRaw = (path: any) => {
     if (this.authEnabled) {
       return this.login().then(
         token => this.http.getRaw(path, token));
@@ -71,7 +75,7 @@ export default class Connection {
     return this.http.getRaw(path);
   };
 
-  query = (query) => {
+  query = (query: any) => {
     if (this.authEnabled) {
       return this.login().then(
         token => {
@@ -84,7 +88,7 @@ export default class Connection {
 
   login = async () => {
     var localConfig = await new OpenidConfigurationGetter(this.http).do()
-      .then(resp => resp);
+      .then((resp: any) => resp);
 
     if (localConfig === undefined) {
       console.warn("client is configured for authentication, but server is not");

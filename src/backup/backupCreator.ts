@@ -4,20 +4,22 @@ import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames,
 const WAIT_INTERVAL = 1000;
 
 export default class BackupCreator {
+  client: any;
+  statusGetter: any;
 
-  includeClassNames;
-  excludeClassNames;
-  backend;
-  backupId;
-  waitForCompletion;
-  errors;
+  includeClassNames: any;
+  excludeClassNames: any;
+  backend: any;
+  backupId: any;
+  waitForCompletion: any;
+  errors: any;
 
-  constructor(client, statusGetter) {
+  constructor(client: any, statusGetter: any) {
     this.client = client;
     this.statusGetter = statusGetter;
   }
 
-  withIncludeClassNames(...classNames) {
+  withIncludeClassNames(...classNames: any[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -26,7 +28,7 @@ export default class BackupCreator {
     return this;
   }
 
-  withExcludeClassNames(...classNames) {
+  withExcludeClassNames(...classNames: any[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -35,17 +37,17 @@ export default class BackupCreator {
     return this;
   }
 
-  withBackend(backend) {
+  withBackend(backend: any) {
     this.backend = backend;
     return this;
   }
 
-  withBackupId(backupId) {
+  withBackupId(backupId: any) {
     this.backupId = backupId;
     return this;
   }
 
-  withWaitForCompletion(waitForCompletion) {
+  withWaitForCompletion(waitForCompletion: any) {
     this.waitForCompletion = waitForCompletion;
     return this;
   }
@@ -80,21 +82,21 @@ export default class BackupCreator {
     return this._create(payload);
   }
 
-  _create(payload) {
+  _create(payload: any) {
     return this.client.post(this._path(), payload);
   }
 
-  _createAndWaitForCompletion(payload) {
+  _createAndWaitForCompletion(payload: any) {
     return new Promise((resolve, reject) => {
       this._create(payload)
-        .then(createResponse => {
+        .then((createResponse: any) => {
           this.statusGetter
             .withBackend(this.backend)
             .withBackupId(this.backupId);
 
           const loop = () => {
             this.statusGetter.do()
-              .then(createStatusResponse => {
+              .then((createStatusResponse: any) => {
                 if (createStatusResponse.status == CreateStatus.SUCCESS
                     || createStatusResponse.status == CreateStatus.FAILED
                 ) {
@@ -116,24 +118,30 @@ export default class BackupCreator {
     return `/backups/${this.backend}`;
   }
 
-  _merge(createStatusResponse, createResponse) {
+  _merge(createStatusResponse: any, createResponse: any) {
     const merged = {};
     if ('id' in createStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'id' does not exist on type '{}'.
       merged.id = createStatusResponse.id;
     }
     if ('path' in createStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'path' does not exist on type '{}'.
       merged.path = createStatusResponse.path
     }
     if ('backend' in createStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'backend' does not exist on type '{}'.
       merged.backend = createStatusResponse.backend
     }
     if ('status' in createStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'status' does not exist on type '{}'.
       merged.status = createStatusResponse.status
     }
     if ('error' in createStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'error' does not exist on type '{}'.
       merged.error = createStatusResponse.error
     }
     if ('classes' in createResponse) {
+      // @ts-expect-error TS(2339): Property 'classes' does not exist on type '{}'.
       merged.classes = createResponse.classes
     }
     return merged;

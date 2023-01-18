@@ -1,5 +1,9 @@
 export default class GraphQLNearVector {
-  constructor(nearVectorObj) {
+  certainty: any;
+  distance: any;
+  source: any;
+  vector: any;
+  constructor(nearVectorObj: any) {
     this.source = nearVectorObj;
   }
 
@@ -47,7 +51,7 @@ export default class GraphQLNearVector {
     }
   }
 
-  parseVector(vector) {
+  parseVector(vector: any) {
     if (!Array.isArray(vector)) {
       throw new Error("nearVector filter: vector must be an array");
     }
@@ -61,7 +65,7 @@ export default class GraphQLNearVector {
     this.vector = vector;
   }
 
-  parseCertainty(cert) {
+  parseCertainty(cert: any) {
     if (typeof cert !== "number") {
       throw new Error("nearVector filter: certainty must be a number");
     }
@@ -69,7 +73,7 @@ export default class GraphQLNearVector {
     this.certainty = cert;
   }
 
-  parseDistance(dist) {
+  parseDistance(dist: any) {
     if (typeof dist !== "number") {
       throw new Error("nearVector filter: distance must be a number");
     }

@@ -1,15 +1,18 @@
 export default class Getter {
-  constructor(client) {
+  client: any;
+  errors: any;
+  id: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

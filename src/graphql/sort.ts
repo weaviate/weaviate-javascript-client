@@ -1,5 +1,10 @@
 export default class GraphQLSort {
-  constructor(sortObj) {
+  errors: any;
+  order: any;
+  path: any;
+  sortArgs: any;
+  source: any;
+  constructor(sortObj: any) {
     this.source = sortObj;
     this.sortArgs = [];
     this.errors = []
@@ -9,7 +14,7 @@ export default class GraphQLSort {
     this.parse();
     this.validate();
 
-    let args = [];
+    let args: any = [];
 
     if (this.sortArgs.length > 0) {
       args = [...args, this.sortArgs];
@@ -35,7 +40,7 @@ export default class GraphQLSort {
     }
   }
 
-  validatePath(path) {
+  validatePath(path: any) {
     if (!path) {
       throw new Error("sort filter: path needs to be set");
     }
@@ -57,6 +62,7 @@ export default class GraphQLSort {
           try {
             this.sortArgs = [...this.sortArgs, this.parseSortArgs(this.source[key])];
           } catch(e) {
+            // @ts-expect-error TS(2571): Object is of type 'unknown'.
             this.errors = [...this.errors, `sort argument at ${key}: ${e.message}`];
           }
       }
@@ -65,13 +71,13 @@ export default class GraphQLSort {
     if (this.errors.length > 0) {
       throw new Error(`sort filter: ${this.errors.join(", ")}`);
     }
-  } 
+  }
 
-  parseSortArgs(args) {
+  parseSortArgs(args: any) {
     return new GraphQLSort(args).toString();
   }
 
-  parsePath(path) {
+  parsePath(path: any) {
     if (!Array.isArray(path)) {
       throw new Error("sort filter: path must be an array");
     }
@@ -79,7 +85,7 @@ export default class GraphQLSort {
     this.path = path;
   }
 
-  parseOrder(order) {
+  parseOrder(order: any) {
     if (typeof order !== "string") {
       throw new Error("sort filter: order must be a string");
     }

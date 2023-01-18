@@ -3,8 +3,10 @@ import { isValidStringProperty } from "../validation/string";
 const beaconPathPrefix = "weaviate://localhost";
 
 export class BeaconPath {
+  beaconRegExp: any;
+  dbVersionSupport: any;
 
-  constructor(dbVersionSupport) {
+  constructor(dbVersionSupport: any) {
     this.dbVersionSupport = dbVersionSupport;
     // matches
     // weaviate://localhost/class/id    => match[2] = class, match[4] = id
@@ -14,8 +16,8 @@ export class BeaconPath {
     this.beaconRegExp = /^weaviate:\/\/localhost(\/([^\/]+))?(\/([^\/]+))?[\/]?$/ig;
   }
 
-  rebuild(beacon) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+  rebuild(beacon: any) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any) => {
       const match = new RegExp(this.beaconRegExp).exec(beacon);
       if (!match) {
         return beacon;

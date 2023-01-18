@@ -1,12 +1,17 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class ShardUpdater {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  shardName: any;
+  status: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
@@ -20,7 +25,7 @@ export default class ShardUpdater {
     }
   };
 
-  withShardName = (shardName) => {
+  withShardName = (shardName: any) => {
     this.shardName = shardName;
     return this;
   };
@@ -34,7 +39,7 @@ export default class ShardUpdater {
     }
   };
 
-  withStatus = (status) => {
+  withStatus = (status: any) => {
     this.status = status
     return this;
   }
@@ -66,7 +71,7 @@ export default class ShardUpdater {
   };
 }
 
-export function updateShard(client, className, shardName, status) {
+export function updateShard(client: any, className: any, shardName: any, status: any) {
   const path = `/schema/${className}/shards/${shardName}`;
   return client.put(path, {status: status}, true)
 }

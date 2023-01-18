@@ -1,22 +1,26 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class ReferencePayloadBuilder {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  id: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  withClassName(className) {
+  withClassName(className: any) {
     this.className = className;
     return this;
   }
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

@@ -1,27 +1,33 @@
 export default class Getter {
-  constructor(client, objectsPath) {
+  additionals: any;
+  className: any;
+  client: any;
+  errors: any;
+  limit: any;
+  objectsPath: any;
+  constructor(client: any, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
     this.additionals = [];
   }
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withLimit = (limit) => {
+  withLimit = (limit: any) => {
     this.limit = limit;
     return this;
   };
 
-  extendAdditionals = (prop) => {
+  extendAdditionals = (prop: any) => {
     this.additionals = [...this.additionals, prop];
     return this;
   };
 
-  withAdditional = (additionalFlag) => this.extendAdditionals(additionalFlag);
+  withAdditional = (additionalFlag: any) => this.extendAdditionals(additionalFlag);
 
   withVector = () => this.extendAdditionals("vector");
 

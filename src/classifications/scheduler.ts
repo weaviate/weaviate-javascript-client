@@ -1,34 +1,43 @@
 import Getter from "./getter";
 
 export default class Scheduler {
-  constructor(client) {
+  basedOnProperties: any;
+  className: any;
+  classifyProperties: any;
+  client: any;
+  errors: any;
+  settings: any;
+  type: any;
+  waitForCompletion: any;
+  waitTimeout: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
     this.waitTimeout = 10 * 60 * 1000; // 10 minutes
     this.waitForCompletion = false;
   }
 
-  withType = (type) => {
+  withType = (type: any) => {
     this.type = type;
     return this;
   };
 
-  withSettings = (settings) => {
+  withSettings = (settings: any) => {
     this.settings = settings;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withClassifyProperties = (props) => {
+  withClassifyProperties = (props: any) => {
     this.classifyProperties = props;
     return this;
   };
 
-  withBasedOnProperties = (props) => {
+  withBasedOnProperties = (props: any) => {
     this.basedOnProperties = props;
     return this;
   };
@@ -38,12 +47,12 @@ export default class Scheduler {
     return this;
   };
 
-  withWaitTimeout = (timeout) => {
+  withWaitTimeout = (timeout: any) => {
     this.waitTimeout = timeout;
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -90,7 +99,7 @@ export default class Scheduler {
     basedOnProperties: this.basedOnProperties,
   });
 
-  pollForCompletion = (id) => {
+  pollForCompletion = (id: any) => {
     return new Promise((resolve, reject) => {
       setTimeout(
         () =>
@@ -107,7 +116,7 @@ export default class Scheduler {
         new Getter(this.client)
           .withId(id)
           .do()
-          .then((res) => {
+          .then((res: any) => {
             res.status == "completed" && resolve(res);
           });
       }, 500);
@@ -123,7 +132,7 @@ export default class Scheduler {
     this.validate();
 
     const path = `/classifications`;
-    return this.client.post(path, this.payload()).then((res) => {
+    return this.client.post(path, this.payload()).then((res: any) => {
       if (!this.waitForCompletion) {
         return Promise.resolve(res);
       }

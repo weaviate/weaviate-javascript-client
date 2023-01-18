@@ -4,7 +4,7 @@ import ReferencesBatcher from "./referencesBatcher";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
 import { BeaconPath } from "../utils/beaconPath";
 
-const batch = (client, dbVersionSupport) => {
+const batch = (client: any, dbVersionSupport: any) => {
   const beaconPath = new BeaconPath(dbVersionSupport);
 
   return {

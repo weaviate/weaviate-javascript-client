@@ -1,5 +1,11 @@
 export default class GraphQLWhere {
-  constructor(whereObj) {
+  operands: any;
+  operator: any;
+  path: any;
+  source: any;
+  valueContent: any;
+  valueType: any;
+  constructor(whereObj: any) {
     this.source = whereObj;
   }
 
@@ -33,11 +39,11 @@ export default class GraphQLWhere {
   }
 
   marshalValueGeoRange() {
-    let parts = [];
+    let parts: any = [];
 
     const gc = this.valueContent.geoCoordinates;
     if (gc) {
-      let gcParts = [];
+      let gcParts: any = [];
 
       if (gc.latitude) {
         gcParts = [...gcParts, `latitude:${gc.latitude}`];
@@ -51,7 +57,7 @@ export default class GraphQLWhere {
 
     const d = this.valueContent.distance;
     if (d) {
-      let dParts = [];
+      let dParts: any = [];
       if (d.max) {
         dParts = [...dParts, `max:${d.max}`];
       }
@@ -99,7 +105,7 @@ export default class GraphQLWhere {
     }
   }
 
-  parseOperator(op) {
+  parseOperator(op: any) {
     if (typeof op !== "string") {
       throw new Error("where filter: operator must be a string");
     }
@@ -107,7 +113,7 @@ export default class GraphQLWhere {
     this.operator = op;
   }
 
-  parsePath(path) {
+  parsePath(path: any) {
     if (!Array.isArray(path)) {
       throw new Error("where filter: path must be an array");
     }
@@ -115,7 +121,7 @@ export default class GraphQLWhere {
     this.path = path;
   }
 
-  parseValue(key, value) {
+  parseValue(key: any, value: any) {
     switch (key) {
       case "valueString":
       case "valueText":
@@ -132,7 +138,7 @@ export default class GraphQLWhere {
     this.valueContent = value;
   }
 
-  parseOperands(ops) {
+  parseOperands(ops: any) {
     if (!Array.isArray(ops)) {
       throw new Error("where filter: operands must be an array");
     }

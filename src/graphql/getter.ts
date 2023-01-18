@@ -10,23 +10,40 @@ import Group from "./group";
 import Sort from "./sort";
 
 export default class Getter {
-  constructor(client) {
+  askString: any;
+  bm25String: any;
+  className: any;
+  client: any;
+  errors: any;
+  fields: any;
+  groupString: any;
+  hybridString: any;
+  includesNearMediaFilter: any;
+  limit: any;
+  nearImageString: any;
+  nearObjectString: any;
+  nearTextString: any;
+  nearVectorString: any;
+  offset: any;
+  sortString: any;
+  whereString: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
     this.includesNearMediaFilter = false
   }
 
-  withFields = (fields) => {
+  withFields = (fields: any) => {
     this.fields = fields;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  withGroup = (groupObj) => {
+  withGroup = (groupObj: any) => {
     try {
       this.groupString = new Group(groupObj).toString();
     } catch (e) {
@@ -36,7 +53,7 @@ export default class Getter {
     return this;
   };
 
-  withWhere = (whereObj) => {
+  withWhere = (whereObj: any) => {
     try {
       this.whereString = new Where(whereObj).toString();
     } catch (e) {
@@ -45,7 +62,7 @@ export default class Getter {
     return this;
   };
 
-  withNearText = (nearTextObj) => {
+  withNearText = (nearTextObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -62,7 +79,7 @@ export default class Getter {
     return this;
   };
 
-  withBm25 = (bm25Obj) => {
+  withBm25 = (bm25Obj: any) => {
     try {
       this.bm25String = new Bm25(bm25Obj).toString();
     } catch (e) {
@@ -72,7 +89,7 @@ export default class Getter {
     return this;
   };
 
-  withHybrid = (hybridObj) => {
+  withHybrid = (hybridObj: any) => {
     try {
       this.hybridString = new Hybrid(hybridObj).toString();
     } catch (e) {
@@ -83,7 +100,7 @@ export default class Getter {
   };
 
 
-  withNearObject = (nearObjectObj) => {
+  withNearObject = (nearObjectObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -100,7 +117,7 @@ export default class Getter {
     return this;
   };
 
-  withAsk = (askObj) => {
+  withAsk = (askObj: any) => {
     try {
       this.askString = new Ask(askObj).toString();
     } catch (e) {
@@ -109,7 +126,7 @@ export default class Getter {
     return this;
   };
 
-  withNearImage = (nearImageObj) => {
+  withNearImage = (nearImageObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -126,7 +143,7 @@ export default class Getter {
     return this;
   };
 
-  withNearVector = (nearVectorObj) => {
+  withNearVector = (nearVectorObj: any) => {
     if (this.includesNearMediaFilter) {
       throw new Error(
         "cannot use multiple near<Media> filters in a single query"
@@ -143,17 +160,17 @@ export default class Getter {
     return this;
   };
 
-  withLimit = (limit) => {
+  withLimit = (limit: any) => {
     this.limit = limit;
     return this;
   };
 
-  withOffset = (offset) => {
+  withOffset = (offset: any) => {
     this.offset = offset;
     return this;
   };
 
-  withSort = (sortObj) => {
+  withSort = (sortObj: any) => {
     try {
       this.sortString = new Sort(sortObj).toString();
     } catch (e) {
@@ -162,7 +179,7 @@ export default class Getter {
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -204,7 +221,7 @@ export default class Getter {
       this.groupString ||
       this.sortString
     ) {
-      let args = [];
+      let args: any = [];
 
       if (this.whereString) {
         args = [...args, `where:${this.whereString}`];

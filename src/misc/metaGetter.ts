@@ -1,5 +1,6 @@
 export default class MetaGetter {
-  constructor(client) {
+  client: any;
+  constructor(client: any) {
     this.client = client;
   }
 

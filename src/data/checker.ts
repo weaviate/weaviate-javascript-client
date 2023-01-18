@@ -1,21 +1,26 @@
 export default class Checker {
-  constructor(client, objectsPath) {
+  className: any;
+  client: any;
+  errors: any;
+  id: any;
+  objectsPath: any;
+  constructor(client: any, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
   }
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

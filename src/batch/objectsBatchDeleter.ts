@@ -1,32 +1,34 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class ObjectsBatchDeleter {
-  className;
-  whereFilter;
-  output;
-  dryRun;
+  client: any;
+  errors: any;
+  className: any;
+  whereFilter: any;
+  output: any;
+  dryRun: any;
 
-  constructor(client) {
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName(className) {
+  withClassName(className: any) {
     this.className = className;
     return this;
   }
 
-  withWhere(whereFilter) {
+  withWhere(whereFilter: any) {
     this.whereFilter = whereFilter;
     return this;
   }
 
-  withOutput(output) {
+  withOutput(output: any) {
     this.output = output;
     return this;
   }
 
-  withDryRun(dryRun) {
+  withDryRun(dryRun: any) {
     this.dryRun = dryRun;
     return this;
   }
@@ -63,7 +65,7 @@ export default class ObjectsBatchDeleter {
   validate() {
     this.validateClassName();
     this.validateWhereFilter();
-  };
+  }
 
   do() {
     this.validate();
@@ -74,5 +76,5 @@ export default class ObjectsBatchDeleter {
     }
     const path = `/batch/objects`;
     return this.client.delete(path, this.payload(), true);
-  };
+  }
 }

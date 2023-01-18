@@ -1,5 +1,7 @@
 export default class Getter {
-  constructor(client) {
+  client: any;
+  errors: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }

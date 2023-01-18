@@ -1,5 +1,7 @@
 export default class LiveChecker {
-  constructor(client, dbVersionProvider) {
+  client: any;
+  dbVersionProvider: any;
+  constructor(client: any, dbVersionProvider: any) {
     this.client = client;
     this.dbVersionProvider = dbVersionProvider;
   }

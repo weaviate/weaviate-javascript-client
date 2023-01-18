@@ -1,5 +1,10 @@
 export default class GraphQLNearImage {
-  constructor(nearImageObj) {
+  certainty: any;
+  distance: any;
+  image: any;
+  imageBlob: any;
+  source: any;
+  constructor(nearImageObj: any) {
     this.source = nearImageObj;
   }
 
@@ -7,7 +12,7 @@ export default class GraphQLNearImage {
     this.parse();
     this.validate();
 
-    let args = [];
+    let args: any = [];
 
     if (this.image) {
       let img = this.image
@@ -56,7 +61,7 @@ export default class GraphQLNearImage {
     }
   }
 
-  parseImage(image) {
+  parseImage(image: any) {
     if (typeof image !== "string") {
       throw new Error("nearImage filter: image must be a string");
     }
@@ -64,7 +69,7 @@ export default class GraphQLNearImage {
     this.image = image;
   }
 
-  parseCertainty(cert) {
+  parseCertainty(cert: any) {
     if (typeof cert !== "number") {
       throw new Error("nearImage filter: certainty must be a number");
     }
@@ -72,7 +77,7 @@ export default class GraphQLNearImage {
     this.certainty = cert;
   }
 
-  parseDistance(dist) {
+  parseDistance(dist: any) {
     if (typeof dist !== "number") {
       throw new Error("nearImage filter: distance must be a number");
     }

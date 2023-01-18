@@ -1,23 +1,29 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class Updater {
-  constructor(client, objectsPath) {
+  className: any;
+  client: any;
+  errors: any;
+  id: any;
+  objectsPath: any;
+  properties: any;
+  constructor(client: any, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
   }
 
-  withProperties = (properties) => {
+  withProperties = (properties: any) => {
     this.properties = properties;
     return this;
   };
 
-  withId = (id) => {
+  withId = (id: any) => {
     this.id = id;
     return this;
   };
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
@@ -61,6 +67,6 @@ export default class Updater {
     }
 
     return this.objectsPath.buildUpdate(this.id, this.className)
-      .then(path => this.client.put(path, this.payload()));
+      .then((path: any) => this.client.put(path, this.payload()));
   };
 }

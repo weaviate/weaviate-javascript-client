@@ -6,23 +6,34 @@ import Ask from "./ask";
 import Raw from "./raw";
 
 export default class Explorer {
-  constructor(client) {
+  askString: any;
+  client: any;
+  errors: any;
+  fields: any;
+  group: any;
+  limit: any;
+  nearImageString: any;
+  nearObjectString: any;
+  nearTextString: any;
+  nearVectorString: any;
+  params: any;
+  constructor(client: any) {
     this.client = client;
     this.params = {};
     this.errors = [];
   }
 
-  withFields = (fields) => {
+  withFields = (fields: any) => {
     this.fields = fields;
     return this;
   };
 
-  withLimit = (limit) => {
+  withLimit = (limit: any) => {
     this.limit = limit;
     return this;
   };
 
-  withNearText = (nearTextObj) => {
+  withNearText = (nearTextObj: any) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
     } catch (e) {
@@ -31,7 +42,7 @@ export default class Explorer {
     return this;
   };
 
-  withNearObject = (nearObjectObj) => {
+  withNearObject = (nearObjectObj: any) => {
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
     } catch (e) {
@@ -40,7 +51,7 @@ export default class Explorer {
     return this;
   };
 
-  withAsk = (askObj) => {
+  withAsk = (askObj: any) => {
     try {
       this.askString = new Ask(askObj).toString();
     } catch (e) {
@@ -49,7 +60,7 @@ export default class Explorer {
     return this;
   };
 
-  withNearImage = (nearImageObj) => {
+  withNearImage = (nearImageObj: any) => {
     try {
       this.nearImageString = new NearImage(nearImageObj).toString();
     } catch (e) {
@@ -58,7 +69,7 @@ export default class Explorer {
     return this;
   };
 
-  withNearVector = (nearVectorObj) => {
+  withNearVector = (nearVectorObj: any) => {
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
     } catch (e) {
@@ -78,7 +89,7 @@ export default class Explorer {
     }
   };
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -101,7 +112,7 @@ export default class Explorer {
       );
     }
 
-    let args = [];
+    let args: any = [];
 
     if (this.nearTextString) {
       args = [...args, `nearText:${this.nearTextString}`];

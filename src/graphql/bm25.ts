@@ -1,8 +1,11 @@
 import { isValidStringArray, isValidStringProperty } from "../validation/string";
 
 export default class GraphQLBm25 {
+  properties: any;
+  query: any;
+  source: any;
 
-  constructor(bm25Obj) {
+  constructor(bm25Obj: any) {
     this.source = bm25Obj;
   }
 
@@ -34,7 +37,7 @@ export default class GraphQLBm25 {
     }
   }
 
-  parseQuery(query) {
+  parseQuery(query: any) {
     if (!isValidStringProperty(query)) {
       throw new Error("bm25 filter: query must be a string");
     }
@@ -42,7 +45,7 @@ export default class GraphQLBm25 {
     this.query = query;
   }
 
-  parseProperties(properties) {
+  parseProperties(properties: any) {
     if (!isValidStringArray(properties)) {
       throw new Error("bm25 filter: properties must be an array of strings");
     }

@@ -1,21 +1,22 @@
 import { validateBackupId, validateBackend } from "./validation";
 
 export default class BackupRestoreStatusGetter {
+  client: any;
 
-  backend;
-  backupId;
-  errors;
+  backend: any;
+  backupId: any;
+  errors: any;
 
-  constructor(client) {
+  constructor(client: any) {
     this.client = client;
   }
 
-  withBackend(backend) {
+  withBackend(backend: any) {
     this.backend = backend;
     return this;
   }
 
-  withBackupId(backupId) {
+  withBackupId(backupId: any) {
     this.backupId = backupId;
     return this;
   }

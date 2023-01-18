@@ -1,5 +1,10 @@
 export default class GraphQLNearObject {
-  constructor(nearObjectObj) {
+  beacon: any;
+  certainty: any;
+  distance: any;
+  id: any;
+  source: any;
+  constructor(nearObjectObj: any) {
     this.source = nearObjectObj;
   }
 
@@ -7,7 +12,7 @@ export default class GraphQLNearObject {
     this.parse();
     this.validate();
 
-    let args = [];
+    let args: any = [];
 
     if (this.id) {
       args = [...args, `id:${JSON.stringify(this.id)}`];
@@ -58,7 +63,7 @@ export default class GraphQLNearObject {
     }
   }
 
-  parseID(id) {
+  parseID(id: any) {
     if (typeof id !== "string") {
       throw new Error("nearObject filter: id must be a string");
     }
@@ -66,7 +71,7 @@ export default class GraphQLNearObject {
     this.id = id;
   }
 
-  parseBeacon(beacon) {
+  parseBeacon(beacon: any) {
     if (typeof beacon !== "string") {
       throw new Error("nearObject filter: beacon must be a string");
     }
@@ -74,7 +79,7 @@ export default class GraphQLNearObject {
     this.beacon = beacon;
   }
 
-  parseCertainty(cert) {
+  parseCertainty(cert: any) {
     if (typeof cert !== "number") {
       throw new Error("nearObject filter: certainty must be a number");
     }
@@ -82,7 +87,7 @@ export default class GraphQLNearObject {
     this.certainty = cert;
   }
 
-  parseDistance(dist) {
+  parseDistance(dist: any) {
     if (typeof dist !== "number") {
       throw new Error("nearObject filter: distance must be a number");
     }

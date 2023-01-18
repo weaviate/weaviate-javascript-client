@@ -1,10 +1,13 @@
 export default class ClassCreator {
-  constructor(client) {
+  class: any;
+  client: any;
+  errors: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withClass = (classObj) => {
+  withClass = (classObj: any) => {
     this.class = classObj;
     return this;
   };

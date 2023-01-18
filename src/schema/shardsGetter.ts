@@ -1,12 +1,15 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class ShardsGetter {
-  constructor(client) {
+  className: any;
+  client: any;
+  errors: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className) => {
+  withClassName = (className: any) => {
     this.className = className;
     return this;
   };
@@ -36,7 +39,7 @@ export default class ShardsGetter {
   };
 }
 
-export function getShards(client, className) {
+export function getShards(client: any, className: any) {
   const path = `/schema/${className}/shards`;
   return client.get(path)
 }

@@ -1,5 +1,12 @@
 export default class GraphQLAsk {
-  constructor(askObj) {
+  autocorrect: any;
+  certainty: any;
+  distance: any;
+  properties: any;
+  question: any;
+  rerank: any;
+  source: any;
+  constructor(askObj: any) {
     this.source = askObj;
   }
 
@@ -7,7 +14,7 @@ export default class GraphQLAsk {
     this.parse();
     this.validate();
 
-    let args = [];
+    let args: any = [];
 
     if (this.question) {
       args = [...args, `question:${JSON.stringify(this.question)}`];
@@ -72,7 +79,7 @@ export default class GraphQLAsk {
     }
   }
 
-  parseQuestion(question) {
+  parseQuestion(question: any) {
     if (typeof question !== "string") {
       throw new Error("ask filter: question must be a string");
     }
@@ -80,7 +87,7 @@ export default class GraphQLAsk {
     this.question = question;
   }
 
-  parseProperties(properties) {
+  parseProperties(properties: any) {
     if (!Array.isArray(properties)) {
       throw new Error("ask filter: properties must be an array");
     }
@@ -88,7 +95,7 @@ export default class GraphQLAsk {
     this.properties = properties;
   }
 
-  parseCertainty(cert) {
+  parseCertainty(cert: any) {
     if (typeof cert !== "number") {
       throw new Error("ask filter: certainty must be a number");
     }
@@ -96,7 +103,7 @@ export default class GraphQLAsk {
     this.certainty = cert;
   }
 
-  parseDistance(dist) {
+  parseDistance(dist: any) {
     if (typeof dist !== "number") {
       throw new Error("ask filter: distance must be a number");
     }
@@ -104,7 +111,7 @@ export default class GraphQLAsk {
     this.distance = dist;
   }
 
-  parseAutocorrect(autocorrect) {
+  parseAutocorrect(autocorrect: any) {
     if (typeof autocorrect !== "boolean") {
       throw new Error("ask filter: autocorrect must be a boolean");
     }
@@ -112,7 +119,7 @@ export default class GraphQLAsk {
     this.autocorrect = autocorrect;
   }
 
-  parseRerank(rerank) {
+  parseRerank(rerank: any) {
     if (typeof rerank !== "boolean") {
       throw new Error("ask filter: rerank must be a boolean");
     }

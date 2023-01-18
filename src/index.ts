@@ -17,7 +17,7 @@ import replicationConsts from "./data/replication/consts.js";
 import { AuthAccessTokenCredentials, AuthUserPasswordCredentials } from "./connection/auth.js";
 
 const app = {
-  client: function (params) {
+  client: function (params: any) {
     // check if the URL is set
     if (!params.host) throw new Error("Missing `host` parameter");
 
@@ -52,11 +52,12 @@ const app = {
   replication: replicationConsts,
 };
 
-function initDbVersionProvider(conn) {
+function initDbVersionProvider(conn: any) {
+  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const metaGetter = misc(conn).metaGetter();
   const versionGetter = () => {
     return metaGetter.do()
-      .then(result => result.version)
+      .then((result: any) => result.version)
       .catch(() => Promise.resolve(""));
   }
 
@@ -68,7 +69,10 @@ function initDbVersionProvider(conn) {
 
 export default app;
 export { AuthUserPasswordCredentials, AuthAccessTokenCredentials };
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = app;
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports.AuthUserPasswordCredentials = AuthUserPasswordCredentials;
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports.AuthAccessTokenCredentials = AuthAccessTokenCredentials;
 

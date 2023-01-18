@@ -1,11 +1,12 @@
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'isom... Remove this comment to see the full error message
 import fetch from 'isomorphic-fetch'
 
-export const httpClient = (config) => {
+export const httpClient = (config: any) => {
   const baseUri = `${config.scheme}://${config.host}/v1`
   const url = makeUrl(baseUri);
 
   return {
-    post: (path, payload, expectReturnContent = true, bearerToken = "") => {
+    post: (path: any, payload: any, expectReturnContent = true, bearerToken = "") => {
       var request = {
         method: "POST",
         headers: {
@@ -17,7 +18,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken)
       return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    put: (path, payload, expectReturnContent = true,  bearerToken = "") => {
+    put: (path: any, payload: any, expectReturnContent = true,  bearerToken = "") => {
       var request = {
         method: "PUT",
         headers: {
@@ -29,7 +30,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken);
       return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    patch: (path, payload, bearerToken = "") => {
+    patch: (path: any, payload: any, bearerToken = "") => {
       var request = {
         method: "PATCH",
         headers: {
@@ -41,7 +42,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken);
       return fetch(url(path), request).then(makeCheckStatus(false));
     },
-    delete: (path, payload, expectReturnContent = false, bearerToken = "") => {
+    delete: (path: any, payload: any, expectReturnContent = false, bearerToken = "") => {
       var request = {
         method: "DELETE",
         headers: {
@@ -53,7 +54,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken);
       return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    head: (path, payload, bearerToken = "") => {
+    head: (path: any, payload: any, bearerToken = "") => {
       var request = {
         method: "HEAD",
         headers: {
@@ -63,9 +64,10 @@ export const httpClient = (config) => {
         body: payload ? JSON.stringify(payload) : undefined,
       };
       addAuthHeaderIfNeeded(request, bearerToken);
+      // @ts-expect-error TS(2554): Expected 1 arguments, but got 2.
       return fetch(url(path), request).then(handleHeadResponse(false, true));
     },
-    get: (path, expectReturnContent = true, bearerToken = "") => {
+    get: (path: any, expectReturnContent = true, bearerToken = "") => {
       var request = {
         method: "GET",
         headers: {
@@ -75,7 +77,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken);
       return fetch(url(path), request).then(makeCheckStatus(expectReturnContent));
     },
-    getRaw: (path, bearerToken = "") => {
+    getRaw: (path: any, bearerToken = "") => {
       // getRaw does not handle the status leaving this to the caller
       var request = {
         method: "GET",
@@ -86,7 +88,7 @@ export const httpClient = (config) => {
       addAuthHeaderIfNeeded(request, bearerToken);
       return fetch(url(path), request);
     },
-    externalGet: (externalUrl) => {
+    externalGet: (externalUrl: any) => {
       return fetch(externalUrl, {
         method: "GET",
         headers: {
@@ -94,7 +96,7 @@ export const httpClient = (config) => {
         },
       }).then(makeCheckStatus(true));
     },
-    externalPost: (externalUrl, body, contentType) => {
+    externalPost: (externalUrl: any, body: any, contentType: any) => {
       if (contentType == undefined || contentType == "") {
         contentType = "application/json";
       }
@@ -106,6 +108,7 @@ export const httpClient = (config) => {
         }
       };
       if (body != null) {
+        // @ts-expect-error TS(2339): Property 'body' does not exist on type '{ method: ... Remove this comment to see the full error message
         request.body = body;
       }
       return fetch(externalUrl, request).then(makeCheckStatus(true));
@@ -113,11 +116,11 @@ export const httpClient = (config) => {
   };
 };
 
-const makeUrl = (basePath) => (path) => basePath + path;
+const makeUrl = (basePath: any) => (path: any) => basePath + path;
 
-const makeCheckStatus = (expectResponseBody) => (res) => {
+const makeCheckStatus = (expectResponseBody: any) => (res: any) => {
   if (res.status >= 400) {
-    return res.text().then(errText => {
+    return res.text().then((errText: any) => {
       var err;
       try {
         // in case of invalid json response (like empty string)
@@ -136,14 +139,14 @@ const makeCheckStatus = (expectResponseBody) => (res) => {
   }
 };
 
-const handleHeadResponse = (expectResponseBody) => (res) => {
+const handleHeadResponse = (expectResponseBody: any) => (res: any) => {
   if (res.status == 204 || res.status == 404) {
     return res.status == 204
   }
   return makeCheckStatus(expectResponseBody)
 }
 
-function addAuthHeaderIfNeeded(request, bearerToken) {
+function addAuthHeaderIfNeeded(request: any, bearerToken: any) {
   if (bearerToken != "") {
     request.headers.Authorization = `Bearer ${bearerToken}`;
   }

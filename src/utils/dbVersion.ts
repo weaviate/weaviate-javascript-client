@@ -1,13 +1,15 @@
 export class DbVersionSupport {
+  dbVersionProvider: any;
 
-  constructor(dbVersionProvider) {
+  constructor(dbVersionProvider: any) {
     this.dbVersionProvider = dbVersionProvider;
   }
 
   supportsClassNameNamespacedEndpointsPromise() {
-    return this.dbVersionProvider.getVersionPromise().then(version => ({
+    return this.dbVersionProvider.getVersionPromise().then((version: any) => ({
       version,
       supports: this.supportsClassNameNamespacedEndpoints(version),
+
       warns: {
         deprecatedNonClassNameNamespacedEndpointsForObjects: () => console.warn(`Usage of objects paths without className is deprecated in Weaviate ${version}. Please provide className parameter`),
         deprecatedNonClassNameNamespacedEndpointsForReferences: () => console.warn(`Usage of references paths without className is deprecated in Weaviate ${version}. Please provide className parameter`),
@@ -21,7 +23,7 @@ export class DbVersionSupport {
   }
 
   // >= 1.14
-  supportsClassNameNamespacedEndpoints(version) {
+  supportsClassNameNamespacedEndpoints(version: any) {
     if (typeof version === "string") {
       const versionNumbers = version.split(".");
       if (versionNumbers.length >= 2) {
@@ -36,8 +38,11 @@ export class DbVersionSupport {
 
 const EMPTY_VERSION = "";
 export class DbVersionProvider {
+  emptyVersionPromise: any;
+  versionGetter: any;
+  versionPromise: any;
 
-  constructor(versionGetter) {
+  constructor(versionGetter: any) {
     this.versionGetter = versionGetter;
 
     this.emptyVersionPromise = Promise.resolve(EMPTY_VERSION);
@@ -62,7 +67,7 @@ export class DbVersionProvider {
   }
 }
 
-function assignPromise(version) {
+function assignPromise(this: any, version: any) {
   if (version === EMPTY_VERSION) {
     return this.emptyVersionPromise;
   }

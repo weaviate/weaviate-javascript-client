@@ -4,20 +4,22 @@ import { validateBackupId, validateExcludeClassNames, validateIncludeClassNames,
 const WAIT_INTERVAL = 1000;
 
 export default class BackupRestorer {
+  client: any;
+  statusGetter: any;
 
-  includeClassNames;
-  excludeClassNames;
-  backend;
-  backupId;
-  waitForCompletion;
-  errors;
+  includeClassNames: any;
+  excludeClassNames: any;
+  backend: any;
+  backupId: any;
+  waitForCompletion: any;
+  errors: any;
 
-  constructor(client, statusGetter) {
+  constructor(client: any, statusGetter: any) {
     this.client = client;
     this.statusGetter = statusGetter;
   }
 
-  withIncludeClassNames(...classNames) {
+  withIncludeClassNames(...classNames: any[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -26,7 +28,7 @@ export default class BackupRestorer {
     return this;
   }
 
-  withExcludeClassNames(...classNames) {
+  withExcludeClassNames(...classNames: any[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -35,17 +37,17 @@ export default class BackupRestorer {
     return this;
   }
 
-  withBackend(backend) {
+  withBackend(backend: any) {
     this.backend = backend;
     return this;
   }
 
-  withBackupId(backupId) {
+  withBackupId(backupId: any) {
     this.backupId = backupId;
     return this;
   }
 
-  withWaitForCompletion(waitForCompletion) {
+  withWaitForCompletion(waitForCompletion: any) {
     this.waitForCompletion = waitForCompletion;
     return this;
   }
@@ -79,21 +81,21 @@ export default class BackupRestorer {
     return this._restore(payload);
   }
 
-  _restore(payload) {
+  _restore(payload: any) {
     return this.client.post(this._path(), payload);
   }
 
-  _restoreAndWaitForCompletion(payload) {
+  _restoreAndWaitForCompletion(payload: any) {
     return new Promise((resolve, reject) => {
       this._restore(payload)
-        .then(restoreResponse => {
+        .then((restoreResponse: any) => {
           this.statusGetter
             .withBackend(this.backend)
             .withBackupId(this.backupId);
 
           const loop = () => {
             this.statusGetter.do()
-              .then(restoreStatusResponse => {
+              .then((restoreStatusResponse: any) => {
                 if (restoreStatusResponse.status == RestoreStatus.SUCCESS
                     || restoreStatusResponse.status == RestoreStatus.FAILED
                 ) {
@@ -115,24 +117,30 @@ export default class BackupRestorer {
     return `/backups/${this.backend}/${this.backupId}/restore`;
   }
 
-  _merge(restoreStatusResponse, restoreResponse) {
+  _merge(restoreStatusResponse: any, restoreResponse: any) {
     const merged = {};
     if ('id' in restoreStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'id' does not exist on type '{}'.
       merged.id = restoreStatusResponse.id;
     }
     if ('path' in restoreStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'path' does not exist on type '{}'.
       merged.path = restoreStatusResponse.path
     }
     if ('backend' in restoreStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'backend' does not exist on type '{}'.
       merged.backend = restoreStatusResponse.backend
     }
     if ('status' in restoreStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'status' does not exist on type '{}'.
       merged.status = restoreStatusResponse.status
     }
     if ('error' in restoreStatusResponse) {
+      // @ts-expect-error TS(2339): Property 'error' does not exist on type '{}'.
       merged.error = restoreStatusResponse.error
     }
     if ('classes' in restoreResponse) {
+      // @ts-expect-error TS(2339): Property 'classes' does not exist on type '{}'.
       merged.classes = restoreResponse.classes
     }
     return merged;

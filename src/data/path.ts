@@ -3,45 +3,46 @@ import { isValidStringProperty } from "../validation/string";
 const objectsPathPrefix = "/objects";
 
 export class ObjectsPath {
+  dbVersionSupport: any;
 
-  constructor(dbVersionSupport) {
+  constructor(dbVersionSupport: any) {
     this.dbVersionSupport = dbVersionSupport;
   }
 
   buildCreate() {
     return this.build({}, []);
   }
-  buildDelete(id, className) {
+  buildDelete(id: any, className: any) {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-  buildCheck(id, className) {
+  buildCheck(id: any, className: any) {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-  buildGetOne(id, className, additionals, consistencyLevel, nodeName) {
+  buildGetOne(id: any, className: any, additionals: any, consistencyLevel: any, nodeName: any) {
     return this.build({id, className, additionals, consistencyLevel, nodeName}, 
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(className, limit, additionals) {
+  buildGet(className: any, limit: any, additionals: any) {
     return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
   }
-  buildUpdate(id, className) {
+  buildUpdate(id: any, className: any) {
     return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
   }
-  buildMerge(id, className) {
+  buildMerge(id: any, className: any) {
     return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
   }
 
-  build(params, modifiers) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+  build(params: any, modifiers: any) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any) => {
       var path = objectsPathPrefix;
-      modifiers.forEach(modifier => {
+      modifiers.forEach((modifier: any) => {
         path = modifier(params, path, support);
       });
       return path;
     });
   }
 
-  addClassNameDeprecatedNotSupportedCheck(params, path, support) {
+  addClassNameDeprecatedNotSupportedCheck(params: any, path: any, support: any) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
         return `${path}/${params.className}`;
@@ -53,7 +54,7 @@ export class ObjectsPath {
     }
     return path;
   }
-  addClassNameDeprecatedCheck(params, path, support) {
+  addClassNameDeprecatedCheck(params: any, path: any, support: any) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
         return `${path}/${params.className}`;
@@ -63,13 +64,13 @@ export class ObjectsPath {
     }
     return path;
   }
-  addId(params, path) {
+  addId(params: any, path: any) {
     if (isValidStringProperty(params.id)) {
       return `${path}/${params.id}`;
     }
     return path;
   }
-  addQueryParams(params, path) {
+  addQueryParams(params: any, path: any) {
     const queryParams = [];
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
@@ -85,7 +86,7 @@ export class ObjectsPath {
     }
     return path;
   }
-  addQueryParamsForGet(params, path, support) {
+  addQueryParamsForGet(params: any, path: any, support: any) {
     const queryParams = [];
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
@@ -109,13 +110,14 @@ export class ObjectsPath {
 
 
 export class ReferencesPath {
+  dbVersionSupport: any;
 
-  constructor(dbVersionSupport) {
+  constructor(dbVersionSupport: any) {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  build(id, className, property) {
-    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
+  build(id: any, className: any, property: any) {
+    return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any) => {
       var path = objectsPathPrefix;
       if (support.supports) {
         if (isValidStringProperty(className)) {

@@ -1,37 +1,44 @@
 import { isValidStringProperty } from "../validation/string";
 
 export default class ReferencesBatcher {
-  constructor(client) {
+  client: any;
+  errors: any;
+  fromClassName: any;
+  fromId: any;
+  fromRefProp: any;
+  toClassName: any;
+  toId: any;
+  constructor(client: any) {
     this.client = client;
     this.errors = [];
   }
 
-  withFromId = (id) => {
+  withFromId = (id: any) => {
     this.fromId = id;
     return this;
   };
 
-  withToId = (id) => {
+  withToId = (id: any) => {
     this.toId = id;
     return this;
   };
 
-  withFromClassName = (className) => {
+  withFromClassName = (className: any) => {
     this.fromClassName = className;
     return this;
   };
 
-  withFromRefProp = (refProp) => {
+  withFromRefProp = (refProp: any) => {
     this.fromRefProp = refProp;
     return this;
   };
 
-  withToClassName(className) {
+  withToClassName(className: any) {
     this.toClassName = className;
     return this;
   }
 
-  validateIsSet = (prop, name, setter) => {
+  validateIsSet = (prop: any, name: any, setter: any) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
