@@ -23,7 +23,8 @@
   "dependencies": {
     "@babel/runtime": "^7.20.7",
     "graphql-request": "^5.1.0",
-    "isomorphic-fetch": "^3.0.0"
+    "isomorphic-fetch": "^3.0.0",
+    "oidc-client-ts": "^2.2.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",

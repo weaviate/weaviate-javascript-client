@@ -1,3 +1,5 @@
+import { OidcClient } from "oidc-client-ts"
+
 export class Authenticator {
   constructor(http, creds) {
     this.http = http;
@@ -17,54 +19,70 @@ export class Authenticator {
   }
 
   refresh = async (localConfig) => {
-    var config = await this.getOpenidConfig(localConfig);
+    let config = await this.getOpenidConfig(localConfig);
+
+    let client = new OidcClient({
+      client_id: config.clientId,
+      authority: config.provider.issuer,
+      metadataUrl: config.metadataUrl
+    })
 
     var authenticator;
     switch (this.creds.constructor) {
       case AuthUserPasswordCredentials:
-        authenticator = new UserPasswordAuthenticator(this.http, this.creds, config);
+        authenticator = new UserPasswordAuthenticator(client, this.creds, config);
         break;
       case AuthAccessTokenCredentials:
-        authenticator = new AccessTokenAuthenticator(this.http, this.creds, config);
+        authenticator = new AccessTokenAuthenticator(client, this.creds, config);
         break;
       case AuthClientCredentials:
-        authenticator = new ClientCredentialsAuthenticator(this.http, this.creds, config);
+        authenticator = new ClientCredentialsAuthenticator(client, this.creds, config);
         break;
       default:
         throw new Error("unsupported credential type");
     }
 
     return authenticator.refresh()
-      .then(resp => {
-        this.bearerToken = resp.bearerToken;
-        this.expirationEpoch = resp.expirationEpoch;
-        this.refreshToken = resp.refreshToken;
-        if (!this.refreshRunning) {
-          this.runBackgroundTokenRefresh(authenticator);
-          this.refreshRunning = true;
-        }
-      });
+      .then(this.postRefresh)
   };
 
   getOpenidConfig = async (localConfig) => {
     return this.http.externalGet(localConfig.href)
       .then(openidProviderConfig => {
+        let scope = localConfig.scopes.join(" ");
         return {
-          clientId: localConfig.clientId, 
+          clientId: localConfig.clientId,
+          scope: scope,
+          metadataUrl: localConfig.href,
           provider: openidProviderConfig
         };
       });
   };
 
-  runBackgroundTokenRefresh = (authenticator) => {
+  postRefresh = (refreshResp) => {
+    this.bearerToken = refreshResp.bearerToken;
+    this.expirationEpoch = refreshResp.expirationEpoch;
+    this.refreshToken = refreshResp.refreshToken;
+    if (!this.refreshRunning) {
+      this.runBackgroundTokenRefresh();
+      this.refreshRunning = true;
+    }
+  };
+
+  runBackgroundTokenRefresh = () => {
     setInterval(async () => { 
       // check every 30s if the token will expire in <= 1m,
       // if so, refresh
       if (this.expirationEpoch - Date.now() <= 60_000) {
-        var resp = await authenticator.refresh();
-        this.bearerToken = resp.bearerToken;
-        this.expirationEpoch = resp.expirationEpoch;
-        this.refreshToken = resp.refreshToken;
+        let resp = await this.client.useRefreshToken({ 
+          state: {
+            refresh_token: this.creds.refreshToken,
+            scope: this.openidConfig.scope
+          }
+        });
+        this.bearerToken = resp.access_token;
+        this.expirationEpoch = resp.expires_at;
+        this.refreshToken = resp.refresh_token;
       }
     }, 30_000)
   };
@@ -78,8 +96,8 @@ export class AuthUserPasswordCredentials {
 }
 
 class UserPasswordAuthenticator {
-  constructor(http, creds, config) {
-    this.http = http;
+  constructor(client, creds, config) {
+    this.client = client;
     this.creds = creds;
     this.openidConfig = config;
   }
@@ -88,6 +106,8 @@ class UserPasswordAuthenticator {
     this.validateOpenidConfig();
     return this.requestAccessToken()
       .then(tokenResp => {
+        // clear the username/password, as they're no longer needed
+        delete this.creds;
         return {
           bearerToken: tokenResp.access_token,
           expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
@@ -101,19 +121,6 @@ class UserPasswordAuthenticator {
       });
   };
 
-  requestAccessToken = () => {
-    var url = this.openidConfig.provider.token_endpoint;
-    var params = new URLSearchParams({
-      grant_type: "password",
-      client_id: this.openidConfig.clientId,
-      username: this.creds.username,
-      password: this.creds.password,
-      scope: "openid offline_access"
-    });
-    let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
-    return this.http.externalPost(url, params, contentType);
-  };
-
   validateOpenidConfig = () => {
     if (this.openidConfig.provider.grant_types_supported !== undefined &&
       !this.openidConfig.provider.grant_types_supported.includes("password")) {
@@ -124,6 +131,13 @@ class UserPasswordAuthenticator {
         throw new Error("microsoft/azure recommends to avoid authentication using "+
           "username and password, so this method is not supported by this client");
       }
+  };
+
+  requestAccessToken = async () => {
+    return await this.client.processResourceOwnerPasswordCredentials({
+      username: this.creds.username,
+      password: this.creds.password,
+    });
   };
 }
 
@@ -146,8 +160,8 @@ export class AuthAccessTokenCredentials {
 }
 
 class AccessTokenAuthenticator {
-  constructor(http, creds, config) {
-    this.http = http;
+  constructor(client, creds, config) {
+    this.client = client;
     this.creds = creds;
     this.openidConfig = config;
   }
@@ -183,15 +197,13 @@ class AccessTokenAuthenticator {
       }
   };
 
-  requestAccessToken = () => {
-    var url = this.openidConfig.provider.token_endpoint;
-    var params = new URLSearchParams({
-      grant_type: "refresh_token",
-      client_id: this.openidConfig.clientId,
-      refresh_token: this.creds.refreshToken,
+  requestAccessToken = async () => {
+    return await this.client.useRefreshToken({ 
+      state: {
+        refresh_token: this.creds.refreshToken,
+        scope: this.openidConfig.scope
+      }
     });
-    let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
-    return this.http.externalPost(url, params, contentType);
   };
 }
 
@@ -204,5 +216,5 @@ class ClientCredentialsAuthenticator {
 }
 
 function calcExpirationEpoch(expiresIn) {
-  return Date.now() + ((expiresIn - 2) * 1000) // -2 for some lag
+  return Date.now() + ((expiresIn - 2) * 1000); // -2 for some lag
 }
