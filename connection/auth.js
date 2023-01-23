@@ -2,16 +2,16 @@ export class Authenticator {
   constructor(http, creds) {
     this.http = http;
     this.creds = creds;
-    this.bearerToken = "";
+    this.accessToken = "";
     this.refreshToken = "";
-    this.expirationEpoch = 0
+    this.expiresAt = 0
     this.refreshRunning = false;
 
     // If the authentication method is access token,
     // our bearer token is already available for use
     if (this.creds instanceof AuthAccessTokenCredentials) {
-      this.bearerToken = this.creds.accessToken;
-      this.expirationEpoch = calcExpirationEpoch(this.creds.expiresIn);
+      this.accessToken = this.creds.accessToken;
+      this.expiresAt = calcExpirationEpoch(this.creds.expiresIn);
       this.refreshToken = this.creds.refreshToken;
     }
   }
@@ -27,14 +27,17 @@ export class Authenticator {
       case AuthAccessTokenCredentials:
         authenticator = new AccessTokenAuthenticator(this.http, this.creds, config);
         break;
+      case AuthClientCredentials:
+        authenticator = new ClientCredentialsAuthenticator(this.http, this.creds, config);
+        break;
       default:
         throw new Error("unsupported credential type");
     }
 
     return authenticator.refresh()
       .then(resp => {
-        this.bearerToken = resp.bearerToken;
-        this.expirationEpoch = resp.expirationEpoch;
+        this.accessToken = resp.accessToken;
+        this.expiresAt = resp.expiresAt;
         this.refreshToken = resp.refreshToken;
         if (!this.refreshRunning) {
           this.runBackgroundTokenRefresh(authenticator);
@@ -47,20 +50,21 @@ export class Authenticator {
     return this.http.externalGet(localConfig.href)
       .then(openidProviderConfig => {
         return {
-          clientId: localConfig.clientId, 
-          provider: openidProviderConfig
+          clientId: localConfig.clientId,
+          provider: openidProviderConfig,
+          scope: localConfig.scopes.join(" ")
         };
       });
   };
 
   runBackgroundTokenRefresh = (authenticator) => {
-    setInterval(async () => { 
+    setInterval(async () => {
       // check every 30s if the token will expire in <= 1m,
       // if so, refresh
-      if (this.expirationEpoch - Date.now() <= 60_000) {
+      if (this.expiresAt - Date.now() <= 60_000) {
         var resp = await authenticator.refresh();
-        this.bearerToken = resp.bearerToken;
-        this.expirationEpoch = resp.expirationEpoch;
+        this.accessToken = resp.accessToken;
+        this.expiresAt = resp.expiresAt;
         this.refreshToken = resp.refreshToken;
       }
     }, 30_000)
@@ -86,8 +90,8 @@ class UserPasswordAuthenticator {
     return this.requestAccessToken()
       .then(tokenResp => {
         return {
-          bearerToken: tokenResp.access_token,
-          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
+          accessToken: tokenResp.access_token,
+          expiresAt: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
@@ -114,13 +118,13 @@ class UserPasswordAuthenticator {
   validateOpenidConfig = () => {
     if (this.openidConfig.provider.grant_types_supported !== undefined &&
       !this.openidConfig.provider.grant_types_supported.includes("password")) {
-        throw new Error("grant_type password not supported");
-      }
+      throw new Error("grant_type password not supported");
+    }
     if (this.openidConfig.provider.token_endpoint.includes(
       "https://login.microsoftonline.com")) {
-        throw new Error("microsoft/azure recommends to avoid authentication using "+
-          "username and password, so this method is not supported by this client");
-      }
+      throw new Error("microsoft/azure recommends to avoid authentication using " +
+        "username and password, so this method is not supported by this client");
+    }
   };
 }
 
@@ -128,7 +132,7 @@ export class AuthAccessTokenCredentials {
   constructor(creds) {
     this.validate(creds);
     this.accessToken = creds.accessToken;
-    this.expirationEpoch = calcExpirationEpoch(creds.expiresIn);
+    this.expiresAt = calcExpirationEpoch(creds.expiresIn);
     this.refreshToken = creds.refreshToken;
   }
 
@@ -153,16 +157,16 @@ class AccessTokenAuthenticator {
     if (this.creds.refreshToken === undefined || this.creds.refreshToken == "") {
       console.warn("AuthAccessTokenCredentials not provided with refreshToken, cannot refresh");
       return Promise.resolve({
-          bearerToken: this.creds.accessToken,
-          expirationEpoch: this.creds.expirationEpoch
+        accessToken: this.creds.accessToken,
+        expiresAt: this.creds.expiresAt
       });
     }
     this.validateOpenidConfig();
     return this.requestAccessToken()
       .then(tokenResp => {
         return {
-          bearerToken: tokenResp.access_token,
-          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
+          accessToken: tokenResp.access_token,
+          expiresAt: calcExpirationEpoch(tokenResp.expires_in),
           refreshToken: tokenResp.refresh_token
         };
       })
@@ -176,8 +180,8 @@ class AccessTokenAuthenticator {
   validateOpenidConfig = () => {
     if (this.openidConfig.provider.grant_types_supported === undefined ||
       !this.openidConfig.provider.grant_types_supported.includes("refresh_token")) {
-        throw new Error("grant_type refresh_token not supported");
-      }
+      throw new Error("grant_type refresh_token not supported");
+    }
   };
 
   requestAccessToken = () => {
@@ -186,6 +190,47 @@ class AccessTokenAuthenticator {
       grant_type: "refresh_token",
       client_id: this.openidConfig.clientId,
       refresh_token: this.creds.refreshToken,
+    });
+    let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
+    return this.http.externalPost(url, params, contentType);
+  };
+}
+
+export class AuthClientCredentials {
+  constructor(creds) {
+    this.clientSecret = creds.clientSecret;
+  }
+}
+
+class ClientCredentialsAuthenticator {
+  constructor(http, creds, config) {
+    this.http = http;
+    this.creds = creds;
+    this.openidConfig = config;
+  }
+
+  refresh = () => {
+    return this.requestAccessToken()
+      .then(tokenResp => {
+        return {
+          accessToken: tokenResp.access_token,
+          expiresAt: calcExpirationEpoch(tokenResp.expires_in),
+          refreshToken: tokenResp.refresh_token
+        };
+      })
+      .catch(err => {
+        return Promise.reject(
+          new Error(`failed to refresh access token: ${err}`)
+        );
+      });
+  };
+
+  requestAccessToken = () => {
+    var url = this.openidConfig.provider.token_endpoint;
+    var params = new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: this.openidConfig.clientId,
+      client_secret: this.creds.clientSecret,
     });
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
