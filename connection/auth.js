@@ -1,19 +1,20 @@
-import { OidcClient } from "oidc-client-ts"
+import { OidcClient, OAuth2Token } from "oidc-client-ts"
+import { OAuth2Client } from "@badgateway/oauth2-client"
 
 export class Authenticator {
   constructor(http, creds) {
     this.http = http;
     this.creds = creds;
-    this.bearerToken = "";
+    this.accessToken = "";
     this.refreshToken = "";
-    this.expirationEpoch = 0
+    this.expiresAt = 0
     this.refreshRunning = false;
 
     // If the authentication method is access token,
     // our bearer token is already available for use
     if (this.creds instanceof AuthAccessTokenCredentials) {
-      this.bearerToken = this.creds.accessToken;
-      this.expirationEpoch = calcExpirationEpoch(this.creds.expiresIn);
+      this.accessToken = this.creds.accessToken;
+      this.expiresAt = calcExpirationEpoch(this.creds.expiresIn);
       this.refreshToken = this.creds.refreshToken;
     }
   }
@@ -21,22 +22,24 @@ export class Authenticator {
   refresh = async (localConfig) => {
     let config = await this.getOpenidConfig(localConfig);
 
-    let client = new OidcClient({
-      client_id: config.clientId,
-      authority: config.provider.issuer,
-      metadataUrl: config.metadataUrl
+    this.client = new OAuth2Client({
+      server: config.provider.issuer,
+      clientId: config.clientId,
+      tokenEndpoint: config.provider.token_endpoint,
+      discoveryEndpoint: config.metadataUrl,
+      authenticationMethod: "client_secret_post"
     })
 
     var authenticator;
     switch (this.creds.constructor) {
       case AuthUserPasswordCredentials:
-        authenticator = new UserPasswordAuthenticator(client, this.creds, config);
+        authenticator = new UserPasswordAuthenticator(this.client, this.creds, config);
         break;
       case AuthAccessTokenCredentials:
-        authenticator = new AccessTokenAuthenticator(client, this.creds, config);
+        authenticator = new AccessTokenAuthenticator(this.client, this.creds, config);
         break;
       case AuthClientCredentials:
-        authenticator = new ClientCredentialsAuthenticator(client, this.creds, config);
+        authenticator = new ClientCredentialsAuthenticator(this.client, this.creds, config);
         break;
       default:
         throw new Error("unsupported credential type");
@@ -49,7 +52,7 @@ export class Authenticator {
   getOpenidConfig = async (localConfig) => {
     return this.http.externalGet(localConfig.href)
       .then(openidProviderConfig => {
-        let scope = localConfig.scopes.join(" ");
+        let scope = localConfig.scopes;
         return {
           clientId: localConfig.clientId,
           scope: scope,
@@ -60,8 +63,8 @@ export class Authenticator {
   };
 
   postRefresh = (refreshResp) => {
-    this.bearerToken = refreshResp.bearerToken;
-    this.expirationEpoch = refreshResp.expirationEpoch;
+    this.accessToken = refreshResp.accessToken;
+    this.expiresAt = refreshResp.expiresAt;
     this.refreshToken = refreshResp.refreshToken;
     if (!this.refreshRunning) {
       this.runBackgroundTokenRefresh();
@@ -73,16 +76,15 @@ export class Authenticator {
     setInterval(async () => { 
       // check every 30s if the token will expire in <= 1m,
       // if so, refresh
-      if (this.expirationEpoch - Date.now() <= 60_000) {
-        let resp = await this.client.useRefreshToken({ 
-          state: {
-            refresh_token: this.creds.refreshToken,
-            scope: this.openidConfig.scope
-          }
+      if (this.expiresAt - Date.now() <= 60_000) {
+        let resp = await this.client.refreshToken({
+          accessToken: this.accessToken,
+          expiresAt: this.expiresAt,
+          refreshToken: this.refreshToken,
         });
-        this.bearerToken = resp.access_token;
-        this.expirationEpoch = resp.expires_at;
-        this.refreshToken = resp.refresh_token;
+        this.accessToken = resp.accessToken;
+        this.expiresAt = resp.expiresAt;
+        this.refreshToken = resp.refreshToken;
       }
     }, 30_000)
   };
@@ -109,9 +111,9 @@ class UserPasswordAuthenticator {
         // clear the username/password, as they're no longer needed
         delete this.creds;
         return {
-          bearerToken: tokenResp.access_token,
-          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
-          refreshToken: tokenResp.refresh_token
+          accessToken: tokenResp.accessToken,
+          expiresAt: tokenResp.expiresAt,
+          refreshToken: tokenResp.refreshToken
         };
       })
       .catch(err => {
@@ -134,9 +136,11 @@ class UserPasswordAuthenticator {
   };
 
   requestAccessToken = async () => {
-    return await this.client.processResourceOwnerPasswordCredentials({
+    this.openidConfig.scope.push("offline_access")
+    return await this.client.password({
       username: this.creds.username,
       password: this.creds.password,
+      scope: this.openidConfig.scope
     });
   };
 }
@@ -145,7 +149,7 @@ export class AuthAccessTokenCredentials {
   constructor(creds) {
     this.validate(creds);
     this.accessToken = creds.accessToken;
-    this.expirationEpoch = calcExpirationEpoch(creds.expiresIn);
+    this.expiresAt = calcExpirationEpoch(creds.expiresIn);
     this.refreshToken = creds.refreshToken;
   }
 
@@ -170,17 +174,17 @@ class AccessTokenAuthenticator {
     if (this.creds.refreshToken === undefined || this.creds.refreshToken == "") {
       console.warn("AuthAccessTokenCredentials not provided with refreshToken, cannot refresh");
       return Promise.resolve({
-          bearerToken: this.creds.accessToken,
-          expirationEpoch: this.creds.expirationEpoch
+          accessToken: this.creds.accessToken,
+          expiresAt: this.creds.expiresAt
       });
     }
     this.validateOpenidConfig();
     return this.requestAccessToken()
       .then(tokenResp => {
         return {
-          bearerToken: tokenResp.access_token,
-          expirationEpoch: calcExpirationEpoch(tokenResp.expires_in),
-          refreshToken: tokenResp.refresh_token
+          accessToken: tokenResp.accessToken,
+          expiresAt: tokenResp.expiresAt,
+          refreshToken: tokenResp.refreshToken
         };
       })
       .catch(err => {
@@ -198,21 +202,49 @@ class AccessTokenAuthenticator {
   };
 
   requestAccessToken = async () => {
-    return await this.client.useRefreshToken({ 
-      state: {
-        refresh_token: this.creds.refreshToken,
-        scope: this.openidConfig.scope
-      }
+    return await this.client.refreshToken({
+      accessToken: this.creds.accessToken,
+      expiresAt: this.creds.expiresAt,
+      refreshToken: this.creds.refreshToken,
     });
   };
 }
 
 export class AuthClientCredentials {
-  
+  constructor(creds) {
+    this.clientSecret = creds.clientSecret;
+  }
 }
 
 class ClientCredentialsAuthenticator {
+  constructor(client, creds, config) {
+    this.client = client;
+    this.creds = creds;
+    this.openidConfig = config;
+  }
 
+  refresh = () => {
+    return this.requestAccessToken()
+      .then(tokenResp => {
+        // clear the username/password, as they're no longer needed
+        delete this.creds;
+        return {
+          accessToken: tokenResp.accessToken,
+          expiresAt: tokenResp.expiresAt,
+          refreshToken: tokenResp.refreshToken
+        };
+      })
+      .catch(err => {
+        return Promise.reject(
+          new Error(`failed to refresh access token: ${err}`)
+        );
+      });
+  };
+
+  requestAccessToken = async () => {
+    this.client.settings.clientSecret = this.creds.clientSecret;
+    return await this.client.clientCredentials();
+  };
 }
 
 function calcExpirationEpoch(expiresIn) {

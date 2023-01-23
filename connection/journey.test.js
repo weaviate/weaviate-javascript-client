@@ -1,9 +1,36 @@
-import { AuthUserPasswordCredentials, AuthAccessTokenCredentials } from './auth.js';
+import {
+  AuthUserPasswordCredentials, 
+  AuthAccessTokenCredentials, 
+  AuthClientCredentials
+} from './auth.js';
 import Connection from "./index.js";
 
 const weaviate = require("../index");
 
 describe("connection", () => {
+  it("makes an Okta logged-in request with client credentials", async() => {
+    if (process.env.OKTA_CLIENT_SECRET == undefined || process.env.OKTA_CLIENT_SECRET == "") {
+      console.warn("Skipping because `OKTA_CLIENT_SECRET` is not set");
+      return;
+    }
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8081",
+      authClientSecret: new AuthClientCredentials({
+        clientSecret: process.env.OKTA_CLIENT_SECRET
+      })
+    })
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();;
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
   it("makes an Okta logged-in request with username/password", async () => {
     if (process.env.OKTA_DUMMY_CI_PW == undefined || process.env.OKTA_DUMMY_CI_PW == "") {
       console.warn("Skipping because `OKTA_DUMMY_CI_PW` is not set");
@@ -74,7 +101,7 @@ describe("connection", () => {
       scheme: "http",
       host: "localhost:8083",
       authClientSecret: new AuthAccessTokenCredentials({
-        accessToken: dummy.auth.bearerToken,
+        accessToken: dummy.auth.accessToken,
         expiresIn: 900
       })
     });
@@ -110,13 +137,13 @@ describe("connection", () => {
       scheme: "http",
       host: "localhost:8083",
       authClientSecret: new AuthAccessTokenCredentials({
-        accessToken: dummy.auth.bearerToken,
+        accessToken: dummy.auth.accessToken,
         expiresIn: 1,
         refreshToken: dummy.auth.refreshToken
       })
     });
     // force the use of refreshToken
-    conn.auth.expirationEpoch = 0
+    conn.auth.expiresAt = 0
 
     return conn.login()
       .then(resp => {
@@ -180,7 +207,7 @@ describe("connection", () => {
       })
     });
     // force the use of refreshToken
-    conn.auth.expirationEpoch = 0
+    conn.auth.expiresAt = 0
 
     await conn.login()
       .then(resp => {
