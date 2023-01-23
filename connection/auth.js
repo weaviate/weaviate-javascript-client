@@ -210,6 +210,7 @@ class ClientCredentialsAuthenticator {
   }
 
   refresh = () => {
+    this.validateOpenidConfig();
     return this.requestAccessToken()
       .then(tokenResp => {
         return {
@@ -225,6 +226,15 @@ class ClientCredentialsAuthenticator {
       });
   };
 
+  validateOpenidConfig = () => {
+    if (this.openidConfig.provider.token_endpoint
+      .includes("https://login.microsoftonline.com")) {
+      this.openidConfig.scope = this.openidConfig.clientId + "/.default"
+    } else {
+      this.openidConfig.scope = null
+    }
+  };
+
   requestAccessToken = () => {
     var url = this.openidConfig.provider.token_endpoint;
     var params = new URLSearchParams({
@@ -232,6 +242,12 @@ class ClientCredentialsAuthenticator {
       client_id: this.openidConfig.clientId,
       client_secret: this.creds.clientSecret,
     });
+
+    // Azure requires scope, whereas Okta fails if it's provided
+    if (this.openidConfig.scope) {
+      params.append("scope", this.openidConfig.scope)
+    }
+
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
   };

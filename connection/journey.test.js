@@ -8,6 +8,29 @@ import Connection from "./index.js";
 const weaviate = require("../index");
 
 describe("connection", () => {
+  it("makes an Azure logged-in request with client credentials", async() => {
+    if (process.env.AZURE_CLIENT_SECRET == undefined || process.env.AZURE_CLIENT_SECRET == "") {
+      console.warn("Skipping because `AZURE_CLIENT_SECRET` is not set");
+      return;
+    }
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8084",
+      authClientSecret: new AuthClientCredentials({
+        clientSecret: process.env.AZURE_CLIENT_SECRET
+      })
+    })
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();;
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
   it("makes an Okta logged-in request with client credentials", async() => {
     if (process.env.OKTA_CLIENT_SECRET == undefined || process.env.OKTA_CLIENT_SECRET == "") {
       console.warn("Skipping because `OKTA_CLIENT_SECRET` is not set");
