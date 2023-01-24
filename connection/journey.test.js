@@ -41,7 +41,8 @@ describe("connection", () => {
       scheme: "http",
       host: "localhost:8082",
       authClientSecret: new AuthClientCredentials({
-        clientSecret: process.env.OKTA_CLIENT_SECRET
+        clientSecret: process.env.OKTA_CLIENT_SECRET,
+        scope: "some_scope"
       })
     })
 

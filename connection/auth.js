@@ -109,7 +109,7 @@ class UserPasswordAuthenticator {
       client_id: this.openidConfig.clientId,
       username: this.creds.username,
       password: this.creds.password,
-      scope: "openid offline_access"
+      scope: this.openidConfig.scope + " offline_access"
     });
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
@@ -199,6 +199,7 @@ class AccessTokenAuthenticator {
 export class AuthClientCredentials {
   constructor(creds) {
     this.clientSecret = creds.clientSecret;
+    this.scope = creds.scope;
   }
 }
 
@@ -207,6 +208,9 @@ class ClientCredentialsAuthenticator {
     this.http = http;
     this.creds = creds;
     this.openidConfig = config;
+    if (creds.scope) {
+      this.openidConfig.scope = creds.scope
+    }
   }
 
   refresh = () => {
@@ -230,8 +234,6 @@ class ClientCredentialsAuthenticator {
     if (this.openidConfig.provider.token_endpoint
       .includes("https://login.microsoftonline.com")) {
       this.openidConfig.scope = this.openidConfig.clientId + "/.default"
-    } else {
-      this.openidConfig.scope = null
     }
   };
 
@@ -241,12 +243,8 @@ class ClientCredentialsAuthenticator {
       grant_type: "client_credentials",
       client_id: this.openidConfig.clientId,
       client_secret: this.creds.clientSecret,
+      scope: this.openidConfig.scope
     });
-
-    // Azure requires scope, whereas Okta fails if it's provided
-    if (this.openidConfig.scope) {
-      params.append("scope", this.openidConfig.scope)
-    }
 
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
     return this.http.externalPost(url, params, contentType);
