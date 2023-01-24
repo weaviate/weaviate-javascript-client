@@ -6,9 +6,9 @@ describe("misc endpoints", () => {
     host: "localhost:8080",
   });
 
-  const auth_client = weaviate.client({
+  const authClient = weaviate.client({
     scheme: "http",
-    host: "localhost:8083"
+    host: "localhost:8085"
   })
 
   it("reports as live", () => {
@@ -78,7 +78,7 @@ describe("misc endpoints", () => {
   });
 
   it("shows oidc config when set", () => {
-    return auth_client.misc
+    return authClient.misc
       .openidConfigurationGetter()
       .do()
       .then((res) => {
