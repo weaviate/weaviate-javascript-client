@@ -52,7 +52,7 @@ export class Authenticator {
         return {
           clientId: localConfig.clientId,
           provider: openidProviderConfig,
-          scope: localConfig.scopes.join(" ")
+          scopes: localConfig.scopes
         };
       });
   };
@@ -75,6 +75,7 @@ export class AuthUserPasswordCredentials {
   constructor(creds) {
     this.username = creds.username;
     this.password = creds.password;
+    this.scopes = creds.scopes;
   }
 }
 
@@ -83,6 +84,9 @@ class UserPasswordAuthenticator {
     this.http = http;
     this.creds = creds;
     this.openidConfig = config;
+    if (creds.scopes) {
+      this.openidConfig.scopes.push(creds.scopes);
+    }
   }
 
   refresh = () => {
@@ -102,19 +106,6 @@ class UserPasswordAuthenticator {
       });
   };
 
-  requestAccessToken = () => {
-    var url = this.openidConfig.provider.token_endpoint;
-    var params = new URLSearchParams({
-      grant_type: "password",
-      client_id: this.openidConfig.clientId,
-      username: this.creds.username,
-      password: this.creds.password,
-      scope: this.openidConfig.scope + " offline_access"
-    });
-    let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
-    return this.http.externalPost(url, params, contentType);
-  };
-
   validateOpenidConfig = () => {
     if (this.openidConfig.provider.grant_types_supported !== undefined &&
       !this.openidConfig.provider.grant_types_supported.includes("password")) {
@@ -125,6 +116,20 @@ class UserPasswordAuthenticator {
       throw new Error("microsoft/azure recommends to avoid authentication using " +
         "username and password, so this method is not supported by this client");
     }
+    this.openidConfig.scopes.push("offline_access");
+  };
+
+  requestAccessToken = () => {
+    var url = this.openidConfig.provider.token_endpoint;
+    var params = new URLSearchParams({
+      grant_type: "password",
+      client_id: this.openidConfig.clientId,
+      username: this.creds.username,
+      password: this.creds.password,
+      scope: this.openidConfig.scopes.join(" ")
+    });
+    let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
+    return this.http.externalPost(url, params, contentType);
   };
 }
 
@@ -199,7 +204,7 @@ class AccessTokenAuthenticator {
 export class AuthClientCredentials {
   constructor(creds) {
     this.clientSecret = creds.clientSecret;
-    this.scope = creds.scope;
+    this.scopes = creds.scopes;
   }
 }
 
@@ -208,8 +213,8 @@ class ClientCredentialsAuthenticator {
     this.http = http;
     this.creds = creds;
     this.openidConfig = config;
-    if (creds.scope) {
-      this.openidConfig.scope = creds.scope
+    if (creds.scopes) {
+      this.openidConfig.scopes.push(creds.scopes);
     }
   }
 
@@ -231,9 +236,14 @@ class ClientCredentialsAuthenticator {
   };
 
   validateOpenidConfig = () => {
+    this.openidConfig.scopes = this.openidConfig.scopes
+      .filter(scope => scope != "openid" && scope != "email");
+    if (this.openidConfig.scopes.length > 0) {
+      return;
+    }
     if (this.openidConfig.provider.token_endpoint
       .includes("https://login.microsoftonline.com")) {
-      this.openidConfig.scope = this.openidConfig.clientId + "/.default"
+      this.openidConfig.scopes.push(this.openidConfig.clientId + "/.default");
     }
   };
 
@@ -243,7 +253,7 @@ class ClientCredentialsAuthenticator {
       grant_type: "client_credentials",
       client_id: this.openidConfig.clientId,
       client_secret: this.creds.clientSecret,
-      scope: this.openidConfig.scope
+      scope: this.openidConfig.scopes.join(" ")
     });
 
     let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
