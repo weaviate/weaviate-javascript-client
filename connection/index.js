@@ -91,9 +91,9 @@ export default class Connection {
       return "";
     }
 
-    if (Date.now() >= this.auth.expirationEpoch) {
+    if (Date.now() >= this.auth.expiresAt) {
       await this.auth.refresh(localConfig);
     }
-    return this.auth.bearerToken;
+    return this.auth.accessToken;
   };
 }

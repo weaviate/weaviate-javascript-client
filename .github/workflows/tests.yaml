@@ -25,6 +25,8 @@ jobs:
       env:
         OKTA_DUMMY_CI_PW: ${{ secrets.OKTA_DUMMY_CI_PW }}
         WCS_DUMMY_CI_PW: ${{ secrets.WCS_DUMMY_CI_PW }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        OKTA_CLIENT_SECRET: ${{ secrets.OKTA_CLIENT_SECRET }}
       run: |
         npm test
         npm run build

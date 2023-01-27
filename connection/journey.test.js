@@ -1,9 +1,60 @@
-import { AuthUserPasswordCredentials, AuthAccessTokenCredentials } from './auth.js';
+import {
+  AuthUserPasswordCredentials, 
+  AuthAccessTokenCredentials, 
+  AuthClientCredentials
+} from './auth.js';
 import Connection from "./index.js";
 
 const weaviate = require("../index");
 
 describe("connection", () => {
+  it("makes an Azure logged-in request with client credentials", async() => {
+    if (process.env.AZURE_CLIENT_SECRET == undefined || process.env.AZURE_CLIENT_SECRET == "") {
+      console.warn("Skipping because `AZURE_CLIENT_SECRET` is not set");
+      return;
+    }
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8081",
+      authClientSecret: new AuthClientCredentials({
+        clientSecret: process.env.AZURE_CLIENT_SECRET
+      })
+    })
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();;
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("makes an Okta logged-in request with client credentials", async() => {
+    if (process.env.OKTA_CLIENT_SECRET == undefined || process.env.OKTA_CLIENT_SECRET == "") {
+      console.warn("Skipping because `OKTA_CLIENT_SECRET` is not set");
+      return;
+    }
+
+    const client = weaviate.client({
+      scheme: "http",
+      host: "localhost:8082",
+      authClientSecret: new AuthClientCredentials({
+        clientSecret: process.env.OKTA_CLIENT_SECRET,
+        scope: "some_scope"
+      })
+    })
+
+    return client.misc
+      .metaGetter()
+      .do()
+      .then((res) => {
+        expect(res.version).toBeDefined();;
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
   it("makes an Okta logged-in request with username/password", async () => {
     if (process.env.OKTA_DUMMY_CI_PW == undefined || process.env.OKTA_DUMMY_CI_PW == "") {
       console.warn("Skipping because `OKTA_DUMMY_CI_PW` is not set");
@@ -12,7 +63,7 @@ describe("connection", () => {
 
     const client = weaviate.client({
       scheme: "http",
-      host: "localhost:8082",
+      host: "localhost:8083",
       authClientSecret: new AuthUserPasswordCredentials({
         username: "test@test.de",
         password: process.env.OKTA_DUMMY_CI_PW
@@ -36,7 +87,7 @@ describe("connection", () => {
 
     const client = weaviate.client({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthUserPasswordCredentials({
         username: "ms_2d0e007e7136de11d5f29fce7a53dae219a51458@existiert.net",
         password: process.env.WCS_DUMMY_CI_PW
@@ -60,7 +111,7 @@ describe("connection", () => {
 
     const dummy = new Connection({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthUserPasswordCredentials({
         username: "ms_2d0e007e7136de11d5f29fce7a53dae219a51458@existiert.net",
         password: process.env.WCS_DUMMY_CI_PW
@@ -72,9 +123,9 @@ describe("connection", () => {
 
     const client = weaviate.client({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthAccessTokenCredentials({
-        accessToken: dummy.auth.bearerToken,
+        accessToken: dummy.auth.accessToken,
         expiresIn: 900
       })
     });
@@ -96,7 +147,7 @@ describe("connection", () => {
 
     const dummy = new Connection({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthUserPasswordCredentials({
         username: "ms_2d0e007e7136de11d5f29fce7a53dae219a51458@existiert.net",
         password: process.env.WCS_DUMMY_CI_PW
@@ -108,15 +159,15 @@ describe("connection", () => {
 
     const conn = new Connection({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthAccessTokenCredentials({
-        accessToken: dummy.auth.bearerToken,
+        accessToken: dummy.auth.accessToken,
         expiresIn: 1,
         refreshToken: dummy.auth.refreshToken
       })
     });
     // force the use of refreshToken
-    conn.auth.expirationEpoch = 0
+    conn.auth.expiresAt = 0
 
     return conn.login()
       .then(resp => {
@@ -129,7 +180,7 @@ describe("connection", () => {
   it("fails to access auth-enabled server without client auth", async () => {
     const client = weaviate.client({
       scheme: "http",
-      host: "localhost:8083"
+      host: "localhost:8085"
     });
 
     return client.misc
@@ -173,14 +224,14 @@ describe("connection", () => {
 
     const conn = new Connection({
       scheme: "http",
-      host: "localhost:8083",
+      host: "localhost:8085",
       authClientSecret: new AuthAccessTokenCredentials({
         accessToken: "abcd1234",
         expiresIn: 1
       })
     });
     // force the use of refreshToken
-    conn.auth.expirationEpoch = 0
+    conn.auth.expiresAt = 0
 
     await conn.login()
       .then(resp => {
