@@ -44,7 +44,7 @@ describe("mock server auth tests", () => {
       authClientSecret: new AuthUserPasswordCredentials({
         username: "user123",
         password: "secure_password",
-        scopes: "custom_scope"
+        scopes: ["custom_scope"]
       })
     });
 
