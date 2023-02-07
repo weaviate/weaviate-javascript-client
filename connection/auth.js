@@ -49,10 +49,11 @@ export class Authenticator {
   getOpenidConfig = async (localConfig) => {
     return this.http.externalGet(localConfig.href)
       .then(openidProviderConfig => {
+        let scopes = localConfig.scopes || [];
         return {
           clientId: localConfig.clientId,
           provider: openidProviderConfig,
-          scopes: localConfig.scopes
+          scopes: scopes
         };
       });
   };
