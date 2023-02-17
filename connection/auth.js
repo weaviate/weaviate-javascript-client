@@ -237,8 +237,6 @@ class ClientCredentialsAuthenticator {
   };
 
   validateOpenidConfig = () => {
-    this.openidConfig.scopes = this.openidConfig.scopes
-      .filter(scope => scope != "openid" && scope != "email");
     if (this.openidConfig.scopes.length > 0) {
       return;
     }

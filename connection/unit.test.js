@@ -63,7 +63,7 @@ describe("mock server auth tests", () => {
       password: "secure_password",
       grant_type: "password",
       client_id: "client123",
-      scope: "openid email custom_scope offline_access"
+      scope: "custom_scope offline_access"
     });
   })
 
