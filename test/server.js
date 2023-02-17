@@ -48,11 +48,7 @@ const getLocalOidcConfig = (ctx, next) => {
   ctx.response.type = "application/json";
   ctx.response.body = {
     clientId: "client123",
-    href: "http://localhost:" + port + "/remote-openid-configuration",
-    scopes: [
-      "openid",
-      "email"
-    ]
+    href: "http://localhost:" + port + "/remote-openid-configuration"
   };
 };
 
