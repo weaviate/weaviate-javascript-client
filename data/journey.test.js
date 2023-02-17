@@ -170,6 +170,7 @@ describe("data", () => {
       .withAdditional("nearestNeighbors")
       .withAdditional("featureProjection")
       .withVector()
+      .withOffset(2)
       .withLimit(2)
       .do()
       .then((res) => {
