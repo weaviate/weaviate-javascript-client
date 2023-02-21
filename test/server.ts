@@ -2,14 +2,14 @@ import { Application } from "@curveball/core";
 import bodyParser from "@curveball/bodyparser";
 
 const port = 40101
-let serverCache = null;
+let serverCache: any = null;
 
 export function testServer() {
   if (serverCache) {
     return serverCache;
   }
 
-  let lastRequest = null;
+  let lastRequest: any = null;
   const app = new Application();
 
   app.use(bodyParser());
@@ -31,7 +31,7 @@ export function testServer() {
     port,
     url: "http://localhost:" + port,
     close: async () => {
-      return new Promise(res => {
+      return new Promise((res: any) => {
         server.close(() => res());
       });
     }
@@ -40,7 +40,7 @@ export function testServer() {
   return serverCache;
 }
 
-const getLocalOidcConfig = (ctx, next) => {
+const getLocalOidcConfig = (ctx: any, next: any) => {
   if (ctx.path !== "/v1/.well-known/openid-configuration") {
     return next();
   }
@@ -52,7 +52,7 @@ const getLocalOidcConfig = (ctx, next) => {
   };
 };
 
-const getRemoteOidcConfig = (ctx, next) => {
+const getRemoteOidcConfig = (ctx: any, next: any) => {
   if (ctx.path !== "/remote-openid-configuration") {
     return next();
   }
@@ -64,7 +64,7 @@ const getRemoteOidcConfig = (ctx, next) => {
   };
 };
 
-const issueToken = (ctx, next) => {
+const issueToken = (ctx: any, next: any) => {
   if (ctx.path !== "/token") {
     return next();
   }

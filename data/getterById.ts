@@ -58,7 +58,7 @@ export default class GetterById {
     this.validateId();
   };
 
-  buildPath = () => {
+  buildPath = (): Promise<string> => {
     return this.objectsPath.buildGetOne(this.id, this.className,
       this.additionals, this.consistencyLevel, this.nodeName)
   }

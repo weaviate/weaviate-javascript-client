@@ -1,5 +1,5 @@
 import Connection from "../connection";
-import {IClient} from "../index";
+import {IWeaviateClient} from "../index";
 
 export const PIZZA_CLASS_NAME = "Pizza";
 export const SOUP_CLASS_NAME = "Soup";
@@ -87,26 +87,26 @@ const soupObjects = [{
   },
 }];
 
-export function createTestFoodSchema(client: IClient) {
+export function createTestFoodSchema(client: IWeaviateClient) {
   return Promise.all([
     client.schema.classCreator().withClass(pizzaClass).do(),
     client.schema.classCreator().withClass(soupClass).do(),
   ]);
 }
 
-export function createTestFoodData(client: IClient) {
+export function createTestFoodData(client: IWeaviateClient) {
   return client.batch.objectsBatcher()
     .withObjects(pizzaObjects)
     .withObjects(soupObjects)
     .do();
 }
 
-export function createTestFoodSchemaAndData(client: IClient) {
+export function createTestFoodSchemaAndData(client: IWeaviateClient) {
   return createTestFoodSchema(client)
     .then(() => createTestFoodData(client));
 }
 
-export function cleanupTestFood(client: IClient) {
+export function cleanupTestFood(client: IWeaviateClient) {
   return Promise.all([
     client.schema.classDeleter().withClassName(PIZZA_CLASS_NAME).do(),
     client.schema.classDeleter().withClassName(SOUP_CLASS_NAME).do(),

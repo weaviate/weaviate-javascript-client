@@ -1,6 +1,6 @@
-import Connection from "../connection";
+import {IWeaviateClient} from "../index";
 
-const weaviate = require("../index");
+import weaviate from '../index'
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
 const DOCKER_COMPOSE_BACKUPS_DIR = "/tmp/backups";
@@ -34,7 +34,7 @@ describe("create and restore backup with waiting", () => {
         expect(createResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("asserts data still exist", () => assertThatAllPizzasExist(client));
@@ -51,14 +51,14 @@ describe("create and restore backup with waiting", () => {
         expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on create status: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create status: " + err)});
   });
 
   it("removes existing class", () => {
     return client.schema.classDeleter()
       .withClassName(PIZZA_CLASS_NAME)
       .do()
-      .catch((err: any) => fail("should not fail on class delete: " + err));
+      .catch((err: any) => {throw new Error("should not fail on class delete: " + err)});
   });
 
   it("restores backup", () => {
@@ -68,7 +68,7 @@ describe("create and restore backup with waiting", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .then(restoreResponse => {
+      .then((restoreResponse: any) => {
         expect(restoreResponse.id).toBe(BACKUP_ID);
         expect(restoreResponse.classes).toHaveLength(1)
         expect(restoreResponse.classes).toContain(PIZZA_CLASS_NAME);
@@ -77,7 +77,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on restore backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on restore backup: " + err)});
   });
 
   it("asserts data again exist", () => assertThatAllPizzasExist(client));
@@ -94,7 +94,7 @@ describe("create and restore backup with waiting", () => {
         expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on restore status: " + err));
+      .catch((err: any) => {throw new Error("should not fail on restore status: " + err)});
   });
 
   it("cleans up", () => cleanupTestFood(client));
@@ -128,7 +128,7 @@ describe("create and restore backup without waiting", () => {
         expect(createResponse.status).toBe(weaviate.backup.CreateStatus.STARTED);
         expect(createResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("waits until created", () => {
@@ -156,7 +156,7 @@ describe("create and restore backup without waiting", () => {
       expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
       expect(createStatusResponse.error).toBeUndefined();
     })
-    .catch((err: any) => fail("should not fail on create status: " + err))
+    .catch((err: any) => {throw new Error("should not fail on create status: " + err)})
   })
 
   it("asserts data still exist", () => assertThatAllPizzasExist(client));
@@ -165,7 +165,7 @@ describe("create and restore backup without waiting", () => {
     return client.schema.classDeleter()
       .withClassName(PIZZA_CLASS_NAME)
       .do()
-      .catch((err: any) => fail("should not fail on class delete: " + err));
+      .catch((err: any) => {throw new Error("should not fail on class delete: " + err)});
   });
 
   it("restores backup", () => {
@@ -183,7 +183,7 @@ describe("create and restore backup without waiting", () => {
         expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.STARTED);
         expect(restoreResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on restore backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on restore backup: " + err)});
   });
 
   it("waits until restored", () => {
@@ -211,7 +211,7 @@ describe("create and restore backup without waiting", () => {
       expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
       expect(restoreStatusResponse.error).toBeUndefined();
     })
-    .catch((err: any) => fail("should not fail on restore backup: " + err));
+    .catch((err: any) => {throw new Error("should not fail on restore backup: " + err)});
   })
 
   it("asserts data again exist", () => assertThatAllPizzasExist(client));
@@ -251,7 +251,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("asserts data still exist", () => Promise.all([
@@ -271,14 +271,14 @@ describe("create and restore 1 of 2 classes", () => {
         expect(createStatusResponse.status).toBe(weaviate.backup.CreateStatus.SUCCESS);
         expect(createStatusResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on create status: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create status: " + err)});
   });
 
   it("removes existing class", () => {
     return client.schema.classDeleter()
       .withClassName(PIZZA_CLASS_NAME)
       .do()
-      .catch((err: any) => fail("should not fail on class delete: " + err));
+      .catch((err: any) => {throw new Error("should not fail on class delete: " + err)});
   });
 
   it("restores backup", () => {
@@ -297,7 +297,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on restore backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on restore backup: " + err)});
   });
 
   it("asserts data again exist", () => Promise.all([
@@ -317,7 +317,7 @@ describe("create and restore 1 of 2 classes", () => {
         expect(restoreStatusResponse.status).toBe(weaviate.backup.RestoreStatus.SUCCESS);
         expect(restoreStatusResponse.error).toBeUndefined();
       })
-      .catch((err: any) => fail("should not fail on restore status: " + err));
+      .catch((err: any) => {throw new Error("should not fail on restore status: " + err)});
   });
 
   it("cleans up", () => cleanupTestFood(client));
@@ -340,7 +340,7 @@ describe("fail creating backup on not existing backend", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on create backup"))
+      .then(() => {throw new Error("should fail on create backup")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain(BACKEND);
@@ -366,7 +366,7 @@ describe("fail checking create status on not existing backend", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on create status"))
+      .then(() => {throw new Error("should fail on create status")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain(BACKEND);
@@ -394,7 +394,7 @@ describe("fail restoring backup on not existing backend", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on restore backup"))
+      .then(() => {throw new Error("should fail on restore backup")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain(BACKEND);
@@ -422,7 +422,7 @@ describe("fail creating backup for not existing class", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on create backup"))
+      .then(() => {throw new Error("should fail on create backup")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain(CLASS_NAME);
@@ -450,7 +450,7 @@ describe("fail restoring backup for existing class", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("fails restoring", () => {
@@ -460,7 +460,7 @@ describe("fail restoring backup for existing class", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .then(resp => {
+      .then((resp: any) => {
         expect(resp.error).toContain("already exists");
         expect(resp.error).toContain(PIZZA_CLASS_NAME);
         expect(resp.status).toBe(weaviate.backup.RestoreStatus.FAILED);
@@ -488,7 +488,7 @@ describe("fail creating existing backup", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("fails creating", () => {
@@ -497,7 +497,7 @@ describe("fail creating existing backup", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on create backup"))
+      .then(() => {throw new Error("should fail on create backup")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain(BACKUP_ID);
@@ -523,7 +523,7 @@ describe("fail checking create status for not existing backup", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on create status"))
+      .then(() => {throw new Error("should fail on create status")})
       .catch((err: any) => {
         expect(err).toContain(404);
         expect(err).toContain(BACKUP_ID);
@@ -550,7 +550,7 @@ describe("fail restoring not existing backup", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on restore backup"))
+      .then(() => {throw new Error("should fail on restore backup")})
       .catch((err: any) => {
         expect(err).toContain(404);
         expect(err).toContain(BACKUP_ID);
@@ -578,7 +578,7 @@ describe("fail checking restore status for not started restore", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("fails checking restore status", () => {
@@ -586,7 +586,7 @@ describe("fail checking restore status for not started restore", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on restore status"))
+      .then(() => {throw new Error("should fail on restore status")})
       .catch((err: any) => {
         expect(err).toContain(404);
         expect(err).toContain(BACKUP_ID);
@@ -615,7 +615,7 @@ describe("fail creating backup for both include and exclude classes", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .then(() => fail("should fail on create"))
+      .then(() => {throw new Error("should fail on create")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain("include");
@@ -644,14 +644,14 @@ describe("fail restoring backup for both include and exclude classes", () => {
       .withBackupId(BACKUP_ID)
       .withWaitForCompletion(true)
       .do()
-      .catch((err: any) => fail("should not fail on create backup: " + err));
+      .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
   });
 
   it("removes existing class", () => {
     return client.schema.classDeleter()
       .withClassName(PIZZA_CLASS_NAME)
       .do()
-      .catch((err: any) => fail("should not fail on class delete: " + err));
+      .catch((err: any) => {throw new Error("should not fail on class delete: " + err)});
   });
 
   it("fails restoring backup", () => {
@@ -661,7 +661,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
       .withBackend(BACKEND)
       .withBackupId(BACKUP_ID)
       .do()
-      .then(() => fail("should fail on restore"))
+      .then(() => {throw new Error("should fail on restore")})
       .catch((err: any) => {
         expect(err).toContain(422);
         expect(err).toContain("include");
@@ -692,7 +692,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 //       .withBackupId(BACKUP_ID_PIZZA)
 //       .withWaitForCompletion(true)
 //       .do()
-//       .catch((err: any) => fail("should not fail on create backup: " + err));
+//       .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
 //   });
 
 //   it("creates backup soup", () => {
@@ -702,7 +702,7 @@ describe("fail restoring backup for both include and exclude classes", () => {
 //       .withBackupId(BACKUP_ID_SOUP)
 //       .withWaitForCompletion(true)
 //       .do()
-//       .catch((err: any) => fail("should not fail on create backup: " + err));
+//       .catch((err: any) => {throw new Error("should not fail on create backup: " + err)});
 //   });
 
 //   it("get all", () => {
@@ -716,28 +716,28 @@ describe("fail restoring backup for both include and exclude classes", () => {
 //           expect.objectContaining({id: BACKUP_ID_SOUP}),
 //         ]));
 //       })
-//       .catch((err: any) => fail("should not fail on getting all: " + err));
+//       .catch((err: any) => {throw new Error("should not fail on getting all: " + err)});
 //   });
 
 //   it("cleans up", () => cleanupTestFood(client));
 // });
 
 
-function assertThatAllPizzasExist(client: any) {
+function assertThatAllPizzasExist(client: IWeaviateClient) {
   return assertThatAllFoodObjectsExist(client, "Pizza", 4);
 }
 
-function assertThatAllSoupsExist(client: any) {
+function assertThatAllSoupsExist(client: IWeaviateClient) {
   return assertThatAllFoodObjectsExist(client, "Soup", 2);
 }
 
-function assertThatAllFoodObjectsExist(client, className, number) {
+function assertThatAllFoodObjectsExist(client: IWeaviateClient, className: string, number: number) {
   return client.graphql.get()
     .withClassName(className)
     .withFields("name")
     .do()
     .then(data => expect(data.data.Get[className].length).toBe(number))
-    .catch((err: any) => fail(number + " objects should exist: " + err));
+    .catch((err: any) => {throw new Error(number + " objects should exist: " + err)});
 }
 
 function randomBackupId() {

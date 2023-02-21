@@ -1,41 +1,43 @@
 import Connection from "./connection/index"
-import graphql, {IClientGraphQL} from "./graphql/index";
-import schema, {IClientSchema} from "./schema/index";
-import data, {IClientData} from "./data/index";
-import classifications, {IClientClassifications} from "./classifications/index";
-import batch, {IClientBatch} from "./batch/index";
-import misc, {IClientMisc} from "./misc/index";
-import c11y, {IClientC11y} from "./c11y/index";
+import graphql, {IWeaviateClientGraphQL} from "./graphql/index";
+import schema, {IWeaviateClientSchema} from "./schema/index";
+import data, {IWeaviateClientData} from "./data/index";
+import classifications, {IWeaviateClientClassifications} from "./classifications/index";
+import batch, {IWeaviateClientBatch} from "./batch/index";
+import misc, {IWeaviateClientMisc} from "./misc/index";
+import c11y, {IWeaviateClientC11y} from "./c11y/index";
 import {DbVersionProvider, DbVersionSupport} from "./utils/dbVersion";
-import backup, {IClientBackup} from "./backup/index";
+import backup, {IWeaviateClientBackup} from "./backup/index";
 import backupConsts from "./backup/consts";
 import batchConsts from "./batch/consts";
 import filtersConsts from "./filters/consts";
-import cluster, {IClientCluster} from "./cluster/index";
+import cluster, {IWeaviateClientCluster} from "./cluster/index";
 import clusterConsts from "./cluster/consts";
 import replicationConsts from "./data/replication/consts";
-import {AuthAccessTokenCredentials, AuthUserPasswordCredentials} from "./connection/auth";
+import {AuthAccessTokenCredentials, AuthClientCredentials, AuthUserPasswordCredentials} from "./connection/auth";
+import MetaGetter from "./misc/metaGetter";
+import {Operator} from "./filters/consts";
 
 export interface IConnectionParams {
-  authClientSecret?: boolean;
+  authClientSecret?: AuthClientCredentials | AuthAccessTokenCredentials | AuthUserPasswordCredentials;
   host: string
   scheme: string
   headers?: any
 }
 
-export interface  IClient {
-  graphql: IClientGraphQL,
-  schema: IClientSchema,
-  data: IClientData,
-  classifications: IClientClassifications,
-  batch: IClientBatch,
-  misc: IClientMisc,
-  c11y: IClientC11y,
-  backup: IClientBackup,
-  cluster: IClientCluster
+export interface IWeaviateClient {
+  graphql: IWeaviateClientGraphQL,
+  schema: IWeaviateClientSchema,
+  data: IWeaviateClientData,
+  classifications: IWeaviateClientClassifications,
+  batch: IWeaviateClientBatch,
+  misc: IWeaviateClientMisc,
+  c11y: IWeaviateClientC11y,
+  backup: IWeaviateClientBackup,
+  cluster: IWeaviateClientCluster
 }
 const app = {
-  client: function (params: IConnectionParams): IClient {
+  client: function (params: IConnectionParams): IWeaviateClient {
     // check if the URL is set
     if (!params.host) throw new Error("Missing `host` parameter");
 
@@ -71,12 +73,11 @@ const app = {
 };
 
 function initDbVersionProvider(conn: Connection) {
-  // FIXME 'misc' requires a conneciton and the DbVersionProvider that itself requires misc().metaGetter :thinking:
-  const metaGetter = misc(conn).metaGetter();
+  const metaGetter = new MetaGetter(conn);
   const versionGetter = () => {
     return metaGetter.do()
       .then((result: any) => result.version)
-      .catch(() => Promise.resolve(""));
+      .catch(() => Promise.resolve(''));
   }
 
   const dbVersionProvider = new DbVersionProvider(versionGetter);
@@ -86,4 +87,4 @@ function initDbVersionProvider(conn: Connection) {
 }
 
 export default app
-export { AuthUserPasswordCredentials, AuthAccessTokenCredentials };
+export { AuthUserPasswordCredentials, AuthAccessTokenCredentials, Operator };

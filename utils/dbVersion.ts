@@ -38,9 +38,9 @@ export class DbVersionSupport {
 
 const EMPTY_VERSION = "";
 export class DbVersionProvider {
-  private versionPromise?: Promise<string>;
+  private versionPromise?: Promise<string | undefined>;
   private emptyVersionPromise: Promise<string>;
-  versionGetter: any;
+  private versionGetter: () => Promise<string>;
 
   constructor(versionGetter: () => Promise<string>) {
     this.versionGetter = versionGetter;
@@ -53,24 +53,24 @@ export class DbVersionProvider {
     if (this.versionPromise) {
       return this.versionPromise;
     }
-    return this.versionGetter().then(assignPromise.bind(this));
+    return this.versionGetter().then(version => this.assignPromise(version));
   }
 
   refresh(force = false) {
     if (force || !this.versionPromise) {
       this.versionPromise = undefined;
       return this.versionGetter()
-        .then(assignPromise.bind(this))
+        .then(version => this.assignPromise(version))
         .then(() => Promise.resolve(true));
     }
     return Promise.resolve(false);
   }
-}
 
-function assignPromise(version: string | undefined) {
-  if (version === EMPTY_VERSION) {
-    return this.emptyVersionPromise;
+  assignPromise(version: string | undefined) {
+    if (version === EMPTY_VERSION) {
+      return this.emptyVersionPromise;
+    }
+    this.versionPromise = Promise.resolve(version);
+    return this.versionPromise;
   }
-  this.versionPromise = Promise.resolve(version);
-  return this.versionPromise;
 }

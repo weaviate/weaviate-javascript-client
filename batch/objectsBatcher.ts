@@ -3,7 +3,7 @@ import Connection from "../connection";
 
 export default class ObjectsBatcher {
   private client: Connection;
-  private objects: any[];
+  public objects: any[];
   private errors: any[];
   private consistencyLevel: any
   constructor(client: Connection) {

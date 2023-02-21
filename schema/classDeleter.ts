@@ -36,6 +36,6 @@ export default class ClassDeleter {
       );
     }
     const path = `/schema/${this.className}`;
-    return this.client.delete(path);
+    return this.client.delete(path, undefined, false);
   };
 }

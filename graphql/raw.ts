@@ -33,7 +33,7 @@ export default class RawGraphQL {
         );
     };
 
-    do = () => {
+    do = (): Promise<any> => {
         let params = "";
 
         this.validate();
@@ -45,6 +45,8 @@ export default class RawGraphQL {
 
         if (this.query) {
             return this.client.query(this.query);
-        };
+        }
+
+        return Promise.resolve(undefined)
     }
 }

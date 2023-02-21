@@ -2,18 +2,18 @@ import ObjectsBatcher from "./objectsBatcher";
 import ObjectsBatchDeleter from "./objectsBatchDeleter";
 import ReferencesBatcher from "./referencesBatcher";
 import ReferencePayloadBuilder from "./referencePayloadBuilder";
-import { BeaconPath } from "../utils/beaconPath";
+import {BeaconPath} from "../utils/beaconPath";
 import {DbVersionSupport} from "../utils/dbVersion";
 import Connection from "../connection";
 
-export interface IClientBatch {
+export interface IWeaviateClientBatch {
   objectsBatcher: () => ObjectsBatcher
   objectsBatchDeleter: () => ObjectsBatchDeleter
   referencesBatcher: () => ReferencesBatcher
   referencePayloadBuilder: () => ReferencePayloadBuilder
 }
 
-const batch = (client: Connection, dbVersionSupport: DbVersionSupport): IClientBatch => {
+const batch = (client: Connection, dbVersionSupport: DbVersionSupport): IWeaviateClientBatch => {
   const beaconPath = new BeaconPath(dbVersionSupport);
 
   return {

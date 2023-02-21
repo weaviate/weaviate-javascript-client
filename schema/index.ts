@@ -7,8 +7,9 @@ import ShardsGetter from "./shardsGetter";
 import ShardUpdater from "./shardUpdater";
 import ShardsUpdater from "./shardsUpdater";
 import Connection from "../connection";
+import {IWeaviateClient} from "../index";
 
-export interface IClientSchema {
+export interface IWeaviateClientSchema {
   classCreator: () => ClassCreator
   classDeleter: () => ClassDeleter
   classGetter: () => ClassGetter
@@ -19,7 +20,7 @@ export interface IClientSchema {
   shardsUpdater: () => ShardsUpdater
 }
 
-const schema = (client: Connection): IClientSchema => {
+const schema = (client: Connection): IWeaviateClientSchema => {
   return {
     classCreator: () => new ClassCreator(client),
     classDeleter: () => new ClassDeleter(client),

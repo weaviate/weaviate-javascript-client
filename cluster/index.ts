@@ -1,11 +1,11 @@
 import NodesStatusGetter from "./nodesStatusGetter";
 import Connection from "../connection";
 
-export interface IClientCluster {
+export interface IWeaviateClientCluster {
   nodesStatusGetter: () => NodesStatusGetter
 }
 
-const cluster = (client: Connection): IClientCluster => {
+const cluster = (client: Connection): IWeaviateClientCluster => {
   return {
     nodesStatusGetter: () => new NodesStatusGetter(client),
   };

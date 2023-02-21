@@ -1,6 +1,6 @@
-import {IClient} from "../index";
+import {IWeaviateClient} from "../index";
 
-const weaviate = require("../index");
+import weaviate from "../index"
 
 const thingClassName = "DataJourneyTestThing";
 const refSourceClassName = "DataJourneyTestRefSource";
@@ -29,7 +29,7 @@ describe("data", () => {
       .then((res:any) => {
         expect(res).toEqual(true);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("(validator) errors on an invalid valid object", () => {
@@ -48,7 +48,7 @@ describe("data", () => {
       });
   });
 
-  let implicitThingId;
+  let implicitThingId: any;
 
   it("creates a new thing object without an explicit id", () => {
     const properties = { stringProp: "without-id" };
@@ -62,7 +62,7 @@ describe("data", () => {
         expect(res.properties).toEqual(properties);
         implicitThingId = res.id;
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("creates a new thing object with an explicit id", () => {
@@ -84,7 +84,7 @@ describe("data", () => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("creates another thing", () => {
@@ -102,7 +102,7 @@ describe("data", () => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("waits for es index updates", () => {
@@ -116,8 +116,8 @@ describe("data", () => {
     return client.data
       .creator()
       .do()
-      .then(() => fail("it should have errord"))
-      .catch((err) => {
+      .then(() => {throw new Error("it should have errord")})
+      .catch((err: any) => {
         expect(err).toEqual(
           new Error(
             "invalid usage: className must be set - set with .withClassName(className)"
@@ -144,7 +144,7 @@ describe("data", () => {
           ])
         );
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("gets all classes objects", () => {
@@ -166,7 +166,7 @@ describe("data", () => {
           ])
         );
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("gets all classes after a specfic object (Cursor API)", () => {
@@ -208,7 +208,7 @@ describe("data", () => {
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("gets all classes objects  with all optional _additional params", () => {
@@ -228,7 +228,7 @@ describe("data", () => {
         expect(res.objects[0].additional.featureProjection).toBeDefined();
         expect(res.objects[0].additional.nearestNeighbors).toBeDefined();
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("gets one thing by id only", () => {
@@ -244,7 +244,7 @@ describe("data", () => {
           })
         );
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("gets one thing by id and class name", () => {
@@ -261,7 +261,7 @@ describe("data", () => {
           })
         );
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("fails to get one thing by id with invalid class name", () => {
@@ -270,9 +270,9 @@ describe("data", () => {
       .withClassName("DoesNotExist")
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .catch(err =>
+      .catch((err: any) => {
         expect(err).toEqual("usage error (404): ")
-      );
+      });
   });
 
   it("gets one thing by id with all optional additional props", () => {
@@ -291,14 +291,14 @@ describe("data", () => {
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("errors if the id is empty", () => {
     return client.data
       .getterById()
       .do()
-      .then(() => fail("it should have errord"))
+      .then(() => {throw new Error("it should have errord")})
       .catch((e:any) => {
         expect(e).toEqual(
           new Error(
@@ -330,7 +330,7 @@ describe("data", () => {
           stringProp: "thing-updated",
         });
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("updates a thing by id and class name", () => {
@@ -355,7 +355,7 @@ describe("data", () => {
           stringProp: "thing-updated-with-class-name",
         });
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("merges a thing", () => {
@@ -375,7 +375,7 @@ describe("data", () => {
           .withProperties(properties)
           .do();
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("adds a reference to a thing by id only", () => {
@@ -390,12 +390,12 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload()
       )
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("replaces all references of a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = implicitThingId;
+    const targetId: any = implicitThingId;
 
     return client.data
       .referenceReplacer()
@@ -405,12 +405,12 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload(),
       ])
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("deletes a single reference of a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = implicitThingId;
+    const targetId: any = implicitThingId;
 
     return client.data
       .referenceDeleter()
@@ -420,7 +420,7 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload()
       )
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("adds a reference to a thing by id and class name", () => {
@@ -436,12 +436,12 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("replaces all references of a thing by id and class name", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = implicitThingId;
+    const targetId: any = implicitThingId;
 
     return client.data
       .referenceReplacer()
@@ -452,12 +452,12 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload(),
       ])
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("deletes a single reference of a thing by id and class name", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = implicitThingId;
+    const targetId: any = implicitThingId;
 
     return client.data
       .referenceDeleter()
@@ -468,7 +468,7 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("checks that object exists by id only", () => {
@@ -476,12 +476,12 @@ describe("data", () => {
       .checker()
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .then((exists) => {
+      .then((exists: any) => {
         if (!exists) {
           fail("it should exist in DB")
         }
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("checks that object exists by id and class name", () => {
@@ -490,12 +490,12 @@ describe("data", () => {
       .withId("00000000-0000-0000-0000-000000000000")
       .withClassName(thingClassName)
       .do()
-      .then((exists) => {
+      .then((exists: any) => {
         if (!exists) {
           fail("it should exist in DB")
         }
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("deletes a thing by id only", () => {
@@ -503,7 +503,7 @@ describe("data", () => {
       .deleter()
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("checks that object doesn't exist anymore with delete by id only", () => {
@@ -511,12 +511,12 @@ describe("data", () => {
       .checker()
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .then((exists) => {
+      .then((exists: any) => {
         if (exists) {
           fail("it should not exist in DB")
         }
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("deletes a thing with id and class name", async () => {
@@ -533,14 +533,14 @@ describe("data", () => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
 
     return client.data
       .deleter()
       .withId(id)
       .withClassName(thingClassName)
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("checks that object doesn't exist anymore with delete by id and class name", () => {
@@ -548,12 +548,12 @@ describe("data", () => {
       .checker()
       .withId("6781a974-cfbf-455d-ace8-f1dba4564230")
       .do()
-      .then((exists) => {
+      .then((exists: any) => {
         if (exists) {
           fail("it should not exist in DB")
         }
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("verifies there are now fewer things (after delete)", () => {
@@ -564,7 +564,7 @@ describe("data", () => {
         .then((res:any) => {
           expect(res.objects).toHaveLength(2);
         })
-        .catch((e:any) => fail("it should not have errord: " + e)),
+        .catch((e:any) => {throw new Error("it should not have errord: " + e)}),
     ]);
   });
 
@@ -585,7 +585,7 @@ describe("data", () => {
         expect(res.vector).toEqual(vector);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("verifies that class with custom vector has been created", () => {
@@ -600,7 +600,7 @@ describe("data", () => {
       .then((res:any) => {
         expect(res.vector).toEqual(vector);
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("deletes a class with custom vector", () => {
@@ -608,7 +608,7 @@ describe("data", () => {
       .deleter()
       .withId("aaaac06c-463f-466c-9092-5930dbac3887")
       .do()
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   });
 
   it("forms a get by id query with node_name set", () => {
@@ -621,11 +621,11 @@ describe("data", () => {
       .withVector()
       .withNodeName("node1")
       .buildPath()
-      .then(path => {
+      .then((path: string) => {
         expect(path).toContain("?include=vector");
         expect(path).toContain("&node_name=node1");
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("forms a get by id query with consistency_level set", () => {
@@ -638,11 +638,11 @@ describe("data", () => {
       .withVector()
       .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
       .buildPath()
-      .then(path => {
+      .then((path: string) => {
         expect(path).toContain("?include=vector");
         expect(path).toContain("consistency_level=QUORUM");
       })
-      .catch((e:any) => fail("it should not have errord: " + e));
+      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("creates object with consistency_level set", async () => {
@@ -1029,7 +1029,7 @@ describe("data", () => {
   });
 });
 
-const setup = async (client: IClient) => {
+const setup = async (client: IWeaviateClient) => {
   const thing = {
     class: thingClassName,
     properties: [

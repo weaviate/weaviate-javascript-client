@@ -5,7 +5,7 @@ export default class Validator {
   private client: Connection;
   private errors: any[];
   private id: any;
-  private properties?: any[];
+  private properties?: any;
   private className?: string;
   constructor(client: Connection) {
     this.client = client;
@@ -17,7 +17,7 @@ export default class Validator {
     return this;
   };
 
-  withProperties = (properties: any[]) => {
+  withProperties = (properties: any) => {
     this.properties = properties;
     return this;
   };

@@ -1,4 +1,6 @@
-const weaviate = require("../index");
+import {IWeaviateClient} from "../index";
+
+import weaviate from '../index'
 
 const thingClassName = "BatchJourneyTestThing";
 const otherThingClassName = "BatchJourneyTestOtherThing";
@@ -81,7 +83,7 @@ describe("batch importing", () => {
       .withObjects([someObjects[4], someObjects[5]]);
 
     expect(batcher.objects).toHaveLength(someObjects.length);
-    batcher.objects.forEach((obj, i) => {
+    batcher.objects.forEach((obj: any, i: number) => {
       expect(obj.class).toBe(someObjects[i].class);
       expect(obj.id).toBe(someObjects[i].id);
     })
@@ -111,7 +113,7 @@ describe("batch importing", () => {
           .withObject(toImport[1])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          .catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
 
       it("waits for es index refresh", () => {
@@ -122,7 +124,7 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[0]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[1]).withClassName(thingClassName).do(),
-        ]).catch((e) => fail("it should not have error'd " + e));
+        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
     });
 
@@ -148,7 +150,7 @@ describe("batch importing", () => {
           .withObjects(toImport[0], toImport[1])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          .catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
 
       it("waits for es index refresh", () => {
@@ -159,7 +161,7 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[2]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[3]).withClassName(thingClassName).do(),
-        ]).catch((e) => fail("it should not have error'd " + e));
+        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
     });
   });
@@ -186,7 +188,7 @@ describe("batch importing", () => {
           .withObjects([toImport[0], toImport[1]])
           .do()
           .then()
-          .catch((e) => fail("it should not have error'd " + e));
+          .catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
 
       it("waits for es index refresh", () => {
@@ -197,7 +199,7 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(toImport[0].id).withClassName(toImport[0].class).do(),
           client.data.getterById().withId(toImport[1].id).withClassName(toImport[1].class).do(),
-        ]).catch((e) => fail("it should not have error'd " + e));
+        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
       });
     });
   });
@@ -210,7 +212,7 @@ describe("batch importing", () => {
         .withReferences([someReferences[3]]);
 
       expect(batcher.references).toHaveLength(someReferences.length);
-      batcher.references.forEach((ref, i) => {
+      batcher.references.forEach((ref: any, i: number) => {
         expect(ref.from).toBe(someReferences[i].from);
         expect(ref.to).toBe(someReferences[i].to);
       })
@@ -229,12 +231,12 @@ describe("batch importing", () => {
         })
         .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ALL)
         .do()
-        .then((res) => {
-          res.forEach((elem) => {
+        .then((res: any) => {
+          res.forEach((elem: any) => {
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e) => fail("it should not have error'd " + e));
+        .catch((e: any) => {throw new Error("it should not have errord " + e)});
     });
 
     it("imports more refs with a builder pattern", () => {
@@ -258,12 +260,12 @@ describe("batch importing", () => {
         .referencesBatcher()
         .withReferences(reference1, reference2)
         .do()
-        .then((res) => {
-          res.forEach((elem) => {
+        .then((res: any[]) => {
+          res.forEach((elem: any) => {
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e) => fail("it should not have error'd " + e));
+        .catch((e: any) => {throw new Error("it should not have errord " + e)});
     });
 
     it("waits for es index refresh", () => {
@@ -277,7 +279,7 @@ describe("batch importing", () => {
           .withId(thingIds[0])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
@@ -287,7 +289,7 @@ describe("batch importing", () => {
           .withId(thingIds[1])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
@@ -297,7 +299,7 @@ describe("batch importing", () => {
           .withId(thingIds[2])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[0]}`
             );
@@ -307,12 +309,12 @@ describe("batch importing", () => {
           .withId(thingIds[3])
           .withClassName(thingClassName)
           .do()
-          .then((res) => {
+          .then((res: any) => {
             expect(res.properties.refProp[0].beacon).toEqual(
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
           }),
-      ]).catch((e) => fail("it should not have error'd " + e));
+      ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
     });
   });
 
@@ -340,7 +342,7 @@ describe("batch deleting", () => {
       .withDryRun(true)
       .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .do()
-      .then(result => {
+      .then((result: any) => {
         expect(result.dryRun).toBe(true);
         expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
         expect(result.match).toEqual({
@@ -377,7 +379,7 @@ describe("batch deleting", () => {
       .withDryRun(true)
       .withOutput(weaviate.batch.DeleteOutput.MINIMAL)
       .do()
-      .then(result => {
+      .then((result: any) => {
         expect(result.dryRun).toBe(true);
         expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
         expect(result.match).toEqual({
@@ -409,7 +411,7 @@ describe("batch deleting", () => {
         path: ["stringProp"]
       })
       .do()
-      .then(result => {
+      .then((result: any) => {
         expect(result.dryRun).toBe(false);
         expect(result.output).toBe(weaviate.batch.DeleteOutput.MINIMAL);
         expect(result.match).toEqual({
@@ -444,7 +446,7 @@ describe("batch deleting", () => {
       .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
       .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
       .do()
-      .then(result => {
+      .then((result: any) => {
         expect(result.dryRun).toBe(false);
         expect(result.output).toBe(weaviate.batch.DeleteOutput.VERBOSE);
         expect(result.match).toEqual({
@@ -478,14 +480,14 @@ describe("batch deleting", () => {
       .withClassName("")
       .withWhere("shouldBeObject")
       .do()
-      .catch(err => expect(err.toString()).toBe("Error: invalid usage: string className must be set - set with .withClassName(className), object where must be set - set with .withWhere(whereFilter)"))
+      .catch((err: any) => expect(err.toString()).toBe("Error: invalid usage: string className must be set - set with .withClassName(className), object where must be set - set with .withWhere(whereFilter)"))
   )
 
   it("tears down and cleans up", () => cleanup(client));
 });
 
 
-const setup = async (client) => {
+const setup = async (client: IWeaviateClient) => {
   // first import the classes
   await Promise.all([
     client.schema
@@ -527,14 +529,14 @@ const setup = async (client) => {
     .do();
 };
 
-const setupData = (client) => {
+const setupData = (client: IWeaviateClient) => {
   return client.batch
     .objectsBatcher()
     .withObjects(someObjects)
     .do();
 }
 
-const cleanup = (client) =>
+const cleanup = (client: IWeaviateClient) =>
   Promise.all([
     client.schema.classDeleter().withClassName(thingClassName).do(),
     client.schema.classDeleter().withClassName(otherThingClassName).do(),

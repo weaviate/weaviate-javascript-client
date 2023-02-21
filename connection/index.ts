@@ -1,14 +1,14 @@
 import {Authenticator} from './auth';
-import OpenidConfigurationGetter from "../misc/openidConfigurationGetter.js";
+import OpenidConfigurationGetter from "../misc/openidConfigurationGetter";
 
 import httpClient from './httpClient';
 import gqlClient from './gqlClient';
 import {IConnectionParams} from "../index";
 
-export interface IHttpClient { patch: (path: string, payload: any, bearerToken?: string) => any; head: (path: string, payload: any, bearerToken?: string) => any; post: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; get: (path: string, expectReturnContent?: boolean, bearerToken?: string) => any; externalPost: (externalUrl: string, body: any, contentType: any) => any; getRaw: (path: string, bearerToken?: string) => any; delete: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; put: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; externalGet: (externalUrl: string) => any };
+export interface IHttpClient { patch: (path: string, payload: any, bearerToken?: string) => any; head: (path: string, payload: any, bearerToken?: string) => any; post: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; get: (path: string, expectReturnContent?: boolean, bearerToken?: string) => any; externalPost: (externalUrl: string, body: any, contentType: any) => any; getRaw: (path: string, bearerToken?: string) => any; delete: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; put: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any; externalGet: (externalUrl: string) => any }
 
 export default class Connection {
-  private auth: any;
+  public readonly auth: any;
   private readonly authEnabled: boolean;
   private gql: { query: (query: any, headers?: {}) => Promise<{ data: any }> };
   private readonly http: IHttpClient
@@ -91,7 +91,7 @@ export default class Connection {
   };
 
   login = async () => {
-    const localConfig = await new OpenidConfigurationGetter(this.http).do()
+    const localConfig = await new OpenidConfigurationGetter(this).do()
       .then((resp: any) => resp);
 
     if (localConfig === undefined) {

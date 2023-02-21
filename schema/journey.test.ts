@@ -1,4 +1,6 @@
-const weaviate = require("../index");
+import {IWeaviateClient} from "../index";
+
+import weaviate from '../index'
 
 describe("schema", () => {
   const client = weaviate.client({
@@ -13,7 +15,7 @@ describe("schema", () => {
       .classCreator()
       .withClass(classObj)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual(classObj);
       });
   });
@@ -23,7 +25,7 @@ describe("schema", () => {
       .classGetter()
       .withClassName(classObj.class)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual(classObj);
       });
   });
@@ -36,9 +38,9 @@ describe("schema", () => {
       .classCreator()
       .withClass(doomedClass)
       .do()
-      .catch(err =>
+      .catch((err: any) => {
         expect(err).toEqual("usage error (422): {\"code\":606,\"message\":\"properties.0.tokenization in body should be one of [word field]\"}")
-      );
+      });
   });
 
   it("extends the thing class with a new property", () => {
@@ -60,7 +62,7 @@ describe("schema", () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual(prop);
       });
   });
@@ -84,9 +86,9 @@ describe("schema", () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      .catch(err =>
+      .catch((err: any) => {
         expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'field' is not allowed for data type 'text'\"}]}")
-      );
+      });
   });
 
   it("fails to extend the thing class with property having not supported tokenization (2)", () => {
@@ -108,16 +110,16 @@ describe("schema", () => {
       .withClassName(className)
       .withProperty(prop)
       .do()
-      .catch(err =>
+      .catch((err: any) => {
         expect(err).toEqual("usage error (422): {\"error\":[{\"message\":\"Tokenization 'word' is not allowed for data type 'int[]'\"}]}")
-      );
+      });
   });
 
   it("retrieves the schema and it matches the expectations", () => {
     return client.schema
       .getter()
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual({
           classes: [
             {
@@ -212,8 +214,8 @@ describe("schema", () => {
       .shardsGetter()
       .withClassName(classObj.class)
       .do()
-      .then((res) => {
-        res.forEach(shard => {
+      .then((res: any) => {
+        res.forEach((shard: any) => {
           expect(shard.status).toEqual("READY");
         });
       });
@@ -230,7 +232,7 @@ describe("schema", () => {
       .withShardName(shards[0].name)
       .withStatus("READONLY")
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res.status).toEqual("READONLY");
     });
   })
@@ -246,7 +248,7 @@ describe("schema", () => {
       .withShardName(shards[0].name)
       .withStatus("READY")
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res.status).toEqual("READY");
     });
   })
@@ -256,21 +258,21 @@ describe("schema", () => {
       .classDeleter()
       .withClassName(classObj.class)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual(undefined);
       });
   });
 
   it("updates all shards in a class", async () => {
     var shardCount = 3;
-    var newClass = newClassObject('NewClass');
+    const newClass: any = newClassObject('NewClass');
     newClass.shardingConfig.desiredCount = shardCount;
 
     await client.schema
       .classCreator()
       .withClass(newClass)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toHaveProperty('shardingConfig.actualCount', 3);
       });
 
@@ -283,9 +285,9 @@ describe("schema", () => {
       .withClassName(newClass.class)
       .withStatus("READONLY")
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res.length).toEqual(shardCount)
-        res.forEach(obj => {
+        res.forEach((obj: any) => {
           expect(obj.status).toEqual("READONLY")
         });
       });
@@ -295,9 +297,9 @@ describe("schema", () => {
       .withClassName(newClass.class)
       .withStatus("READY")
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res.length).toEqual(shardCount)
-        res.forEach(obj => {
+        res.forEach((obj: any) => {
           expect(obj.status).toEqual("READY")
         });
       });
@@ -306,7 +308,7 @@ describe("schema", () => {
   })
 
   it("has updated values of bm25 config", async () => {
-    var newClass = newClassObject('NewClass');
+    const newClass: any = newClassObject('NewClass');
     var bm25Config = {k1: 1.13, b: 0.222};
 
     newClass.invertedIndexConfig.bm25 = bm25Config;
@@ -315,7 +317,7 @@ describe("schema", () => {
       .classCreator()
       .withClass(newClass)
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
       });
 
@@ -323,8 +325,8 @@ describe("schema", () => {
   });
 
   it("has updated values of stopwords config", async () => {
-    var newClass = newClassObject('SpaceClass');
-    var stopwordConfig = {
+    const newClass: any = newClassObject('SpaceClass');
+    const stopwordConfig: any = {
       preset: "en",
       additions: ["star", "nebula"],
       removals: ["a", "the"]
@@ -336,7 +338,7 @@ describe("schema", () => {
       .classCreator()
       .withClass(newClass)
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
       });
 
@@ -344,13 +346,13 @@ describe("schema", () => {
   });
 
   it("creates a class with bm25 and stopwords config", async () => {
-    var newClass = {
+    const newClass: any = {
       class: 'EmptyClass',
       properties: [{dataType: ["string"],name: 'stringProp'}]
     }
 
-    var bm25Config = {k1: 1.13, b: 0.222};
-    var stopwordConfig = {
+    const bm25Config: any = {k1: 1.13, b: 0.222};
+    const stopwordConfig: any = {
       preset: "en",
       additions: ["star", "nebula"],
       removals: ["a", "the"]
@@ -365,7 +367,7 @@ describe("schema", () => {
       .classCreator()
       .withClass(newClass)
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res).toHaveProperty('invertedIndexConfig.bm25', bm25Config);
         expect(res).toHaveProperty('invertedIndexConfig.stopwords', stopwordConfig);
       });
@@ -375,14 +377,14 @@ describe("schema", () => {
 
   it("creates a class with explicit replication config", async () => {
     const replicationFactor = 2;
-    var newClass = newClassObject("SomeClass");
+    const newClass: any = newClassObject("SomeClass");
     newClass.replicationConfig.factor = replicationFactor;
 
     await client.schema
       .classCreator()
       .withClass(newClass)
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res).toHaveProperty('replicationConfig.factor', replicationFactor);
       });
 
@@ -390,14 +392,14 @@ describe("schema", () => {
   });
 
   it("creates a class with implicit replication config", async () => {
-    var newClass = newClassObject("SomeClass");
+    const newClass: any = newClassObject("SomeClass");
     delete newClass.replicationConfig
 
     await client.schema
       .classCreator()
       .withClass(newClass)
       .do()
-      .then(res => {
+      .then((res: any) => {
         expect(res).toHaveProperty('replicationConfig.factor', 1);
       });
 
@@ -405,7 +407,7 @@ describe("schema", () => {
   });
 });
 
-function newClassObject(className) {
+function newClassObject(className: string) {
   return {
     class: className,
     properties: [
@@ -480,22 +482,22 @@ function newClassObject(className) {
   };
 }
 
-async function getShards(client, className) {
+async function getShards(client: IWeaviateClient, className: string) {
   return client.schema
     .shardsGetter()
     .withClassName(className)
     .do()
-    .then((res) => {
+    .then((res: any) => {
       return res;
     });
 }
 
-function deleteClass(client, className) {
+function deleteClass(client: IWeaviateClient, className: string) {
   return client.schema
     .classDeleter()
     .withClassName(className)
     .do()
-    .then((res) => {
+    .then((res: any) => {
       expect(res).toEqual(undefined);
     });
 }

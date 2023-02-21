@@ -3,15 +3,16 @@ import Getter from "./getter";
 import Explorer from "./explorer";
 import Raw from "./raw";
 import Connection from "../connection";
+import {IWeaviateClient} from "../index";
 
-export interface IClientGraphQL {
+export interface IWeaviateClientGraphQL {
   get: () => Getter
   aggregate: () => Aggregator
   explore: () => Explorer
   raw: () => Raw
 }
 
-const graphql = (client: Connection): IClientGraphQL => {
+const graphql = (client: Connection): IWeaviateClientGraphQL => {
   return {
     get: () => new Getter(client),
     aggregate: () => new Aggregator(client),

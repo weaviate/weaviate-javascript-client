@@ -11,7 +11,7 @@ describe("db version provider", () => {
 
     return dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(EMPTY_VERSION))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
   });
 
   it("should return proper version", () => {
@@ -20,7 +20,7 @@ describe("db version provider", () => {
 
     return dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
   });
 
   it("should return new version after refresh",  async () => {
@@ -39,11 +39,11 @@ describe("db version provider", () => {
 
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.refresh(true);
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_2))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
   });
 
   it("should fetch version once", async () => {
@@ -60,13 +60,13 @@ describe("db version provider", () => {
 
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
 
     expect(callsCounter).toBe(1);
   });
@@ -88,19 +88,19 @@ describe("db version provider", () => {
 
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(EMPTY_VERSION))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(EMPTY_VERSION))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
     await dbVersionProvider.getVersionPromise()
       .then(version => expect(version).toBe(VERSION_1))
-      .catch(() => fail("version should always resolve successfully"));
+      .catch(() => {throw new Error("version should always resolve successfully")});
 
     expect(callsCounter).toBe(3);
   });
@@ -111,7 +111,7 @@ describe("db version support", () => {
   it("should not support", () => {
     const notSupportedVersions = ["0.11", "1.13.9", "1.13", "1.0"];
     notSupportedVersions.forEach(async version => {
-      const dbVersionProvider = { getVersionPromise: () => Promise.resolve(version) };
+      const dbVersionProvider = new DbVersionProvider(() => Promise.resolve(version))
       const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
       await dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
@@ -119,14 +119,14 @@ describe("db version support", () => {
           expect(support.supports).toBe(false);
           expect(support.version).toBe(version);
         })
-        .catch(() => fail("version should always resolve successfully"));
+        .catch(() => {throw new Error("version should always resolve successfully")});
     });
   });
 
   it ("should support", () => {
     const supportedVersions = ["1.14.0", "1.14.9", "1.100", "2.0", "10.11.12"];
     supportedVersions.forEach(async version => {
-      const dbVersionProvider = { getVersionPromise: () => Promise.resolve(version) };
+      const dbVersionProvider = new DbVersionProvider(() => Promise.resolve(version))
       const dbVersionSupport = new DbVersionSupport(dbVersionProvider);
 
       await dbVersionSupport.supportsClassNameNamespacedEndpointsPromise()
@@ -134,7 +134,7 @@ describe("db version support", () => {
           expect(support.supports).toBe(true);
           expect(support.version).toBe(version);
         })
-        .catch(() => fail("version should always resolve successfully"));
+        .catch(() => {throw new Error("version should always resolve successfully")});
     });
   });
 });

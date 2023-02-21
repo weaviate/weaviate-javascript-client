@@ -1,11 +1,21 @@
 import {IHttpClient} from "./index";
 
+interface IAuthenticatorResult {
+  accessToken: string
+  expiresAt: number
+  refreshToken: string
+}
+
+interface IAuthenticator {
+  refresh: () => Promise<IAuthenticatorResult>
+}
+
 export class Authenticator {
 
   private readonly http: any
   private readonly creds: any
   private accessToken: string
-  private refreshToken: string;
+  private refreshToken?: string;
   private expiresAt: number;
   private refreshRunning: boolean;
 
@@ -21,7 +31,7 @@ export class Authenticator {
     // our bearer token is already available for use
     if (this.creds instanceof AuthAccessTokenCredentials) {
       this.accessToken = this.creds.accessToken;
-      this.expiresAt = calcExpirationEpoch(this.creds.expiresIn); // FIXME
+      this.expiresAt = this.creds.expiresAt
       this.refreshToken = this.creds.refreshToken;
     }
   }
@@ -29,7 +39,7 @@ export class Authenticator {
   refresh = async (localConfig: any) => {
     let config = await this.getOpenidConfig(localConfig);
 
-    let authenticator: any;
+    let authenticator: IAuthenticator;
     switch (this.creds.constructor) {
       case AuthUserPasswordCredentials:
         authenticator = new UserPasswordAuthenticator(this.http, this.creds, config);
@@ -45,7 +55,7 @@ export class Authenticator {
     }
 
     return authenticator.refresh()
-      .then((resp: any) => {
+      .then(resp => {
         this.accessToken = resp.accessToken;
         this.expiresAt = resp.expiresAt;
         this.refreshToken = resp.refreshToken;
@@ -84,14 +94,14 @@ export class Authenticator {
 
 export interface IAuthUserPasswordCredentials {
   username: string
-  password: string
-  scopes: any[]
+  password?: string
+  scopes?: any[]
 }
 
 export class AuthUserPasswordCredentials {
   private username: string;
-  private password: string;
-  private scopes: any[];
+  private password?: string;
+  private scopes?: any[];
   constructor(creds: IAuthUserPasswordCredentials) {
     this.username = creds.username;
     this.password = creds.password;
@@ -105,7 +115,7 @@ interface IRequestAccessTokenResponse {
   refresh_token: string
 }
 
-class UserPasswordAuthenticator {
+class UserPasswordAuthenticator implements IAuthenticator  {
   private creds: any;
   private http: any;
   private openidConfig: any;
@@ -165,14 +175,14 @@ class UserPasswordAuthenticator {
 export interface IAuthAccessTokenCredentials {
   accessToken: string
   expiresIn: number
-  refreshToken: string
+  refreshToken?: string
 }
 
 export class AuthAccessTokenCredentials {
 
   public readonly accessToken: string;
   public readonly expiresAt: number;
-  public readonly refreshToken: string;
+  public readonly refreshToken?: string;
 
   constructor(creds: IAuthAccessTokenCredentials) {
     this.validate(creds);
@@ -191,7 +201,7 @@ export class AuthAccessTokenCredentials {
   };
 }
 
-class AccessTokenAuthenticator {
+class AccessTokenAuthenticator implements IAuthenticator {
   private creds: any;
   private http: any;
   private openidConfig: any;
@@ -246,12 +256,12 @@ class AccessTokenAuthenticator {
 
 export interface IAuthClientCredentials {
   clientSecret: string
-  scopes: any[]
+  scopes?: any[]
 }
 
 export class AuthClientCredentials {
   private clientSecret: any;
-  private scopes: any;
+  private scopes?: any[];
 
   constructor(creds: IAuthClientCredentials) {
     this.clientSecret = creds.clientSecret;
@@ -259,7 +269,7 @@ export class AuthClientCredentials {
   }
 }
 
-class ClientCredentialsAuthenticator {
+class ClientCredentialsAuthenticator implements IAuthenticator {
 
   private creds: any;
   private http: any;

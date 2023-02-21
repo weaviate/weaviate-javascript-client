@@ -1,7 +1,7 @@
 import {CreateStatus} from "./consts";
 import {validateBackend, validateBackupId, validateExcludeClassNames, validateIncludeClassNames} from "./validation";
 import BackupCreateStatusGetter from "./backupCreateStatusGetter";
-import {IClient} from "../index";
+import {IWeaviateClient} from "../index";
 import Connection from "../connection";
 
 const WAIT_INTERVAL = 1000;

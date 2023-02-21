@@ -1,4 +1,4 @@
-const weaviate = require("../index");
+import weaviate from '../index'
 const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
 
 const EXPECTED_WEAVIATE_VERSION = "1.18.0-alpha.1"
@@ -14,7 +14,7 @@ describe("cluster nodes endpoint", () => {
     return client.cluster
       .nodesStatusGetter()
       .do()
-      .then(nodesStatusResponse => {
+      .then((nodesStatusResponse: any) => {
         expect(nodesStatusResponse.nodes).toHaveLength(1);
         const node = nodesStatusResponse.nodes[0];
         expect(node.name).toMatch(/.+/);
@@ -25,7 +25,9 @@ describe("cluster nodes endpoint", () => {
         expect(node.stats.shardCount).toEqual(0);
         expect(node.shards).toHaveLength(0);
       })
-      .catch(e => fail("should not fail on getting nodes: " + e))
+      .catch((e: any) => {
+        throw new Error("should not fail on getting nodes: " + e)
+      })
   });
 
   it("sets up db", () => createTestFoodSchemaAndData(client));
@@ -34,7 +36,7 @@ describe("cluster nodes endpoint", () => {
     return client.cluster
       .nodesStatusGetter()
       .do()
-      .then(nodesStatusResponse => {
+      .then((nodesStatusResponse: any) => {
         expect(nodesStatusResponse.nodes).toHaveLength(1);
         const node = nodesStatusResponse.nodes[0];
         expect(node.name).toMatch(/.+/);
@@ -61,7 +63,7 @@ describe("cluster nodes endpoint", () => {
           }
         }
       })
-      .catch(e => fail("should not fail on getting nodes: " + e))
+      .catch((e: any) => { throw new Error("should not fail on getting nodes: " + e)})
   });
 
   it("cleans up db", () => cleanupTestFood(client));

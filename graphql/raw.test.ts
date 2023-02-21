@@ -1,5 +1,4 @@
 import Raw from "./raw";
-import Connection from "../connection";
 
 test("a simple raw query", () => {
   const mockClient: any = {
@@ -14,11 +13,11 @@ test("a simple raw query", () => {
 });
 
 test("reject empty raw query", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
-    new Raw(mockClient, '').do().catch(err => {
+    new Raw(mockClient).do().catch((err: any) => {
         expect(err).toMatchObject(new Error("invalid usage: query must be set - set with .raw().withQuery(query)"));
     });
   });

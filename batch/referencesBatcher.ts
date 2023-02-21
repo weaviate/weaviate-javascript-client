@@ -6,7 +6,7 @@ import Connection from "../connection";
 export default class ReferencesBatcher {
   private client: Connection;
   private beaconPath: BeaconPath;
-  private references: any[];
+  public references: any[];
   private errors: any[];
   private consistencyLevel: any
   constructor(client: Connection, beaconPath: BeaconPath) {

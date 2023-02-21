@@ -36,7 +36,9 @@ describe("a classification journey", () => {
             expect(res.type).toEqual("text2vec-contextionary-contextual");
             id = res.id;
           })
-          .catch((e: any) => fail("it should not have errord: " + e));
+          .catch((e: any) => {
+            throw new Error("it should not have errord: " + e)
+          });
       },
       60 * 1000 // jest timeout
     );

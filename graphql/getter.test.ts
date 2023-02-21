@@ -2,7 +2,7 @@ import Getter from "./getter";
 import { Operator } from "../filters/consts";
 
 test("a simple query without params", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -14,7 +14,7 @@ test("a simple query without params", () => {
 });
 
 test("a simple query with a limit", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -30,7 +30,7 @@ test("a simple query with a limit", () => {
 });
 
 test("a simple query with a limit and offset", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -64,7 +64,7 @@ test("a simple query with a limit and after", () => {
 });
 
 test("a simple query with a group", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -81,7 +81,7 @@ test("a simple query with a group", () => {
 
 describe("where filters", () => {
   test("a query with a valid where filter", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -102,7 +102,7 @@ describe("where filters", () => {
   // to prevent a regression on
   // https://github.com/semi-technologies/weaviate-javascript-client/issues/6
   test("a query with a where filter containing a geo query", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -135,7 +135,7 @@ describe("where filters", () => {
   });
 
   test("a query with a valid nested where filter", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -164,7 +164,7 @@ describe("where filters", () => {
   });
 
   describe("queries with invalid nested where filters", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -209,9 +209,9 @@ describe("where filters", () => {
           .withWhere(t.where)
           .do()
           .then(() => {
-            fail("it should have error'd");
+            fail("it should have errord");
           })
-          .catch((e) => {
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -221,7 +221,7 @@ describe("where filters", () => {
 
 describe("nearText searchers", () => {
   test("a query with a valid nearText", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -238,7 +238,7 @@ describe("nearText searchers", () => {
   });
 
   test("with optional parameters (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -262,7 +262,7 @@ describe("nearText searchers", () => {
   });
 
   test("with optional parameters (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -286,7 +286,7 @@ describe("nearText searchers", () => {
   });
 
   test("with optional parameters and autocorrect (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -311,7 +311,7 @@ describe("nearText searchers", () => {
   });
 
   test("with optional parameters and autocorrect (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -336,7 +336,7 @@ describe("nearText searchers", () => {
   });
 
   test("a query with a valid nearText and autocorrect set to false", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -353,7 +353,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveTo with objects parameter (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -376,7 +376,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveTo with objects parameter (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -399,7 +399,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveAwayFrom with objects parameter (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -422,7 +422,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveAwayFrom with objects parameter (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -445,7 +445,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveTo and moveAway with objects parameter (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -469,7 +469,7 @@ describe("nearText searchers", () => {
   });
 
   test("with moveTo and moveAway with objects parameter (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -493,7 +493,7 @@ describe("nearText searchers", () => {
   });
 
   describe("queries with invalid nearText searchers", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -624,8 +624,8 @@ describe("nearText searchers", () => {
           .withFields("name")
           .withNearText(t.nearText)
           .do()
-          .then(() => fail("it should have error'd"))
-          .catch((e) => {
+          .then(() => {throw new Error("it should have errord")})
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -635,7 +635,7 @@ describe("nearText searchers", () => {
 
 describe("nearVector searchers", () => {
   test("a query with a valid nearVector", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -652,7 +652,7 @@ describe("nearVector searchers", () => {
   });
 
   test("with optional parameters (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -674,7 +674,7 @@ describe("nearVector searchers", () => {
   });
 
   test("with optional parameters (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -696,7 +696,7 @@ describe("nearVector searchers", () => {
   });
 
   describe("queries with invalid nearVector searchers", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -735,8 +735,8 @@ describe("nearVector searchers", () => {
           .withFields("name")
           .withNearVector(t.nearVector)
           .do()
-          .then(() => fail("it should have error'd"))
-          .catch((e) => {
+          .then(() => {throw new Error("it should have errord")})
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -746,7 +746,7 @@ describe("nearVector searchers", () => {
 
 describe("nearObject searchers", () => {
   test("a query with a valid nearObject with id", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -763,7 +763,7 @@ describe("nearObject searchers", () => {
   });
 
   test("a query with a valid nearObject with beacon", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -780,7 +780,7 @@ describe("nearObject searchers", () => {
   });
 
   test("a query with a valid nearObject with all params (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -801,7 +801,7 @@ describe("nearObject searchers", () => {
   });
 
   test("a query with a valid nearObject with all params (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -822,7 +822,7 @@ describe("nearObject searchers", () => {
   });
 
   describe("queries with invalid nearObject searchers", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -861,8 +861,8 @@ describe("nearObject searchers", () => {
           .withFields("name")
           .withNearObject(t.nearObject)
           .do()
-          .then(() => fail("it should have error'd"))
-          .catch((e) => {
+          .then(() => {throw new Error("it should have errord")})
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -872,7 +872,7 @@ describe("nearObject searchers", () => {
 
 describe("ask searchers", () => {
   test("a query with a valid ask with question", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -889,7 +889,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question and properties", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -906,7 +906,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question, properties, certainty", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -927,7 +927,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question, properties, distance", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -948,7 +948,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with all params (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -971,7 +971,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with all params (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -994,7 +994,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question and autocorrect", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1011,7 +1011,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question and autocorrect set to false", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1028,7 +1028,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question and rerank", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1045,7 +1045,7 @@ describe("ask searchers", () => {
   });
 
   test("a query with a valid ask with question and rerank set to false", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1062,7 +1062,7 @@ describe("ask searchers", () => {
   });
 
   describe("queries with invalid ask searchers", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1106,8 +1106,8 @@ describe("ask searchers", () => {
           .withFields("name")
           .withAsk(t.ask)
           .do()
-          .then(() => fail("it should have error'd"))
-          .catch((e) => {
+          .then(() => {throw new Error("it should have errord")})
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -1117,7 +1117,7 @@ describe("ask searchers", () => {
 
 describe("nearImage searchers", () => {
   test("a query with a valid nearImage with image", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1134,7 +1134,7 @@ describe("nearImage searchers", () => {
   });
 
   test("a query with a valid nearImage with all params (with certainty)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1154,7 +1154,7 @@ describe("nearImage searchers", () => {
   });
 
   test("a query with a valid nearImage with all params (with distance)", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1174,7 +1174,7 @@ describe("nearImage searchers", () => {
   });
 
   test("a query with a valid nearImage with base64 encoded image", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1191,7 +1191,7 @@ describe("nearImage searchers", () => {
   });
 
   describe("queries with invalid nearImage searchers", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1225,8 +1225,8 @@ describe("nearImage searchers", () => {
           .withFields("name")
           .withNearImage(t.nearImage)
           .do()
-          .then(() => fail("it should have error'd"))
-          .catch((e) => {
+          .then(() => {throw new Error("it should have errord")})
+          .catch((e: any) => {
             expect(e.toString()).toContain(t.msg);
           });
       });
@@ -1236,7 +1236,7 @@ describe("nearImage searchers", () => {
 
 describe("sort filters", () => {
   test("a query with a valid sort filter", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1257,7 +1257,7 @@ describe("sort filters", () => {
   });
 
   test("a query with a valid array of sort filter", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1278,7 +1278,7 @@ describe("sort filters", () => {
   });
 
   test("a query with a valid array of sort filters", () => {
-    const mockClient = {
+    const mockClient: any = {
       query: jest.fn(),
     };
 
@@ -1304,7 +1304,7 @@ describe("sort filters", () => {
 });
 
 describe("invalid sort filters", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -1387,8 +1387,8 @@ describe("invalid sort filters", () => {
         .withFields("name")
         .withSort(t.sort)
         .do()
-        .then(() => fail("it should have error'd"))
-        .catch((e) => {
+        .then(() => {throw new Error("it should have errord")})
+        .catch((e: any) => {
           expect(e.toString()).toEqual(t.msg);
         });
     });
@@ -1396,7 +1396,7 @@ describe("invalid sort filters", () => {
 });
 
 describe("bm25 valid searchers", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -1441,7 +1441,7 @@ describe("bm25 valid searchers", () => {
 });
 
 describe("bm25 invalid searchers", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -1485,8 +1485,8 @@ describe("bm25 invalid searchers", () => {
         .withFields("name")
         .withBm25(t.bm25)
         .do()
-        .then(() => fail("it should have error'd"))
-        .catch((e) => {
+        .then(() => {throw new Error("it should have errord")})
+        .catch((e: any) => {
           expect(e.toString()).toContain(t.msg);
         });
     });
@@ -1495,7 +1495,7 @@ describe("bm25 invalid searchers", () => {
 
 
 describe("hybrid valid searchers", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -1566,7 +1566,7 @@ describe("hybrid valid searchers", () => {
 });
 
 describe("hybrid invalid searchers", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 
@@ -1615,8 +1615,8 @@ describe("hybrid invalid searchers", () => {
         .withFields("name")
         .withHybrid(t.hybrid)
         .do()
-        .then(() => fail("it should have error'd"))
-        .catch((e) => {
+        .then(() => {throw new Error("it should have errord")})
+        .catch((e: any) => {
           expect(e.toString()).toContain(t.msg);
         });
     });

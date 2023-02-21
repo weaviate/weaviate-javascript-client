@@ -1,4 +1,4 @@
-const weaviate = require("../index");
+import weaviate from '../index'
 describe("c11y endpoints", () => {
   const client = weaviate.client({
     scheme: "http",
@@ -10,7 +10,7 @@ describe("c11y endpoints", () => {
       .conceptsGetter()
       .withConcept("car")
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res.individualWords[0].word).toEqual("car");
       });
   });
@@ -25,7 +25,7 @@ describe("c11y endpoints", () => {
       )
       .withWeight(1)
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res).toEqual({
           concept: "clientalmostdonehappyness",
           definition:

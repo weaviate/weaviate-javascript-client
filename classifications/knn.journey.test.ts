@@ -1,4 +1,4 @@
-import weaviate, {IClient} from "../index";
+import weaviate, {IWeaviateClient} from "../index";
 import Connection from "../connection";
 
 const targetDessertId = "cd54852a-209d-423b-bf1c-884468215237";
@@ -15,7 +15,7 @@ describe("a classification journey", () => {
 
     it("setups the schema and data", () => setup(client));
 
-    let id; // will be assigned by weaviate, see then block in scheduler
+    let id: any; // will be assigned by weaviate, see then block in scheduler
 
     it("triggers a classification without waiting", () => {
       return client.classifications
@@ -30,7 +30,7 @@ describe("a classification journey", () => {
           expect(res.id).toBeDefined();
           id = res.id;
         })
-        .catch((e: any) => fail("it should not have errord: " + e));
+        .catch((e: any) => {throw new Error("it should not have errord: " + e)});
     });
 
     it("is now completed", () => {
@@ -57,7 +57,7 @@ describe("a classification journey", () => {
               res.status == "completed" && resolve(undefined);
             });
         }, 500);
-      }).catch(() => fail("timed out"));
+      }).catch(() => {throw new Error("timed out")});
     });
 
     it("waits for es index updates to have refreshed", () => {
@@ -72,22 +72,22 @@ describe("a classification journey", () => {
     //       .getterById()
     //       .withId(unclassifiedOneId)
     //       .do()
-    //       .then(res => {
+    //       .then((res: any) => {
     //         expect(res.schema.toTarget[0].beacon).toEqual(
     //           beaconTo(targetDessertId),
     //         );
     //       })
-    //       .catch(e => fail('it should not have errord: ' + e)),
+    //       .catch(e => {throw new Error('it should not have errord: ' + e)),
     //     client.data
     //       .getterById()
     //       .withId(unclassifiedTwoId)
     //       .do()
-    //       .then(res => {
+    //       .then((res: any) => {
     //         expect(res.schema.toTarget[0].beacon).toEqual(
     //           beaconTo(targetSavoryId),
     //         );
     //       })
-    //       .catch(e => fail('it should not have errord: ' + e)),
+    //       .catch(e => {throw new Error('it should not have errord: ' + e)),
     //   ]);
     // });
 
@@ -119,7 +119,7 @@ describe("a classification journey", () => {
           expect(res.status).toEqual("completed");
           id = res.id;
         })
-        .catch((e: any) => fail("it should not have errord: " + e));
+        .catch((e: any) => {throw new Error("it should not have errord: " + e)});
     });
 
     it("waits for es index updates to have refreshed", () => {
@@ -134,22 +134,22 @@ describe("a classification journey", () => {
     //       .getterById()
     //       .withId(unclassifiedOneId)
     //       .do()
-    //       .then(res => {
+    //       .then((res: any) => {
     //         expect(res.schema.toTarget[0].beacon).toEqual(
     //           beaconTo(targetDessertId),
     //         );
     //       })
-    //       .catch(e => fail('it should not have errord: ' + e)),
+    //       .catch(e => {throw new Error('it should not have errord: ' + e)),
     //     client.data
     //       .getterById()
     //       .withId(unclassifiedTwoId)
     //       .do()
-    //       .then(res => {
+    //       .then((res: any) => {
     //         expect(res.schema.toTarget[0].beacon).toEqual(
     //           beaconTo(targetSavoryId),
     //         );
     //       })
-    //       .catch(e => fail('it should not have errord: ' + e)),
+    //       .catch(e => {throw new Error('it should not have errord: ' + e)),
     //   ]);
     // });
 
@@ -176,7 +176,7 @@ describe("a classification journey", () => {
         .withWaitTimeout(1) // that's going to be difficult ;-)
         .do()
         .then((res: any) => {
-          fail("it should have error'd");
+          fail("it should have errord");
         })
         .catch((e: any) => {
           expect(e).toEqual(
@@ -196,7 +196,7 @@ describe("a classification journey", () => {
   });
 });
 
-const setup = async (client: IClient) => {
+const setup = async (client: IWeaviateClient) => {
   let targetClass = {
     class: "ClassificationJourneyTarget",
     properties: [
@@ -277,7 +277,7 @@ const setup = async (client: IClient) => {
     .do();
 };
 
-const cleanup = (client: IClient) => {
+const cleanup = (client: IWeaviateClient) => {
   return Promise.all([
     client.schema
       .classDeleter()
@@ -290,4 +290,4 @@ const cleanup = (client: IClient) => {
   ]);
 };
 
-const beaconTo = (target) => `weaviate://localhost/${target}`;
+const beaconTo = (target: any) => `weaviate://localhost/${target}`;

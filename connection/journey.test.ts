@@ -1,7 +1,7 @@
-import {AuthAccessTokenCredentials, AuthClientCredentials, AuthUserPasswordCredentials} from './auth.js';
-import Connection from "./index.js";
+import {AuthAccessTokenCredentials, AuthClientCredentials, AuthUserPasswordCredentials} from './auth';
+import Connection from "./index";
 
-const weaviate = require("../index");
+import weaviate from '../index'
 
 describe("connection", () => {
   it("makes an Azure logged-in request with client credentials", async() => {
@@ -21,10 +21,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("makes an Okta logged-in request with client credentials", async() => {
@@ -45,10 +45,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("makes an Okta logged-in request with username/password", async () => {
@@ -69,10 +69,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("makes a WCS logged-in request with username/password", async () => {
@@ -93,10 +93,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("makes a scopeless WCS logged-in request with username/password", async () => {
@@ -112,10 +112,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("makes a logged-in request with access token", async () => {
@@ -148,10 +148,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then((res) => {
-        expect(res.version).toBeDefined();;
+      .then((res: any) => {
+        expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("uses refresh token to fetch new access token", async () => {
@@ -189,7 +189,7 @@ describe("connection", () => {
         expect(resp).toBeDefined();
         expect(resp != "").toBeTruthy();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
   })
 
   it("fails to access auth-enabled server without client auth", async () => {
@@ -201,10 +201,10 @@ describe("connection", () => {
     return client.misc
       .metaGetter()
       .do()
-      .then(res => {
+      .then((res: any) => {
         fail(`should not have succeeded. received: ${res}`);
       })
-      .catch(e => {
+      .catch((e: any) => {
         expect(e).toContain("401");
         expect(e).toContain("anonymous access not enabled");
       });
@@ -225,10 +225,10 @@ describe("connection", () => {
     await client.misc
       .metaGetter()
       .do()
-      .then((res) => {
+      .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
 
     expect(logSpy).toHaveBeenCalledWith(
       "client is configured for authentication, but server is not");
@@ -253,7 +253,7 @@ describe("connection", () => {
         expect(resp).toBeDefined();
         expect(resp ).toEqual("abcd1234");
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
 
     expect(logSpy).toHaveBeenCalledWith(
       "AuthAccessTokenCredentials not provided with refreshToken, cannot refresh");
