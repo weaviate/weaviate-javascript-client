@@ -1,3 +1,5 @@
+import { buildObjectsPath } from "./path"
+
 export default class ObjectsBatcher {
   constructor(client) {
     this.client = client;
@@ -25,6 +27,11 @@ export default class ObjectsBatcher {
     return this.withObjects(object);
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   payload = () => ({
     objects: this.objects,
   });
@@ -50,7 +57,11 @@ export default class ObjectsBatcher {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/batch/objects`;
+    let params = new URLSearchParams()
+    if (this.consistencyLevel) {
+      params.set("consistency_level", this.consistencyLevel)
+    }
+    const path = buildObjectsPath(params);
     return this.client.post(path, this.payload());
   };
 }

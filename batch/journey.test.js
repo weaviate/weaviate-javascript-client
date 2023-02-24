@@ -179,9 +179,10 @@ describe("batch importing", () => {
         },
       ];
 
-      it("imports them", () => {
+      it("imports them with consistency level", () => {
         client.batch
           .objectsBatcher()
+          .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ONE)
           .withObjects([toImport[0], toImport[1]])
           .do()
           .then()
@@ -215,7 +216,7 @@ describe("batch importing", () => {
       })
     });
 
-    it("imports the refs with raw objects", () => {
+    it("imports the refs with raw objects and consistency level", () => {
       return client.batch
         .referencesBatcher()
         .withReference({
@@ -226,6 +227,7 @@ describe("batch importing", () => {
           from: `weaviate://localhost/${thingClassName}/${thingIds[1]}/refProp`,
           to: `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`,
         })
+        .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ALL)
         .do()
         .then((res) => {
           res.forEach((elem) => {
@@ -429,7 +431,7 @@ describe("batch deleting", () => {
       })
   )
 
-  it("batch deletes with default dryRun", () => {
+  it("batch deletes with default dryRun and consistency level", () => {
     const inAMinute = "" + (new Date().getTime() + 60 * 1000);
     return client.batch
       .objectsBatchDeleter()
@@ -440,6 +442,7 @@ describe("batch deleting", () => {
         path: ["_creationTimeUnix"]
       })
       .withOutput(weaviate.batch.DeleteOutput.VERBOSE)
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
       .do()
       .then(result => {
         expect(result.dryRun).toBe(false);

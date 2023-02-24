@@ -37,7 +37,7 @@ describe("schema", () => {
       .withClass(doomedClass)
       .do()
       .catch(err =>
-        expect(err).toEqual("usage error (422): {\"code\":606,\"message\":\"tokenization in body should be one of [word field]\"}")
+        expect(err).toEqual("usage error (422): {\"code\":606,\"message\":\"properties.0.tokenization in body should be one of [word field]\"}")
       );
   });
 

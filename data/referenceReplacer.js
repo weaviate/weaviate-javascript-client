@@ -26,6 +26,11 @@ export default class ReferenceReplacer {
     return this;
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
@@ -59,7 +64,7 @@ export default class ReferenceReplacer {
       : Promise.resolve([]);
 
     return Promise.all([
-      this.referencesPath.build(this.id, this.className, this.refProp),
+      this.referencesPath.build(this.id, this.className, this.refProp, this.consistencyLevel),
       payloadPromise
     ]).then(results => {
       const path = results[0];

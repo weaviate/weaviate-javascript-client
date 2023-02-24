@@ -8,11 +8,12 @@ export class ObjectsPath {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  buildCreate() {
-    return this.build({}, []);
+  buildCreate(consistencyLevel) {
+    return this.build({consistencyLevel}, [this.addQueryParams]);
   }
-  buildDelete(id, className) {
-    return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
+  buildDelete(id, className, consistencyLevel) {
+    return this.build({id, className, consistencyLevel}, 
+      [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
   buildCheck(id, className) {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
@@ -24,11 +25,13 @@ export class ObjectsPath {
   buildGet(className, limit, additionals) {
     return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
   }
-  buildUpdate(id, className) {
-    return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
+  buildUpdate(id, className, consistencyLevel) {
+    return this.build({id, className, consistencyLevel}, 
+      [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
-  buildMerge(id, className) {
-    return this.build({id, className}, [this.addClassNameDeprecatedCheck, this.addId]);
+  buildMerge(id, className, consistencyLevel) {
+    return this.build({id, className, consistencyLevel}, 
+      [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
 
   build(params, modifiers) {
@@ -114,7 +117,7 @@ export class ReferencesPath {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  build(id, className, property) {
+  build(id, className, property, consistencyLevel) {
     return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then(support => {
       var path = objectsPathPrefix;
       if (support.supports) {
@@ -132,6 +135,9 @@ export class ReferencesPath {
       path = `${path}/references`;
       if (isValidStringProperty(property)) {
         path = `${path}/${property}`;
+      }
+      if (isValidStringProperty(consistencyLevel)) {
+        path = `${path}?consistency_level=${consistencyLevel}`;
       }
       return path;
     });

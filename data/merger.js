@@ -22,6 +22,11 @@ export default class Merger {
     return this;
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
       this.errors = [
@@ -57,7 +62,7 @@ export default class Merger {
       );
     }
 
-    return this.objectsPath.buildMerge(this.id, this.className)
+    return this.objectsPath.buildMerge(this.id, this.className, this.consistencyLevel)
       .then(path => this.client.patch(path, this.payload()));
   };
 }

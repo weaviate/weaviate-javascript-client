@@ -15,6 +15,11 @@ export default class Deleter {
     return this;
   }
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
@@ -40,7 +45,7 @@ export default class Deleter {
     }
     this.validate();
 
-    return this.objectsPath.buildDelete(this.id, this.className)
+    return this.objectsPath.buildDelete(this.id, this.className, this.consistencyLevel)
       .then(this.client.delete);
   };
 }

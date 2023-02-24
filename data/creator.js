@@ -27,6 +27,11 @@ export default class Creator {
     return this;
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
       this.errors = [
@@ -55,7 +60,7 @@ export default class Creator {
       );
     }
 
-    return this.objectsPath.buildCreate()
-      .then(path => this.client.post(path, this.payload()))
+    return this.objectsPath.buildCreate(this.consistencyLevel)
+      .then(path => this.client.post(path, this.payload()));
   };
 }

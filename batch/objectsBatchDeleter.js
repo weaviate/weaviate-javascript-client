@@ -1,4 +1,5 @@
 import { isValidStringProperty } from "../validation/string";
+import { buildObjectsPath } from "./path"
 
 export default class ObjectsBatchDeleter {
   className;
@@ -30,6 +31,11 @@ export default class ObjectsBatchDeleter {
     this.dryRun = dryRun;
     return this;
   }
+
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
 
   payload() {
     return {
@@ -72,7 +78,11 @@ export default class ObjectsBatchDeleter {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/batch/objects`;
+    let params = new URLSearchParams()
+    if (this.consistencyLevel) {
+      params.set("consistency_level", this.consistencyLevel)
+    }
+    const path = buildObjectsPath(params);
     return this.client.delete(path, this.payload(), true);
   };
 }
