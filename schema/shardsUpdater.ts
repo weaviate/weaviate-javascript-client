@@ -7,15 +7,15 @@ export default class ShardsUpdater {
   private client: Connection;
   private errors: any[];
   private shards: any[];
-  private status: any;
-  private className: any;
+  private status?: string;
+  private className?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
     this.shards = [];
   }
 
-  withClassName = (className: any) => {
+  withClassName = (className: string) => {
     this.className = className;
     return this;
   };
@@ -29,7 +29,7 @@ export default class ShardsUpdater {
     }
   };
 
-  withStatus = (status: any) => {
+  withStatus = (status: string) => {
     this.status = status
     return this;
   }

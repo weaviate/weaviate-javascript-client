@@ -3,8 +3,8 @@ import Connection from "../connection";
 
 export default class BackupRestoreStatusGetter {
 
-  private backend: any
-  private backupId: any;
+  private backend?: string
+  private backupId?: string;
   private errors: any[]
   private client: Connection;
 
@@ -13,12 +13,12 @@ export default class BackupRestoreStatusGetter {
     this.errors = [] // FIXME it was not initialized
   }
 
-  withBackend(backend: any) {
+  withBackend(backend: string) {
     this.backend = backend;
     return this;
   }
 
-  withBackupId(backupId: any) {
+  withBackupId(backupId: string) {
     this.backupId = backupId;
     return this;
   }

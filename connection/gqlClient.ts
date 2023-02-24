@@ -1,7 +1,11 @@
 import { GraphQLClient } from 'graphql-request'
 import {IConnectionParams} from "../index";
 
-export const gqlClient = (config: IConnectionParams) => {
+export interface IGraphQLClient {
+  query: (query: any, headers?: {}) => Promise<{ data: any }>
+}
+
+export const gqlClient = (config: IConnectionParams): IGraphQLClient => {
     const scheme = config.scheme
     const host = config.host
     const defaultHeaders = config.headers

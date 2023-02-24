@@ -7,7 +7,7 @@ export default class Updater {
   private objectsPath: ObjectsPath;
   private errors: any[];
   private className?: string;
-  private id: any;
+  private id?: string;
   private properties?: any[];
   private consistencyLevel?: string
   constructor(client: Connection, objectsPath: ObjectsPath) {
@@ -21,7 +21,7 @@ export default class Updater {
     return this;
   };
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -74,7 +74,7 @@ export default class Updater {
       );
     }
 
-    return this.objectsPath.buildUpdate(this.id, this.className, this.consistencyLevel)
+    return this.objectsPath.buildUpdate(this.id!, this.className, this.consistencyLevel)
       .then((path: string) => this.client.put(path, this.payload()));
   };
 }

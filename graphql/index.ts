@@ -3,7 +3,6 @@ import Getter from "./getter";
 import Explorer from "./explorer";
 import Raw from "./raw";
 import Connection from "../connection";
-import {IWeaviateClient} from "../index";
 
 export interface IWeaviateClientGraphQL {
   get: () => Getter

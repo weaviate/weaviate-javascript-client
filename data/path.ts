@@ -10,35 +10,35 @@ export class ObjectsPath {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  buildCreate(consistencyLevel: any) {
+  buildCreate(consistencyLevel: string) {
     return this.build({consistencyLevel}, [this.addQueryParams]);
   }
-  buildDelete(id: any, className: string) {
+  buildDelete(id: string, className: string) {
     return this.build({id, className, consistencyLevel}, 
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildCheck(id: any, className: any) {
+  buildCheck(id: string, className: string) {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-  buildGetOne(id: any, className: any, additionals: any, consistencyLevel: any, nodeName: any) {
+  buildGetOne(id: string, className: string, additionals: any, consistencyLevel: string, nodeName: any) {
     return this.build({id, className, additionals, consistencyLevel, nodeName},
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(className: any, limit: any, additionals: any) {
+  buildGet(className: string, limit: any, additionals: any) {
     return this.build({className, limit, additionals, after}, [this.addQueryParamsForGet]);
   }
-  buildUpdate(id: any, className: string | undefined, consistencyLevel: string | undefined) {
+  buildUpdate(id: any, className: string | undefined) {
     return this.build({id, className, consistencyLevel}, 
       [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
-  buildMerge(id: any, className: string | undefined, consistencyLevel: string | undefined) {
+  buildMerge(id: any, className: string | undefined) {
     return this.build({id, className, consistencyLevel}, 
       [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
 
   build(params: any, modifiers: any) {
     return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any) => {
-      var path = objectsPathPrefix;
+      let path = objectsPathPrefix;
       modifiers.forEach((modifier: any) => {
         path = modifier(params, path, support);
       });
@@ -46,7 +46,7 @@ export class ObjectsPath {
     });
   }
 
-  addClassNameDeprecatedNotSupportedCheck(params: any, path: any, support: any) {
+  addClassNameDeprecatedNotSupportedCheck(params: any, path: string, support: any) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
         return `${path}/${params.className}`;
@@ -58,7 +58,7 @@ export class ObjectsPath {
     }
     return path;
   }
-  addClassNameDeprecatedCheck(params: any, path: any, support: any) {
+  addClassNameDeprecatedCheck(params: any, path: string, support: any) {
     if (support.supports) {
       if (isValidStringProperty(params.className)) {
         return `${path}/${params.className}`;
@@ -68,13 +68,13 @@ export class ObjectsPath {
     }
     return path;
   }
-  addId(params: any, path: any) {
+  addId(params: any, path: string) {
     if (isValidStringProperty(params.id)) {
       return `${path}/${params.id}`;
     }
     return path;
   }
-  addQueryParams(params: any, path: any) {
+  addQueryParams(params: any, path: string) {
     const queryParams = [];
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
@@ -90,7 +90,7 @@ export class ObjectsPath {
     }
     return path;
   }
-  addQueryParamsForGet(params: any, path: any, support: any) {
+  addQueryParamsForGet(params: any, path: string, support: any) {
     const queryParams = [];
     if (Array.isArray(params.additionals) && params.additionals.length > 0) {
       queryParams.push(`include=${params.additionals.join(",")}`);
@@ -123,7 +123,7 @@ export class ReferencesPath {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  build(id: any, className: any, property: any, consistencyLevel: string) {
+  build(id: string, className: string, property: string, consistencyLevel: string) {
     return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any)=> {
       var path = objectsPathPrefix;
       if (support.supports) {

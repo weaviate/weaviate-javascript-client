@@ -1,45 +1,45 @@
-import { isValidStringProperty } from "../validation/string";
+import {isValidStringProperty} from "../validation/string";
 import Connection from "../connection";
 
 export default class ReferencesBatcher {
   private client: Connection;
   private errors: any[];
-  private fromId: any;
-  private toId: any;
-  private fromClassName: any;
-  private fromRefProp: any;
-  private toClassName: any;
+  private fromId?: string;
+  private toId?: string;
+  private fromClassName?: string;
+  private fromRefProp?: string;
+  private toClassName?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withFromId = (id: any) => {
+  withFromId = (id: string) => {
     this.fromId = id;
     return this;
   };
 
-  withToId = (id: any) => {
+  withToId = (id: string) => {
     this.toId = id;
     return this;
   };
 
-  withFromClassName = (className: any) => {
+  withFromClassName = (className: string) => {
     this.fromClassName = className;
     return this;
   };
 
-  withFromRefProp = (refProp: any) => {
+  withFromRefProp = (refProp: string) => {
     this.fromRefProp = refProp;
     return this;
   };
 
-  withToClassName(className: any) {
+  withToClassName(className: string) {
     this.toClassName = className;
     return this;
   }
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

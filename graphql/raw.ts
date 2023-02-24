@@ -3,7 +3,7 @@ import Connection from "../connection";
 export default class RawGraphQL {
   private client: Connection;
   private errors: any[];
-  private query: any;
+  private query?: string;
 
     constructor(client: Connection/*, quer*/) { // FIXME extra param
         this.client = client;
@@ -16,7 +16,7 @@ export default class RawGraphQL {
     };
 
 
-    validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+    validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
         if (prop == undefined || prop == null || prop.length == 0) {
             this.errors = [
                 ...this.errors,

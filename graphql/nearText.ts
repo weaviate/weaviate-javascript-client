@@ -2,15 +2,15 @@ export default class GraphQLNearText {
   private source: any;
   private autocorrect?: boolean;
   private moveAwayFrom: any;
-  private moveAwayFromConcepts: any;
-  private moveAwayFromForce: any;
-  private moveAwayFromObjects: any;
+  private moveAwayFromConcepts?: string[];
+  private moveAwayFromForce?: number;
+  private moveAwayFromObjects?: string;
   private moveTo: any;
-  private moveToConcepts: any;
-  private moveToForce: any;
-  private moveToObjects: any;
+  private moveToConcepts?: string[];
+  private moveToForce?: number;
+  private moveToObjects?: string;
   private distance?: number;
-  private concepts: any;
+  private concepts?: string[];
   private certainty?: number;
   constructor(nearTextObj: any) {
     this.source = nearTextObj;
@@ -120,7 +120,7 @@ export default class GraphQLNearText {
     }
   }
 
-  parseConcepts(concepts: any[]) {
+  parseConcepts(concepts: string[]) {
     if (!Array.isArray(concepts)) {
       throw new Error("nearText filter: concepts must be an array");
     }

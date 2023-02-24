@@ -4,7 +4,7 @@ import Connection from "../connection";
 export default class Validator {
   private client: Connection;
   private errors: any[];
-  private id: any;
+  private id?: string;
   private properties?: any;
   private className?: string;
   constructor(client: Connection) {
@@ -22,7 +22,7 @@ export default class Validator {
     return this;
   };
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };

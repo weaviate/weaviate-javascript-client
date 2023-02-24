@@ -5,13 +5,13 @@ export default class PropertyCreator {
   private client: Connection;
   private errors: any[];
   private property: any;
-  private className: any;
+  private className?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className: any) => {
+  withClassName = (className: string) => {
     this.className = className;
     return this;
   };

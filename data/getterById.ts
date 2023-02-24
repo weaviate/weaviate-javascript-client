@@ -5,7 +5,7 @@ export default class GetterById {
   private errors: any[];
   private additionals: any[];
   private objectsPath: any;
-  private id: any;
+  private id?: string;
   private className?: string;
   private consistencyLevel: any;
   private nodeName: any;
@@ -16,7 +16,7 @@ export default class GetterById {
     this.additionals = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -59,7 +59,7 @@ export default class GetterById {
   };
 
   buildPath = (): Promise<string> => {
-    return this.objectsPath.buildGetOne(this.id, this.className,
+    return this.objectsPath.buildGetOne(this.id!, this.className!,
       this.additionals, this.consistencyLevel, this.nodeName)
   }
 

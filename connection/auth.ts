@@ -1,4 +1,4 @@
-import {IHttpClient} from "./index";
+import {IHttpClient} from "./httpClient";
 
 interface IAuthenticatorResult {
   accessToken: string
@@ -12,7 +12,7 @@ interface IAuthenticator {
 
 export class Authenticator {
 
-  private readonly http: any
+  private readonly http: IHttpClient
   private readonly creds: any
   private accessToken: string
   private refreshToken?: string;
@@ -312,8 +312,8 @@ class ClientCredentialsAuthenticator implements IAuthenticator {
   };
 
   requestAccessToken = () => {
-    var url = this.openidConfig.provider.token_endpoint;
-    var params = new URLSearchParams({
+    const url = this.openidConfig.provider.token_endpoint;
+    const params = new URLSearchParams({
       grant_type: "client_credentials",
       client_id: this.openidConfig.clientId,
       client_secret: this.creds.clientSecret,

@@ -1,7 +1,7 @@
 export default class GraphQLWhere {
   private source: any;
   private operands?: string;
-  private path?: any[];
+  private path?: string[];
   private valueType?: string;
   private valueContent: any;
   private operator?: string;
@@ -113,7 +113,7 @@ export default class GraphQLWhere {
     this.operator = op;
   }
 
-  parsePath(path: any[]) {
+  parsePath(path: string[]) {
     if (!Array.isArray(path)) {
       throw new Error("where filter: path must be an array");
     }

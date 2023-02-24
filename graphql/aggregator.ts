@@ -9,27 +9,27 @@ export default class Aggregator {
   private client: Connection;
   private errors: any[];
   private includesNearMediaFilter: boolean;
-  private fields: any;
-  private className: any;
-  private whereString: string | undefined;
-  private nearTextString: string | undefined;
-  private nearObjectString: string | undefined;
-  private objectLimit: any;
-  private nearVectorString: string | undefined;
-  private limit: any;
-  private groupBy: any;
+  private fields?: string;
+  private className?: string;
+  private whereString?: string;
+  private nearTextString?: string;
+  private nearObjectString?: string;
+  private objectLimit?: number;
+  private nearVectorString?: string;
+  private limit?: number;
+  private groupBy?: string[];
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
     this.includesNearMediaFilter = false
   }
 
-  withFields = (fields: any) => {
+  withFields = (fields: string) => {
     this.fields = fields;
     return this;
   };
 
-  withClassName = (className: any) => {
+  withClassName = (className: string) => {
     this.className = className;
     return this;
   };
@@ -94,7 +94,7 @@ export default class Aggregator {
     return this;
   };
 
-  withObjectLimit = (objectLimit: any) => {
+  withObjectLimit = (objectLimit: number) => {
     if (!isValidPositiveIntProperty(objectLimit)) {
       throw new Error(
         "objectLimit must be a non-negative integer"
@@ -105,12 +105,12 @@ export default class Aggregator {
     return this;
   };
 
-  withLimit = (limit: any) => {
+  withLimit = (limit: number) => {
     this.limit = limit;
     return this;
   };
 
-  withGroupBy = (groupBy: any) => {
+  withGroupBy = (groupBy: string[]) => {
     this.groupBy = groupBy;
     return this;
   };
@@ -126,7 +126,7 @@ export default class Aggregator {
     }
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

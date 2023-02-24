@@ -9,8 +9,8 @@ export default class Creator {
   private vector: any;
   private className?: string;
   private properties?: any;
-  private id: any;
-  private consistencyLevel: any
+  private id?: string;
+  private consistencyLevel?: string
   constructor(client: Connection, objectsPath: ObjectsPath) {
     this.client = client;
     this.objectsPath = objectsPath;
@@ -32,12 +32,12 @@ export default class Creator {
     return this;
   };
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
 
-  withConsistencyLevel = (cl: any) => {
+  withConsistencyLevel = (cl: string) => {
     this.consistencyLevel = cl;
     return this;
   };

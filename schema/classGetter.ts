@@ -4,7 +4,7 @@ import Connection from "../connection";
 export default class ClassGetter {
   private client: Connection;
   private errors: any[];
-  private className: any;
+  private className?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];

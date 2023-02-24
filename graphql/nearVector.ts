@@ -2,7 +2,7 @@ export default class GraphQLNearVector {
   private source: any;
   private distance?: number;
   private certainty?: number;
-  private vector?: any[];
+  private vector?: number[];
   constructor(nearVectorObj: any) {
     this.source = nearVectorObj;
   }

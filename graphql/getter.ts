@@ -186,7 +186,7 @@ export default class Getter {
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

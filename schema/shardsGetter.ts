@@ -4,13 +4,13 @@ import Connection from "../connection";
 export default class ShardsGetter {
   private client: Connection;
   private errors: any[];
-  private className: any;
+  private className?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className: any) => {
+  withClassName = (className: string) => {
     this.className = className;
     return this;
   };

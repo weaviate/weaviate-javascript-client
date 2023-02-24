@@ -5,13 +5,13 @@ export default class ReferencePayloadBuilder {
   private client: Connection;
   private errors: any[];
   private className?: string;
-  private id: any;
+  private id?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -21,7 +21,7 @@ export default class ReferencePayloadBuilder {
     return this;
   }
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

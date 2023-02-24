@@ -4,7 +4,7 @@ import Connection from "../connection";
 export default class BackupGetter {
 
   private client: Connection
-  private backend: any;
+  private backend?: string;
   private errors: any[];
 
   constructor(client: Connection) {
@@ -12,7 +12,7 @@ export default class BackupGetter {
     this.errors = []
   }
 
-  withBackend(backend: any) {
+  withBackend(backend: string) {
     this.backend = backend;
     return this;
   }

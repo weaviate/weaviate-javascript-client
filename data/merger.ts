@@ -8,8 +8,8 @@ export default class Merger {
   private errors: any[];
   private className?: string;
   private properties?: any[];
-  private id: any;
-  private consistencyLevel: any
+  private id?: string;
+  private consistencyLevel?: string
   constructor(client: Connection, objectsPath: ObjectsPath) {
     this.client = client;
     this.objectsPath = objectsPath;
@@ -26,12 +26,12 @@ export default class Merger {
     return this;
   };
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
 
-  withConsistencyLevel = (cl: any) => {
+  withConsistencyLevel = (cl: string) => {
     this.consistencyLevel = cl;
     return this;
   };
@@ -71,7 +71,7 @@ export default class Merger {
       );
     }
 
-    return this.objectsPath.buildMerge(this.id, this.className, this.consistencyLevel)
+    return this.objectsPath.buildMerge(this.id!, this.className!, this.consistencyLevel!)
       .then((path: string) => this.client.patch(path, this.payload()));
   };
 }

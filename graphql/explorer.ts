@@ -9,26 +9,26 @@ export default class Explorer {
   private client: Connection;
   private errors: any[];
   private params: {};
-  private group?: any[];
+  private group?: string[];
   private nearVectorString?: string;
   private nearImageString?: string;
   private askString?: string;
   private nearObjectString?: string;
   private nearTextString?: string;
-  private limit?: any
-  private fields: any;
+  private limit?: number
+  private fields?: string;
   constructor(client: Connection) {
     this.client = client;
     this.params = {};
     this.errors = [];
   }
 
-  withFields = (fields: any) => {
+  withFields = (fields: string) => {
     this.fields = fields;
     return this;
   };
 
-  withLimit = (limit: any) => {
+  withLimit = (limit: number) => {
     this.limit = limit;
     return this;
   };
@@ -89,7 +89,7 @@ export default class Explorer {
     }
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

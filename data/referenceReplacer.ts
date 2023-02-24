@@ -9,8 +9,8 @@ export default class ReferenceReplacer {
   private errors: any[];
   private references?: any[];
   private className?: string;
-  private refProp: any;
-  private id: any;
+  private refProp?: string;
+  private id?: string;
   private consistencyLevel?: string
   constructor(client: Connection, referencesPath: ReferencesPath, beaconPath: BeaconPath) {
     this.client = client;
@@ -19,7 +19,7 @@ export default class ReferenceReplacer {
     this.errors = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -34,7 +34,7 @@ export default class ReferenceReplacer {
     return this;
   };
 
-  withReferenceProperty = (refProp: any) => {
+  withReferenceProperty = (refProp: string) => {
     this.refProp = refProp;
     return this;
   };
@@ -44,7 +44,7 @@ export default class ReferenceReplacer {
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -77,7 +77,7 @@ export default class ReferenceReplacer {
       : Promise.resolve([]);
 
     return Promise.all([
-      this.referencesPath.build(this.id, this.className, this.refProp, this.consistencyLevel),
+      this.referencesPath.build(this.id!, this.className!, this.refProp!, this.consistencyLevel!),
       payloadPromise
     ]).then(results => {
       const path = results[0];

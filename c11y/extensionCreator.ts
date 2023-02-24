@@ -3,30 +3,30 @@ import Connection from "../connection";
 export default class ExtensionCreator {
   private client: Connection;
   private errors: any[];
-  private concept: any;
-  private definition: any;
-  private weight: any;
+  private concept?: string;
+  private definition?: string;
+  private weight?: number;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withConcept = (concept: any) => {
+  withConcept = (concept: string) => {
     this.concept = concept;
     return this;
   };
 
-  withDefinition = (definition: any) => {
+  withDefinition = (definition: string) => {
     this.definition = definition;
     return this;
   };
 
-  withWeight = (weight: any) => {
+  withWeight = (weight: number) => {
     this.weight = weight;
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -42,7 +42,7 @@ export default class ExtensionCreator {
       "definition",
       "withDefinition(definition)"
     );
-    this.validateIsSet(this.weight, "weight", "withWeight(weight)");
+    this.validateIsSet(this.weight?.toString() || '', "weight", "withWeight(weight)");
   };
 
   payload = () => ({

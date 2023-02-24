@@ -3,7 +3,7 @@ export default class GraphQLSort {
   private sortArgs: any[];
   private errors: any[];
   private order?: string;
-  private path?: any[];
+  private path?: string[];
 
   constructor(sortObj: any) {
     this.source = sortObj;
@@ -77,7 +77,7 @@ export default class GraphQLSort {
     return new GraphQLSort(args).toString();
   }
 
-  parsePath(path: any[]) {
+  parsePath(path: string[]) {
     if (!Array.isArray(path)) {
       throw new Error("sort filter: path must be an array");
     }

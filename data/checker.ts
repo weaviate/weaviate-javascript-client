@@ -5,14 +5,14 @@ export default class Checker {
   private objectsPath: any;
   private errors: any[];
   private className?: string;
-  private id: any;
+  private id?: string;
   constructor(client: Connection, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -22,7 +22,7 @@ export default class Checker {
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

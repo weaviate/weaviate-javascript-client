@@ -8,10 +8,10 @@ export default class ReferenceCreator {
   private referencesPath: ReferencesPath;
   private beaconPath: BeaconPath;
   private errors: any[];
-  private id: any;
+  private id?: string;
   private className?: string;
   private reference: any;
-  private refProp: any;
+  private refProp?: string;
   private consistencyLevel?: string
   constructor(client: Connection, referencesPath: ReferencesPath, beaconPath: BeaconPath) {
     this.client = client;
@@ -20,7 +20,7 @@ export default class ReferenceCreator {
     this.errors = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -35,7 +35,7 @@ export default class ReferenceCreator {
     return this;
   };
 
-  withReferenceProperty = (refProp: any) => {
+  withReferenceProperty = (refProp: string) => {
     this.refProp = refProp;
     return this;
   };
@@ -45,7 +45,7 @@ export default class ReferenceCreator {
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -75,7 +75,7 @@ export default class ReferenceCreator {
     }
 
     return Promise.all([
-      this.referencesPath.build(this.id, this.className, this.refProp, this.consistencyLevel),
+      this.referencesPath.build(this.id!, this.className!, this.refProp!, this.consistencyLevel!),
       this.beaconPath.rebuild(this.reference.beacon)
     ]).then(results => {
       const path = results[0];

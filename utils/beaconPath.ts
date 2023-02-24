@@ -1,4 +1,4 @@
-import { isValidStringProperty } from "../validation/string";
+import {isValidStringProperty} from "../validation/string";
 import {DbVersionSupport} from "./dbVersion";
 
 const beaconPathPrefix = "weaviate://localhost";
@@ -17,15 +17,15 @@ export class BeaconPath {
     this.beaconRegExp = /^weaviate:\/\/localhost(\/([^\/]+))?(\/([^\/]+))?[\/]?$/ig;
   }
 
-  rebuild(beacon: any) {
+  rebuild(beacon: string) {
     return this.dbVersionSupport.supportsClassNameNamespacedEndpointsPromise().then((support: any) => {
       const match = new RegExp(this.beaconRegExp).exec(beacon);
       if (!match) {
         return beacon;
       }
 
-      var className;
-      var id;
+      let className;
+      let id;
       if (match[4] !== undefined) {
         id = match[4];
         className = match[2];
@@ -33,7 +33,7 @@ export class BeaconPath {
         id = match[2];
       }
 
-      var beaconPath = beaconPathPrefix;
+      let beaconPath = beaconPathPrefix;
       if (support.supports) {
         if (isValidStringProperty(className)) {
           beaconPath = `${beaconPath}/${className}`;

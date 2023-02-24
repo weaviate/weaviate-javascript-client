@@ -5,15 +5,15 @@ export default class Deleter {
   private objectsPath: any;
   private errors: any[];
   private className?: string;
-  private id: any;
-  private consistencyLevel: any;
+  private id?: string;
+  private consistencyLevel?: string;
   constructor(client: Connection, objectsPath: any) {
     this.client = client;
     this.objectsPath = objectsPath;
     this.errors = [];
   }
 
-  withId = (id: any) => {
+  withId = (id: string) => {
     this.id = id;
     return this;
   };
@@ -23,12 +23,12 @@ export default class Deleter {
     return this;
   }
 
-  withConsistencyLevel = (cl: any) => {
+  withConsistencyLevel = (cl: string) => {
     this.consistencyLevel = cl;
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

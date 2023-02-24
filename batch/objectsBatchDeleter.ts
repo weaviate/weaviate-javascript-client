@@ -3,10 +3,10 @@ import { buildObjectsPath } from "./path"
 import Connection from "../connection";
 
 export default class ObjectsBatchDeleter {
-  private className: any;
-  private whereFilter: any;
-  private output: any;
-  private dryRun: any;
+  private className?: string;
+  private whereFilter?: any;
+  private output?: any;
+  private dryRun?: boolean;
   private errors: any[];
   private client: Connection;
 
@@ -15,7 +15,7 @@ export default class ObjectsBatchDeleter {
     this.errors = [];
   }
 
-  withClassName(className: any) {
+  withClassName(className: string) {
     this.className = className;
     return this;
   }
@@ -30,7 +30,7 @@ export default class ObjectsBatchDeleter {
     return this;
   }
 
-  withDryRun(dryRun: any) {
+  withDryRun(dryRun: boolean) {
     this.dryRun = dryRun;
     return this;
   }

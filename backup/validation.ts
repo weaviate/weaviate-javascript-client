@@ -1,6 +1,6 @@
 import { isValidStringProperty } from "../validation/string";
 
-export function validateIncludeClassNames(classNames: any[]) {
+export function validateIncludeClassNames(classNames?: string[]) {
   if (Array.isArray(classNames)) {
     let errors: any[] = [];
     classNames.forEach(className => {
@@ -16,7 +16,7 @@ export function validateIncludeClassNames(classNames: any[]) {
   return [];
 }
 
-export function validateExcludeClassNames(classNames: any[]) {
+export function validateExcludeClassNames(classNames?: string[]) {
   if (Array.isArray(classNames)) {
     let errors: any[] = [];
     classNames.forEach(className => {
@@ -32,14 +32,14 @@ export function validateExcludeClassNames(classNames: any[]) {
   return [];
 }
 
-export function validateBackend(backend: string) {
+export function validateBackend(backend?: string) {
   if (!isValidStringProperty(backend)) {
     return ["string backend must set - set with .withBackend(backend)"];
   }
   return [];
 }
 
-export function validateBackupId(backupId: string) {
+export function validateBackupId(backupId?: string) {
   if (!isValidStringProperty(backupId)) {
     return ["string backupId must be set - set with .withBackupId(backupId)"];
   }

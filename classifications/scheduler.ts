@@ -6,10 +6,10 @@ export default class Scheduler {
   private errors: any[];
   private waitTimeout: number;
   private waitForCompletion: boolean;
-  private classifyProperties?: any[];
-  private basedOnProperties?: any[];
-  private settings: any;
-  private type: any;
+  private classifyProperties?: string[];
+  private basedOnProperties?: string[];
+  private settings?: string;
+  private type?: string;
   private className?: string;
   constructor(client: Connection) {
     this.client = client;
@@ -18,12 +18,12 @@ export default class Scheduler {
     this.waitForCompletion = false;
   }
 
-  withType = (type: any) => {
+  withType = (type: string) => {
     this.type = type;
     return this;
   };
 
-  withSettings = (settings: any) => {
+  withSettings = (settings: string) => {
     this.settings = settings;
     return this;
   };
@@ -33,12 +33,12 @@ export default class Scheduler {
     return this;
   };
 
-  withClassifyProperties = (props: any[]) => {
+  withClassifyProperties = (props: string[]) => {
     this.classifyProperties = props;
     return this;
   };
 
-  withBasedOnProperties = (props: any[]) => {
+  withBasedOnProperties = (props: string[]) => {
     this.basedOnProperties = props;
     return this;
   };
@@ -53,7 +53,7 @@ export default class Scheduler {
     return this;
   };
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null | any[], name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,

@@ -3,7 +3,7 @@ import { isValidStringProperty } from "../validation/string";
 
 export default class GraphQLHybrid {
   private source: any;
-  private query?: any;
+  private query?: string;
   private vector?: number[];
   private alpha?: number;
 

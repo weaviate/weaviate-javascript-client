@@ -1,18 +1,17 @@
 import {CreateStatus} from "./consts";
 import {validateBackend, validateBackupId, validateExcludeClassNames, validateIncludeClassNames} from "./validation";
 import BackupCreateStatusGetter from "./backupCreateStatusGetter";
-import {IWeaviateClient} from "../index";
 import Connection from "../connection";
 
 const WAIT_INTERVAL = 1000;
 
 export default class BackupCreator {
 
-  private includeClassNames: any;
-  private excludeClassNames: any;
-  private backend: any;
-  private backupId: any;
-  private waitForCompletion: any;
+  private includeClassNames?: string[];
+  private excludeClassNames?: string[];
+  private backend?: string;
+  private backupId?: string;
+  private waitForCompletion!: boolean;
   private errors: any[];
   private client: Connection;
   private statusGetter: BackupCreateStatusGetter;
@@ -23,7 +22,7 @@ export default class BackupCreator {
     this.statusGetter = statusGetter;
   }
 
-  withIncludeClassNames(...classNames: any) {
+  withIncludeClassNames(...classNames: string[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -32,7 +31,7 @@ export default class BackupCreator {
     return this;
   }
 
-  withExcludeClassNames(...classNames: any) {
+  withExcludeClassNames(...classNames: string[]) {
     let cls = classNames;
     if (classNames.length && Array.isArray(classNames[0])) {
       cls = classNames[0];
@@ -41,17 +40,17 @@ export default class BackupCreator {
     return this;
   }
 
-  withBackend(backend: any) {
+  withBackend(backend: string) {
     this.backend = backend;
     return this;
   }
 
-  withBackupId(backupId: any) {
+  withBackupId(backupId: string) {
     this.backupId = backupId;
     return this;
   }
 
-  withWaitForCompletion(waitForCompletion: any) {
+  withWaitForCompletion(waitForCompletion: boolean) {
     this.waitForCompletion = waitForCompletion;
     return this;
   }
@@ -95,8 +94,8 @@ export default class BackupCreator {
       this._create(payload)
         .then((createResponse: any) => {
           this.statusGetter
-            .withBackend(this.backend)
-            .withBackupId(this.backupId);
+            .withBackend(this.backend!)
+            .withBackupId(this.backupId!);
 
           const loop = () => {
             this.statusGetter.do()

@@ -1,4 +1,3 @@
-import Connection from "../connection";
 import {IWeaviateClient} from "../index";
 
 export const PIZZA_CLASS_NAME = "Pizza";

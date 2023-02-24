@@ -1,11 +1,11 @@
 export default class GraphQLAsk {
   private source: any;
-  private question: any;
-  private properties: any;
-  private certainty: any;
-  private autocorrect?: Boolean;
-  private rerank?: Boolean;
-  private distance: any;
+  private question?: string;
+  private properties?: string[];
+  private certainty?: number;
+  private autocorrect?: boolean;
+  private rerank?: boolean;
+  private distance?: number;
   constructor(askObj: any) {
     this.source = askObj;
   }
@@ -28,7 +28,6 @@ export default class GraphQLAsk {
       args = [...args, `certainty:${this.certainty}`];
     }
 
-    // @ts-ignore
     if (this.distance) {
       args = [...args, `distance:${this.distance}`];
     }

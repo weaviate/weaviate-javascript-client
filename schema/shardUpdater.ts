@@ -4,15 +4,15 @@ import Connection from "../connection";
 export default class ShardUpdater {
   private client: Connection;
   private errors: any[];
-  private className: any;
-  private shardName: any;
-  private status: any;
+  private className?: string;
+  private shardName?: string;
+  private status?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  withClassName = (className: any) => {
+  withClassName = (className: string) => {
     this.className = className;
     return this;
   };
@@ -26,7 +26,7 @@ export default class ShardUpdater {
     }
   };
 
-  withShardName = (shardName: any) => {
+  withShardName = (shardName: string) => {
     this.shardName = shardName;
     return this;
   };
@@ -40,7 +40,7 @@ export default class ShardUpdater {
     }
   };
 
-  withStatus = (status: any) => {
+  withStatus = (status: string) => {
     this.status = status
     return this;
   }

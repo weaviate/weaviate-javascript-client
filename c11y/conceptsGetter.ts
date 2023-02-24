@@ -3,13 +3,13 @@ import Connection from "../connection";
 export default class ConceptsGetter {
   private client: Connection;
   private errors: any[];
-  private concept: any;
+  private concept?: string;
   constructor(client: Connection) {
     this.client = client;
     this.errors = [];
   }
 
-  validateIsSet = (prop: string | any[] | null | undefined, name: string, setter: string) => {
+  validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
         ...this.errors,
@@ -18,7 +18,7 @@ export default class ConceptsGetter {
     }
   };
 
-  withConcept = (concept: any) => {
+  withConcept = (concept: string) => {
     this.concept = concept;
     return this;
   };

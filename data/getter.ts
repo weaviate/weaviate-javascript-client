@@ -7,7 +7,7 @@ export default class Getter {
   private errors: any[];
   private additionals: any[];
   private className?: string;
-  private limit: any;
+  private limit?: number;
   private after: string
   constructor(client: Connection, objectsPath: ObjectsPath) {
     this.client = client;
@@ -26,7 +26,7 @@ export default class Getter {
     return this;
   };
 
-  withLimit = (limit: any) => {
+  withLimit = (limit: number) => {
     this.limit = limit;
     return this;
   };
@@ -47,7 +47,7 @@ export default class Getter {
       );
     }
 
-    return this.objectsPath.buildGet(this.className, this.limit, 
+    return this.objectsPath.buildGet(this.className, this.limit,
       this.additionals, this.after)
       .then(this.client.get);
   };

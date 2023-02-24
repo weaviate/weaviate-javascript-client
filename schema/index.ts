@@ -7,7 +7,6 @@ import ShardsGetter from "./shardsGetter";
 import ShardUpdater from "./shardUpdater";
 import ShardsUpdater from "./shardsUpdater";
 import Connection from "../connection";
-import {IWeaviateClient} from "../index";
 
 export interface IWeaviateClientSchema {
   classCreator: () => ClassCreator

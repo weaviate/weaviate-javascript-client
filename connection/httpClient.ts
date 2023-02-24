@@ -1,7 +1,19 @@
 import fetch from 'isomorphic-fetch'
 import {IConnectionParams} from "../index";
 
-export const httpClient = (config: IConnectionParams) => {
+export interface IHttpClient {
+  patch: (path: string, payload: any, bearerToken?: string) => any;
+  head: (path: string, payload: any, bearerToken?: string) => any;
+  post: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any;
+  get: (path: string, expectReturnContent?: boolean, bearerToken?: string) => any;
+  externalPost: (externalUrl: string, body: any, contentType: any) => any;
+  getRaw: (path: string, bearerToken?: string) => any;
+  delete: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any;
+  put: (path: string, payload: any, expectReturnContent?: boolean, bearerToken?: string) => any;
+  externalGet: (externalUrl: string) => any
+}
+
+export const httpClient = (config: IConnectionParams): IHttpClient => {
   const baseUri = `${config.scheme}://${config.host}/v1`
   const url = makeUrl(baseUri);
 

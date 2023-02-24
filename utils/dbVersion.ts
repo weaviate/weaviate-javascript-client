@@ -7,7 +7,7 @@ export class DbVersionSupport {
   }
 
   supportsClassNameNamespacedEndpointsPromise() {
-    return this.dbVersionProvider.getVersionPromise().then((version: string | undefined) => ({
+    return this.dbVersionProvider.getVersionPromise().then((version?: string) => ({
       version,
       supports: this.supportsClassNameNamespacedEndpoints(version),
       warns: {
@@ -23,7 +23,7 @@ export class DbVersionSupport {
   }
 
   // >= 1.14
-  supportsClassNameNamespacedEndpoints(version: string | undefined) {
+  supportsClassNameNamespacedEndpoints(version?: string) {
     if (typeof version === "string") {
       const versionNumbers = version.split(".");
       if (versionNumbers.length >= 2) {
@@ -39,7 +39,7 @@ export class DbVersionSupport {
 const EMPTY_VERSION = "";
 export class DbVersionProvider {
   private versionPromise?: Promise<string | undefined>;
-  private emptyVersionPromise: Promise<string>;
+  private readonly emptyVersionPromise: Promise<string>;
   private versionGetter: () => Promise<string>;
 
   constructor(versionGetter: () => Promise<string>) {
@@ -66,7 +66,7 @@ export class DbVersionProvider {
     return Promise.resolve(false);
   }
 
-  assignPromise(version: string | undefined) {
+  assignPromise(version?: string) {
     if (version === EMPTY_VERSION) {
       return this.emptyVersionPromise;
     }
