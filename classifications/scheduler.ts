@@ -8,7 +8,7 @@ export default class Scheduler {
   private waitForCompletion: boolean;
   private classifyProperties?: string[];
   private basedOnProperties?: string[];
-  private settings?: string;
+  private settings?: any;
   private type?: string;
   private className?: string;
   constructor(client: Connection) {
@@ -23,7 +23,7 @@ export default class Scheduler {
     return this;
   };
 
-  withSettings = (settings: string) => {
+  withSettings = (settings: any) => {
     this.settings = settings;
     return this;
   };

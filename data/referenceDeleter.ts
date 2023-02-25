@@ -8,7 +8,7 @@ export default class ReferenceDeleter {
   private referencesPath: ReferencesPath;
   private beaconPath: BeaconPath;
   private errors: any[];
-  private refProp?: string;
+  private refProp?: any;
   private id?: string;
   private className?: string;
   private reference: any;
@@ -30,7 +30,7 @@ export default class ReferenceDeleter {
     return this;
   }
 
-  withReference = (ref: string) => {
+  withReference = (ref: any) => {
     this.reference = ref;
     return this;
   };
