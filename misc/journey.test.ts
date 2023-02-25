@@ -16,7 +16,9 @@ describe("misc endpoints", () => {
       .liveChecker()
       .do()
       .then((res: any) => expect(res).toEqual(true))
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("reports as not live with a broken url", () => {
@@ -29,7 +31,9 @@ describe("misc endpoints", () => {
       .liveChecker()
       .do()
       .then((res: any) => expect(res).toEqual(false))
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("reports as ready", () => {
@@ -37,7 +41,9 @@ describe("misc endpoints", () => {
       .readyChecker()
       .do()
       .then((res: any) => expect(res).toEqual(true))
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("reports as not ready with a broken url", () => {
@@ -50,7 +56,9 @@ describe("misc endpoints", () => {
       .readyChecker()
       .do()
       .then((res: any) => expect(res).toEqual(false))
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("displays meta info", () => {
@@ -64,7 +72,9 @@ describe("misc endpoints", () => {
           100
         );
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("shows oidc config as undefined when not set", () => {
@@ -74,7 +84,9 @@ describe("misc endpoints", () => {
       .then((res: any) => {
         expect(res).toBeUndefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("shows oidc config when set", () => {
@@ -84,7 +96,7 @@ describe("misc endpoints", () => {
       .then((res: any) => {
         expect(res.clientId).toEqual("wcs")
         expect(res.href).toContain(".well-known/openid-configuration")
-        expect(res.scopes).toEqual(["openid","email"])
+        expect(res.scopes).toEqual(["openid", "email"])
       })
   });
 });

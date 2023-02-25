@@ -1,5 +1,6 @@
 import weaviate from '../index'
-const { createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME } = require("../utils/testData");
+
+const {createTestFoodSchemaAndData, cleanupTestFood, PIZZA_CLASS_NAME, SOUP_CLASS_NAME} = require("../utils/testData");
 
 const EXPECTED_WEAVIATE_VERSION = "1.18.0-alpha.1"
 const EXPECTED_WEAVIATE_GIT_HASH = "41f7cb9"
@@ -63,7 +64,9 @@ describe("cluster nodes endpoint", () => {
           }
         }
       })
-      .catch((e: any) => { throw new Error("should not fail on getting nodes: " + e)})
+      .catch((e: any) => {
+        throw new Error("should not fail on getting nodes: " + e)
+      })
   });
 
   it("cleans up db", () => cleanupTestFood(client));

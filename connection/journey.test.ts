@@ -4,7 +4,7 @@ import Connection from "./index";
 import weaviate from '../index'
 
 describe("connection", () => {
-  it("makes an Azure logged-in request with client credentials", async() => {
+  it("makes an Azure logged-in request with client credentials", async () => {
     if (process.env.AZURE_CLIENT_SECRET == undefined || process.env.AZURE_CLIENT_SECRET == "") {
       console.warn("Skipping because `AZURE_CLIENT_SECRET` is not set");
       return;
@@ -24,10 +24,12 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
-  it("makes an Okta logged-in request with client credentials", async() => {
+  it("makes an Okta logged-in request with client credentials", async () => {
     if (process.env.OKTA_CLIENT_SECRET == undefined || process.env.OKTA_CLIENT_SECRET == "") {
       console.warn("Skipping because `OKTA_CLIENT_SECRET` is not set");
       return;
@@ -48,7 +50,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("makes an Okta logged-in request with username/password", async () => {
@@ -72,7 +76,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("makes a WCS logged-in request with username/password", async () => {
@@ -96,7 +102,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("makes a scopeless WCS logged-in request with username/password", async () => {
@@ -115,7 +123,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("makes a logged-in request with access token", async () => {
@@ -151,7 +161,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("uses refresh token to fetch new access token", async () => {
@@ -189,7 +201,9 @@ describe("connection", () => {
         expect(resp).toBeDefined();
         expect(resp != "").toBeTruthy();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("fails to access auth-enabled server without client auth", async () => {
@@ -228,7 +242,9 @@ describe("connection", () => {
       .then((res: any) => {
         expect(res.version).toBeDefined();
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
 
     expect(logSpy).toHaveBeenCalledWith(
       "client is configured for authentication, but server is not");
@@ -251,9 +267,11 @@ describe("connection", () => {
     await conn.login()
       .then(resp => {
         expect(resp).toBeDefined();
-        expect(resp ).toEqual("abcd1234");
+        expect(resp).toEqual("abcd1234");
       })
-      .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
 
     expect(logSpy).toHaveBeenCalledWith(
       "AuthAccessTokenCredentials not provided with refreshToken, cannot refresh");

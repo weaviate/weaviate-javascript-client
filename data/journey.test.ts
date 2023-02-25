@@ -18,7 +18,7 @@ describe("data", () => {
   });
 
   it("validates a valid thing", () => {
-    const properties = { stringProp: "without-id" };
+    const properties = {stringProp: "without-id"};
 
     return client.data
       .validator()
@@ -26,14 +26,16 @@ describe("data", () => {
       .withClassName(thingClassName)
       .withProperties(properties)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res).toEqual(true);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("(validator) errors on an invalid valid object", () => {
-    const properties = { stringProp: 234 }; // number is invalid
+    const properties = {stringProp: 234}; // number is invalid
 
     return client.data
       .validator()
@@ -41,7 +43,7 @@ describe("data", () => {
       .withClassName(thingClassName)
       .withProperties(properties)
       .do()
-      .catch((e:any) => {
+      .catch((e: any) => {
         expect(e).toEqual(
           `usage error (422): {"error":[{"message":"invalid object: invalid string property 'stringProp' on class 'DataJourneyTestThing': not a string, but json.Number"}]}`
         );
@@ -51,22 +53,24 @@ describe("data", () => {
   let implicitThingId: any;
 
   it("creates a new thing object without an explicit id", () => {
-    const properties = { stringProp: "without-id" };
+    const properties = {stringProp: "without-id"};
 
     return client.data
       .creator()
       .withClassName(thingClassName)
       .withProperties(properties)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual(properties);
         implicitThingId = res.id;
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("creates a new thing object with an explicit id", () => {
-    const properties = { stringProp: "with-id" };
+    const properties = {stringProp: "with-id"};
     // explicitly make this an all-zero UUID. This way we can be sure that it's
     // the first to come up when using the cursor API. Since this test suite
     // also contains dynamicaly generated IDs, this is the only way to make
@@ -80,11 +84,13 @@ describe("data", () => {
       .withProperties(properties)
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("creates another thing", () => {
@@ -98,11 +104,13 @@ describe("data", () => {
       .withProperties(properties)
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("waits for es index updates", () => {
@@ -116,7 +124,9 @@ describe("data", () => {
     return client.data
       .creator()
       .do()
-      .then(() => {throw new Error("it should have errord")})
+      .then(() => {
+        throw new Error("it should have errord")
+      })
       .catch((err: any) => {
         expect(err).toEqual(
           new Error(
@@ -130,21 +140,23 @@ describe("data", () => {
     return client.data
       .getter()
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.objects).toHaveLength(3);
         expect(res.objects).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               id: "00000000-0000-0000-0000-000000000000",
-              properties: { stringProp: "with-id" },
+              properties: {stringProp: "with-id"},
             }),
             expect.objectContaining({
-              properties: { stringProp: "without-id" },
+              properties: {stringProp: "without-id"},
             }),
           ])
         );
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("gets all classes objects", () => {
@@ -152,21 +164,22 @@ describe("data", () => {
       .getter()
       .withClassName(thingClassName)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.objects).toHaveLength(2);
         expect(res.objects).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               id: "00000000-0000-0000-0000-000000000000",
-              properties: { stringProp: "with-id" },
+              properties: {stringProp: "with-id"},
             }),
             expect.objectContaining({
-              properties: { stringProp: "without-id" },
+              properties: {stringProp: "without-id"},
             }),
           ])
         );
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
   });
 
   it("gets all classes after a specfic object (Cursor API)", () => {
@@ -199,7 +212,7 @@ describe("data", () => {
       .withVector()
       .withLimit(2)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.objects).toHaveLength(2);
         expect(res.objects[0].vector.length).toBeGreaterThan(10);
         expect(res.objects[0].additional.interpretation).toBeDefined();
@@ -208,7 +221,9 @@ describe("data", () => {
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("gets all classes objects  with all optional _additional params", () => {
@@ -221,14 +236,16 @@ describe("data", () => {
       .withAdditional("featureProjection")
       .withVector()
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.objects).toHaveLength(2);
         expect(res.objects[0].vector.length).toBeGreaterThan(10);
         expect(res.objects[0].additional.interpretation).toBeDefined();
         expect(res.objects[0].additional.featureProjection).toBeDefined();
         expect(res.objects[0].additional.nearestNeighbors).toBeDefined();
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("gets one thing by id only", () => {
@@ -236,15 +253,17 @@ describe("data", () => {
       .getterById()
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res).toEqual(
           expect.objectContaining({
             id: "00000000-0000-0000-0000-000000000000",
-            properties: { stringProp: "with-id" },
+            properties: {stringProp: "with-id"},
           })
         );
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("gets one thing by id and class name", () => {
@@ -253,15 +272,17 @@ describe("data", () => {
       .withClassName(thingClassName)
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res).toEqual(
           expect.objectContaining({
             id: "00000000-0000-0000-0000-000000000000",
-            properties: { stringProp: "with-id" },
+            properties: {stringProp: "with-id"},
           })
         );
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("fails to get one thing by id with invalid class name", () => {
@@ -284,22 +305,26 @@ describe("data", () => {
       .withAdditional("nearestNeighbors")
       .withVector()
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.vector.length).toBeGreaterThan(10);
         expect(res.additional.interpretation).toBeDefined();
         expect(res.additional.nearestNeighbors).toBeDefined();
         // not testing for classification as that's only set if the object was
         // actually classified, this one wasn't
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("errors if the id is empty", () => {
     return client.data
       .getterById()
       .do()
-      .then(() => {throw new Error("it should have errord")})
-      .catch((e:any) => {
+      .then(() => {
+        throw new Error("it should have errord")
+      })
+      .catch((e: any) => {
         expect(e).toEqual(
           new Error(
             "invalid usage: id must be set - initialize with getterById(id)"
@@ -314,7 +339,7 @@ describe("data", () => {
       .getterById()
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         // alter the schema
         const properties = res.properties;
         properties.stringProp = "thing-updated";
@@ -325,12 +350,14 @@ describe("data", () => {
           .withProperties(properties)
           .do();
       })
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual({
           stringProp: "thing-updated",
         });
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("updates a thing by id and class name", () => {
@@ -340,7 +367,7 @@ describe("data", () => {
       .withId(id)
       .withClassName(thingClassName)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         const properties = res.properties;
         properties.stringProp = "thing-updated-with-class-name";
         return client.data
@@ -350,12 +377,14 @@ describe("data", () => {
           .withProperties(properties)
           .do();
       })
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual({
           stringProp: "thing-updated-with-class-name",
         });
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("merges a thing", () => {
@@ -364,7 +393,7 @@ describe("data", () => {
       .getterById()
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         // alter the schema
         const properties = res.properties;
         properties.intProp = 7;
@@ -375,7 +404,9 @@ describe("data", () => {
           .withProperties(properties)
           .do();
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("adds a reference to a thing by id only", () => {
@@ -390,7 +421,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload()
       )
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("replaces all references of a thing by id only", () => {
@@ -405,7 +438,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload(),
       ])
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("deletes a single reference of a thing by id only", () => {
@@ -420,7 +455,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).payload()
       )
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("adds a reference to a thing by id and class name", () => {
@@ -436,7 +473,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("replaces all references of a thing by id and class name", () => {
@@ -452,7 +491,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload(),
       ])
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("deletes a single reference of a thing by id and class name", () => {
@@ -468,7 +509,9 @@ describe("data", () => {
         client.data.referencePayloadBuilder().withId(targetId).withClassName(thingClassName).payload()
       )
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("checks that object exists by id only", () => {
@@ -481,7 +524,9 @@ describe("data", () => {
           fail("it should exist in DB")
         }
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("checks that object exists by id and class name", () => {
@@ -495,7 +540,9 @@ describe("data", () => {
           fail("it should exist in DB")
         }
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("deletes a thing by id only", () => {
@@ -503,7 +550,9 @@ describe("data", () => {
       .deleter()
       .withId("00000000-0000-0000-0000-000000000000")
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("checks that object doesn't exist anymore with delete by id only", () => {
@@ -516,11 +565,13 @@ describe("data", () => {
           fail("it should not exist in DB")
         }
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("deletes a thing with id and class name", async () => {
-    const properties = { stringProp: "with-id" };
+    const properties = {stringProp: "with-id"};
     const id = "6781a974-cfbf-455d-ace8-f1dba4564230";
 
     await client.data
@@ -529,18 +580,22 @@ describe("data", () => {
       .withProperties(properties)
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual(properties);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
 
     return client.data
       .deleter()
       .withId(id)
       .withClassName(thingClassName)
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("checks that object doesn't exist anymore with delete by id and class name", () => {
@@ -553,7 +608,9 @@ describe("data", () => {
           fail("it should not exist in DB")
         }
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("verifies there are now fewer things (after delete)", () => {
@@ -561,15 +618,17 @@ describe("data", () => {
       client.data
         .getter()
         .do()
-        .then((res:any) => {
+        .then((res: any) => {
           expect(res.objects).toHaveLength(2);
         })
-        .catch((e:any) => {throw new Error("it should not have errord: " + e)}),
+        .catch((e: any) => {
+          throw new Error("it should not have errord: " + e)
+        }),
     ]);
   });
 
   it("creates a new class with custom vector and explicit id", () => {
-    const properties = { foo: "bar" };
+    const properties = {foo: "bar"};
     const id = "aaaac06c-463f-466c-9092-5930dbac3887";
     const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
 
@@ -580,12 +639,14 @@ describe("data", () => {
       .withVector(vector)
       .withId(id)
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.properties).toEqual(properties);
         expect(res.vector).toEqual(vector);
         expect(res.id).toEqual(id);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("verifies that class with custom vector has been created", () => {
@@ -597,10 +658,12 @@ describe("data", () => {
       .withId(id)
       .withVector()
       .do()
-      .then((res:any) => {
+      .then((res: any) => {
         expect(res.vector).toEqual(vector);
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("deletes a class with custom vector", () => {
@@ -608,7 +671,9 @@ describe("data", () => {
       .deleter()
       .withId("aaaac06c-463f-466c-9092-5930dbac3887")
       .do()
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("forms a get by id query with node_name set", () => {
@@ -625,7 +690,9 @@ describe("data", () => {
         expect(path).toContain("?include=vector");
         expect(path).toContain("&node_name=node1");
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
   })
 
   it("forms a get by id query with consistency_level set", () => {
@@ -642,8 +709,9 @@ describe("data", () => {
         expect(path).toContain("?include=vector");
         expect(path).toContain("consistency_level=QUORUM");
       })
-      .catch((e:any) => {throw new Error("it should not have errord: " + e)});
-  })
+      .catch((e: any) => {
+        throw new Error("it should not have errord: " + e)
+      });
 
   it("creates object with consistency_level set", async () => {
     const id = "144d1944-3ab4-4aa1-8095-92429d6cbaba";

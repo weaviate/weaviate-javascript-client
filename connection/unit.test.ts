@@ -1,4 +1,4 @@
-import { testServer } from "../test/server";
+import {testServer} from "../test/server";
 import {
   AuthClientCredentials,
   AuthUserPasswordCredentials,
@@ -25,7 +25,9 @@ describe("mock server auth tests", () => {
         expect(conn.auth.refreshToken).toEqual("refresh_token_000");
         expect(conn.auth.expiresAt).toBeGreaterThan(Date.now());
       })
-      .catch(e => {throw new Error("it should not have failed: " + e)})
+      .catch(e => {
+        throw new Error("it should not have failed: " + e)
+      })
 
     const request = server.lastRequest();
 
@@ -54,7 +56,9 @@ describe("mock server auth tests", () => {
         expect(conn.auth.refreshToken).toEqual("refresh_token_000");
         expect(conn.auth.expiresAt).toBeGreaterThan(Date.now());
       })
-      .catch(e => {throw new Error("it should not have failed: " + e)})
+      .catch(e => {
+        throw new Error("it should not have failed: " + e)
+      })
 
     const request = server.lastRequest();
 
@@ -87,7 +91,9 @@ describe("mock server auth tests", () => {
         expect(conn.auth.refreshToken).toEqual("refresh_token_000");
         expect(conn.auth.expiresAt).toBeGreaterThan(Date.now());
       })
-      .catch(e => {throw new Error("it should not have failed: " + e)})
+      .catch(e => {
+        throw new Error("it should not have failed: " + e)
+      })
 
     const request = server.lastRequest();
 

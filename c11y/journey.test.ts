@@ -1,4 +1,5 @@
 import weaviate from '../index'
+
 describe("c11y endpoints", () => {
   const client = weaviate.client({
     scheme: "http",
@@ -21,7 +22,7 @@ describe("c11y endpoints", () => {
       .withConcept("clientalmostdonehappyness")
       .withDefinition(
         "the happyness you feel when the Weaviate Javascript client " +
-          "is almost complete and ready to be released"
+        "is almost complete and ready to be released"
       )
       .withWeight(1)
       .do()

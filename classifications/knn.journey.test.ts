@@ -21,7 +21,7 @@ describe("a classification journey", () => {
       return client.classifications
         .scheduler()
         .withType("knn")
-        .withSettings({ k: 3 })
+        .withSettings({k: 3})
         .withClassName("ClassificationJourneySource")
         .withClassifyProperties(["toTarget"])
         .withBasedOnProperties(["description"])
@@ -30,7 +30,9 @@ describe("a classification journey", () => {
           expect(res.id).toBeDefined();
           id = res.id;
         })
-        .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+        .catch((e: any) => {
+          throw new Error("it should not have errord: " + e)
+        });
     });
 
     it("is now completed", () => {
@@ -57,7 +59,9 @@ describe("a classification journey", () => {
               res.status == "completed" && resolve(undefined);
             });
         }, 500);
-      }).catch(() => {throw new Error("timed out")});
+      }).catch(() => {
+        throw new Error("timed out")
+      });
     });
 
     it("waits for es index updates to have refreshed", () => {
@@ -108,7 +112,7 @@ describe("a classification journey", () => {
       return client.classifications
         .scheduler()
         .withType("knn")
-        .withSettings({ k: 3 })
+        .withSettings({k: 3})
         .withClassName("ClassificationJourneySource")
         .withClassifyProperties(["toTarget"])
         .withBasedOnProperties(["description"])
@@ -119,7 +123,9 @@ describe("a classification journey", () => {
           expect(res.status).toEqual("completed");
           id = res.id;
         })
-        .catch((e: any) => {throw new Error("it should not have errord: " + e)});
+        .catch((e: any) => {
+          throw new Error("it should not have errord: " + e)
+        });
     });
 
     it("waits for es index updates to have refreshed", () => {
@@ -168,7 +174,7 @@ describe("a classification journey", () => {
       return client.classifications
         .scheduler()
         .withType("knn")
-        .withSettings({ k: 3 })
+        .withSettings({k: 3})
         .withClassName("ClassificationJourneySource")
         .withClassifyProperties(["toTarget"])
         .withBasedOnProperties(["description"])
@@ -182,7 +188,7 @@ describe("a classification journey", () => {
           expect(e).toEqual(
             new Error(
               "classification didn't finish within configured timeout, " +
-                "set larger timeout with .withWaitTimeout(timeout)"
+              "set larger timeout with .withWaitTimeout(timeout)"
             )
           );
         });
@@ -229,14 +235,14 @@ const setup = async (client: IWeaviateClient) => {
   await client.data
     .creator()
     .withClassName("ClassificationJourneyTarget")
-    .withProperties({ name: "Dessert" })
+    .withProperties({name: "Dessert"})
     .withId(targetDessertId)
     .do();
 
   await client.data
     .creator()
     .withClassName("ClassificationJourneyTarget")
-    .withProperties({ name: "Savory" })
+    .withProperties({name: "Savory"})
     .withId(targetSavoryId)
     .do();
   // import training data
@@ -246,7 +252,7 @@ const setup = async (client: IWeaviateClient) => {
     .withClassName("ClassificationJourneySource")
     .withProperties({
       description: "Lots of Sugar, Cream and Flour. Maybe Eggs.",
-      toTarget: [{ beacon: beaconTo(targetDessertId) }],
+      toTarget: [{beacon: beaconTo(targetDessertId)}],
     })
     .do();
   await client.data
@@ -254,7 +260,7 @@ const setup = async (client: IWeaviateClient) => {
     .withClassName("ClassificationJourneySource")
     .withProperties({
       description: "French Fries and Sausage",
-      toTarget: [{ beacon: beaconTo(targetSavoryId) }],
+      toTarget: [{beacon: beaconTo(targetSavoryId)}],
     })
     .do();
 

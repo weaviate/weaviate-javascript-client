@@ -21,32 +21,32 @@ const someObjects = [
   {
     class: thingClassName,
     id: thingIds[0],
-    properties: { stringProp: "foo1" },
+    properties: {stringProp: "foo1"},
   },
   {
     class: thingClassName,
     id: thingIds[1],
-    properties: { stringProp: "bar1" },
+    properties: {stringProp: "bar1"},
   },
   {
     class: thingClassName,
     id: thingIds[2],
-    properties: { stringProp: "foo2" },
+    properties: {stringProp: "foo2"},
   },
   {
     class: thingClassName,
     id: thingIds[3],
-    properties: { stringProp: "bar2" },
+    properties: {stringProp: "bar2"},
   },
   {
     class: otherThingClassName,
     id: otherThingIds[0],
-    properties: { stringProp: "foo3" },
+    properties: {stringProp: "foo3"},
   },
   {
     class: otherThingClassName,
     id: otherThingIds[1],
-    properties: { stringProp: "bar3" },
+    properties: {stringProp: "bar3"},
   },
 ];
 
@@ -97,12 +97,12 @@ describe("batch importing", () => {
         {
           class: thingClassName,
           id: thingIds[0],
-          properties: { stringProp: "foo" },
+          properties: {stringProp: "foo"},
         },
         {
           class: thingClassName,
           id: thingIds[1],
-          properties: { stringProp: "bar" },
+          properties: {stringProp: "bar"},
         },
       ];
 
@@ -113,7 +113,9 @@ describe("batch importing", () => {
           .withObject(toImport[1])
           .do()
           .then()
-          .catch((e: any) => {throw new Error("it should not have errord " + e)});
+          .catch((e: any) => {
+            throw new Error("it should not have errord " + e)
+          });
       });
 
       it("waits for es index refresh", () => {
@@ -124,7 +126,9 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[0]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[1]).withClassName(thingClassName).do(),
-        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
+        ]).catch((e: any) => {
+          throw new Error("it should not have errord " + e)
+        });
       });
     });
 
@@ -134,13 +138,13 @@ describe("batch importing", () => {
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[2])
-          .withProperties({ stringProp: "foo" })
+          .withProperties({stringProp: "foo"})
           .payload(), // note the .payload(), not .do()!
         client.data
           .creator()
           .withClassName(thingClassName)
           .withId(thingIds[3])
-          .withProperties({ stringProp: "foo" })
+          .withProperties({stringProp: "foo"})
           .payload(), // note the .payload(), not .do()!
       ];
 
@@ -150,7 +154,9 @@ describe("batch importing", () => {
           .withObjects(toImport[0], toImport[1])
           .do()
           .then()
-          .catch((e: any) => {throw new Error("it should not have errord " + e)});
+          .catch((e: any) => {
+            throw new Error("it should not have errord " + e)
+          });
       });
 
       it("waits for es index refresh", () => {
@@ -161,7 +167,9 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(thingIds[2]).withClassName(thingClassName).do(),
           client.data.getterById().withId(thingIds[3]).withClassName(thingClassName).do(),
-        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
+        ]).catch((e: any) => {
+          throw new Error("it should not have errord " + e)
+        });
       });
     });
   });
@@ -172,12 +180,12 @@ describe("batch importing", () => {
         {
           class: otherThingClassName,
           id: otherThingIds[0],
-          properties: { stringProp: "foo" },
+          properties: {stringProp: "foo"},
         },
         {
           class: otherThingClassName,
           id: otherThingIds[1],
-          properties: { stringProp: "bar" },
+          properties: {stringProp: "bar"},
         },
       ];
 
@@ -188,7 +196,9 @@ describe("batch importing", () => {
           .withObjects([toImport[0], toImport[1]])
           .do()
           .then()
-          .catch((e: any) => {throw new Error("it should not have errord " + e)});
+          .catch((e: any) => {
+            throw new Error("it should not have errord " + e)
+          });
       });
 
       it("waits for es index refresh", () => {
@@ -199,7 +209,9 @@ describe("batch importing", () => {
         return Promise.all([
           client.data.getterById().withId(toImport[0].id).withClassName(toImport[0].class).do(),
           client.data.getterById().withId(toImport[1].id).withClassName(toImport[1].class).do(),
-        ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
+        ]).catch((e: any) => {
+          throw new Error("it should not have errord " + e)
+        });
       });
     });
   });
@@ -236,7 +248,9 @@ describe("batch importing", () => {
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e: any) => {throw new Error("it should not have errord " + e)});
+        .catch((e: any) => {
+          throw new Error("it should not have errord " + e)
+        });
     });
 
     it("imports more refs with a builder pattern", () => {
@@ -265,7 +279,9 @@ describe("batch importing", () => {
             expect(elem.result.errors).toBeUndefined();
           });
         })
-        .catch((e: any) => {throw new Error("it should not have errord " + e)});
+        .catch((e: any) => {
+          throw new Error("it should not have errord " + e)
+        });
     });
 
     it("waits for es index refresh", () => {
@@ -314,7 +330,9 @@ describe("batch importing", () => {
               `weaviate://localhost/${otherThingClassName}/${otherThingIds[1]}`
             );
           }),
-      ]).catch((e: any) => {throw new Error("it should not have errord " + e)});
+      ]).catch((e: any) => {
+        throw new Error("it should not have errord " + e)
+      });
     });
   });
 
@@ -525,7 +543,7 @@ const setup = async (client: IWeaviateClient) => {
   return client.schema
     .propertyCreator()
     .withClassName(thingClassName)
-    .withProperty({ name: "refProp", dataType: [otherThingClassName] })
+    .withProperty({name: "refProp", dataType: [otherThingClassName]})
     .do();
 };
 

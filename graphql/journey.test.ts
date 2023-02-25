@@ -58,7 +58,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("title url wordCount")
-      .withNearText({ concepts: ["news"], certainty: 0.1 })
+      .withNearText({concepts: ["news"], certainty: 0.1})
       .withWhere({
         operator: weaviate.filters.Operator.GREATER_THAN_EQUAL,
         path: ["wordCount"],
@@ -81,7 +81,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("title url wordCount")
-      .withNearText({ concepts: ["news"], distance: 0.9 })
+      .withNearText({concepts: ["news"], distance: 0.9})
       .withWhere({
         operator: weaviate.filters.Operator.GREATER_THAN_EQUAL,
         path: ["wordCount"],
@@ -104,7 +104,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("title url wordCount")
-      .withGroup({ type: "merge", force: 1.0 })
+      .withGroup({type: "merge", force: 1.0})
       .withLimit(7)
       .do()
       .then(function (result) {
@@ -120,13 +120,15 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, certainty: 0.7 })
+      .withNearVector({vector: searchVec, certainty: 0.7})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearVector (with distance)", () => {
@@ -135,13 +137,15 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, distance: 0.3 })
+      .withNearVector({vector: searchVec, distance: 0.3})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearObject (with certainty)", () => {
@@ -154,7 +158,9 @@ describe("the graphql journey", () => {
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearObject (with distance)", () => {
@@ -167,72 +173,84 @@ describe("the graphql journey", () => {
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get bm25 with query (without properties)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withBm25({ query: "Article" })
+      .withBm25({query: "Article"})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get bm25 with query (with properties)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withBm25({ query: "Apple", properties: ["title", "url"] })
+      .withBm25({query: "Apple", properties: ["title", "url"]})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get bm25 with query (with properties not having searched query)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withBm25({ query: "Apple", properties: ["url"] })
+      .withBm25({query: "Apple", properties: ["url"]})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(0);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get hybrid with query (no vector, alpha 0)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "apple", alpha: 0 })
+      .withHybrid({query: "apple", alpha: 0})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get hybrid with query (no vector, alpha 0.5)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "Apple", alpha: 0.5 })
+      .withHybrid({query: "Apple", alpha: 0.5})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get hybrid with query (with vector)", () => {
@@ -241,39 +259,45 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withHybrid({ query: "Apple", alpha: 0.5, vector: dummyVec300x0 })
+      .withHybrid({query: "Apple", alpha: 0.5, vector: dummyVec300x0})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearText (with certainty)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], certainty: 0.7 })
+      .withNearText({concepts: ["Article"], certainty: 0.7})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearText (with distance)", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], distance: 0.3 })
+      .withNearText({concepts: ["Article"], distance: 0.3})
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearText with moveTo and moveAwayFrom (with certainty)", () => {
@@ -282,15 +306,17 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearText({
         concepts: ["Article"], certainty: 0.7,
-        moveTo: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e2" }], force: 0.7 },
-        moveAwayFrom: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e1" }], force: 0.5 },
+        moveTo: {objects: [{id: "abefd256-8574-442b-9293-9205193737e2"}], force: 0.7},
+        moveAwayFrom: {objects: [{id: "abefd256-8574-442b-9293-9205193737e1"}], force: 0.5},
       })
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get with nearText with moveTo and moveAwayFrom (with distance)", () => {
@@ -299,15 +325,17 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withNearText({
         concepts: ["Article"], distance: 0.3,
-        moveTo: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e2" }], force: 0.7 },
-        moveAwayFrom: { objects:[{ id: "abefd256-8574-442b-9293-9205193737e1" }], force: 0.5 },
+        moveTo: {objects: [{id: "abefd256-8574-442b-9293-9205193737e2"}], force: 0.7},
+        moveAwayFrom: {objects: [{id: "abefd256-8574-442b-9293-9205193737e1"}], force: 0.5},
       })
       .withFields("_additional { id }")
       .do()
       .then((res: any) => {
         expect(res.data.Get.Article.length).toBe(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get expected failure - multiple nearMedia filters (with certainty)", () => {
@@ -315,7 +343,7 @@ describe("the graphql journey", () => {
       client.graphql
         .get()
         .withClassName("Article")
-        .withNearText({ concepts: ["iphone"] })
+        .withNearText({concepts: ["iphone"]})
         .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.65 })
         .do()
     })
@@ -327,7 +355,7 @@ describe("the graphql journey", () => {
       client.graphql
         .get()
         .withClassName("Article")
-        .withNearText({ concepts: ["iphone"] })
+        .withNearText({concepts: ["iphone"]})
         .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.35 })
         .do()
     })
@@ -344,7 +372,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method optional fields", () => {
@@ -366,7 +396,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearVector (with certainty)", () => {
@@ -375,14 +407,16 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, certainty: 0.7 })
+      .withNearVector({vector: searchVec, certainty: 0.7})
       .withFields("meta { count }")
       .do()
       .then((res: any) => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearVector (with distance)", () => {
@@ -391,14 +425,16 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, distance: 0.3 })
+      .withNearVector({vector: searchVec, distance: 0.3})
       .withFields("meta { count }")
       .do()
       .then((res: any) => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearObject (with certainty)", () => {
@@ -412,7 +448,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearObject (with distance)", () => {
@@ -426,35 +464,41 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearText (with certainty)", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], certainty: 0.7 })
+      .withNearText({concepts: ["Article"], certainty: 0.7})
       .withFields("meta { count }")
       .do()
       .then((res: any) => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with nearText (with distance)", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], distance: 0.3 })
+      .withNearText({concepts: ["Article"], distance: 0.3})
       .withFields("meta { count }")
       .do()
       .then((res: any) => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(3);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method expected failure - multiple nearMedia filters (with certainty)", () => {
@@ -462,7 +506,7 @@ describe("the graphql journey", () => {
       client.graphql
         .aggregate()
         .withClassName("Article")
-        .withNearText({ concepts: ["iphone"] })
+        .withNearText({concepts: ["iphone"]})
         .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.65 })
         .do()
     })
@@ -474,7 +518,7 @@ describe("the graphql journey", () => {
       client.graphql
         .aggregate()
         .withClassName("Article")
-        .withNearText({ concepts: ["iphone"] })
+        .withNearText({concepts: ["iphone"]})
         .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.35 })
         .do()
     })
@@ -487,7 +531,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, certainty: 0.7 })
+      .withNearVector({vector: searchVec, certainty: 0.7})
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
@@ -499,7 +543,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with where and nearVector (with distance)", () => {
@@ -508,7 +554,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearVector({ vector: searchVec, distance: 0.3 })
+      .withNearVector({vector: searchVec, distance: 0.3})
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
@@ -520,7 +566,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with where and nearObject (with certainty)", () => {
@@ -539,7 +587,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with where and nearObject (with distance)", () => {
@@ -558,14 +608,16 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with where and nearText (with certainty)", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], certainty: 0.7 })
+      .withNearText({concepts: ["Article"], certainty: 0.7})
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
@@ -577,14 +629,16 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with where and nearText (with distance)", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], distance: 0.3 })
+      .withNearText({concepts: ["Article"], distance: 0.3})
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
@@ -596,7 +650,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with objectLimit (with certainty)", () => {
@@ -605,7 +661,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], certainty: 0.7 })
+      .withNearText({concepts: ["Article"], certainty: 0.7})
       .withObjectLimit(objectLimit)
       .withFields("meta { count }")
       .do()
@@ -613,7 +669,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(objectLimit);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with objectLimit (with distance)", () => {
@@ -622,7 +680,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearText({ concepts: ["Article"], distance: 0.3 })
+      .withNearText({concepts: ["Article"], distance: 0.3})
       .withObjectLimit(objectLimit)
       .withFields("meta { count }")
       .do()
@@ -630,7 +688,9 @@ describe("the graphql journey", () => {
         const count = res.data.Aggregate.Article[0].meta.count;
         expect(count).toEqual(objectLimit);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql aggregate method with bad objectLimit input (with certainty)", () => {
@@ -640,7 +700,7 @@ describe("the graphql journey", () => {
       client.graphql
         .aggregate()
         .withClassName("Article")
-        .withNearText({ concepts: ["Article"], certainty: 0.7 })
+        .withNearText({concepts: ["Article"], certainty: 0.7})
         .withObjectLimit(objectLimit)
         .withFields("meta { count }")
         .do()
@@ -655,7 +715,7 @@ describe("the graphql journey", () => {
       client.graphql
         .aggregate()
         .withClassName("Article")
-        .withNearText({ concepts: ["Article"], distance: 0.3 })
+        .withNearText({concepts: ["Article"], distance: 0.3})
         .withObjectLimit(objectLimit)
         .withFields("meta { count }")
         .do()
@@ -666,26 +726,30 @@ describe("the graphql journey", () => {
   test("graphql explore with minimal fields", () => {
     return client.graphql
       .explore()
-      .withNearText({ concepts: ["iphone"] })
+      .withNearText({concepts: ["iphone"]})
       .withFields("beacon certainty className")
       .do()
       .then((res: any) => {
         expect(res.data.Explore.length).toBeGreaterThan(0);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql explore with optional fields", () => {
     return client.graphql
       .explore()
-      .withNearText({ concepts: ["iphone"] })
+      .withNearText({concepts: ["iphone"]})
       .withFields("beacon certainty distance className")
       .withLimit(1)
       .do()
       .then((res: any) => {
         expect(res.data.Explore.length).toEqual(1);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql explore with nearObject field", () => {
@@ -697,7 +761,9 @@ describe("the graphql journey", () => {
       .then((res: any) => {
         expect(res.data.Explore.length).toBeGreaterThan(0);
       })
-      .catch((e: any) => {throw new Error("it should not have errord" + e)});
+      .catch((e: any) => {
+        throw new Error("it should not have errord" + e)
+      });
   });
 
   test("graphql get method with sort filter: wordCount asc", () => {
@@ -722,7 +788,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("wordCount")
-      .withSort([{ path: ["wordCount"], order: "asc" }])
+      .withSort([{path: ["wordCount"], order: "asc"}])
       .do()
       .then(function (result) {
         expect(result.data.Get.Article.length).toBe(3);
@@ -737,7 +803,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("title")
-      .withSort({ path: ["title"], order: "desc" })
+      .withSort({path: ["title"], order: "desc"})
       .do()
       .then(function (result) {
         expect(result.data.Get.Article.length).toBe(3);
@@ -752,7 +818,7 @@ describe("the graphql journey", () => {
       .get()
       .withClassName("Article")
       .withFields("title")
-      .withSort([{ path: ["title"], order: "desc" }])
+      .withSort([{path: ["title"], order: "desc"}])
       .do()
       .then(function (result) {
         expect(result.data.Get.Article.length).toBe(3);
@@ -768,8 +834,8 @@ describe("the graphql journey", () => {
       .withClassName("Article")
       .withFields("title")
       .withSort([
-        { path: ["wordCount"], order: "asc" },
-        { path: ["title"], order: "desc" },
+        {path: ["wordCount"], order: "asc"},
+        {path: ["title"], order: "desc"},
       ])
       .do()
       .then(function (result) {

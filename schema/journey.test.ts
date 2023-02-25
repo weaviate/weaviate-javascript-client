@@ -234,7 +234,7 @@ describe("schema", () => {
       .do()
       .then((res: any) => {
         expect(res.status).toEqual("READONLY");
-    });
+      });
   })
 
   it("updates a shard of an existing class to ready", async () => {
@@ -250,7 +250,7 @@ describe("schema", () => {
       .do()
       .then((res: any) => {
         expect(res.status).toEqual("READY");
-    });
+      });
   })
 
   it("deletes an existing class", () => {
@@ -348,7 +348,7 @@ describe("schema", () => {
   it("creates a class with bm25 and stopwords config", async () => {
     const newClass: any = {
       class: 'EmptyClass',
-      properties: [{dataType: ["string"],name: 'stringProp'}]
+      properties: [{dataType: ["string"], name: 'stringProp'}]
     }
 
     const bm25Config: any = {k1: 1.13, b: 0.222};
@@ -462,9 +462,9 @@ function newClassObject(className: string) {
     },
     moduleConfig: {
       'text2vec-contextionary':
-      {
-        vectorizeClassName: true
-      }
+        {
+          vectorizeClassName: true
+        }
     },
     shardingConfig: {
       actualCount: 1,
