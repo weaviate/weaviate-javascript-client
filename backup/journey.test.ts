@@ -577,7 +577,7 @@ describe("fail checking create status for not existing backup", () => {
         throw new Error("should fail on create status")
       })
       .catch((err: any) => {
-        expect(err).toContain(404);
+        expect(err).toContain('404');
         expect(err).toContain(BACKUP_ID);
       });
   });
@@ -606,7 +606,7 @@ describe("fail restoring not existing backup", () => {
         throw new Error("should fail on restore backup")
       })
       .catch((err: any) => {
-        expect(err).toContain(404);
+        expect(err).toContain('404');
         expect(err).toContain(BACKUP_ID);
       });
   });
@@ -646,7 +646,7 @@ describe("fail checking restore status for not started restore", () => {
         throw new Error("should fail on restore status")
       })
       .catch((err: any) => {
-        expect(err).toContain(404);
+        expect(err).toContain('404');
         expect(err).toContain(BACKUP_ID);
       });
   });
