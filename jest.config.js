@@ -3,8 +3,6 @@ module.exports = {
   collectCoverage: false,
   coverageDirectory: "coverage",
   coverageProvider: "v8",
-  sourceMap: true,
-  inlineSourceMap: true,
   preset: 'ts-jest',
   testEnvironment: "node",
   testMatch: [
