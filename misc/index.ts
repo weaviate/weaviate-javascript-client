@@ -17,7 +17,7 @@ const misc = (client: Connection, dbVersionProvider: DbVersionProvider): IWeavia
     liveChecker: () => new LiveChecker(client, dbVersionProvider),
     readyChecker: () => new ReadyChecker(client, dbVersionProvider),
     metaGetter: () => new MetaGetter(client),
-    openidConfigurationGetter: () => new OpenidConfigurationGetter(client),
+    openidConfigurationGetter: () => new OpenidConfigurationGetter(client.http),
   };
 };
 

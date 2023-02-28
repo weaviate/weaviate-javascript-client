@@ -1,8 +1,8 @@
-import Connection from "../connection";
+import {IHttpClient} from "../connection/httpClient";
 
 export default class OpenidConfigurationGetterGetter {
-  private client: Connection;
-  constructor(client: Connection) {
+  private client: IHttpClient;
+  constructor(client: IHttpClient) {
     this.client = client;
   }
 

@@ -9,7 +9,7 @@ export default class Connection {
   public readonly auth: any;
   private readonly authEnabled: boolean;
   private gql: IGraphQLClient;
-  private readonly http: IHttpClient
+  public readonly http: IHttpClient
 
   constructor(params: IConnectionParams) {
     this.http = httpClient(params);
@@ -69,14 +69,6 @@ export default class Connection {
     return this.http.get(path, expectReturnContent);
   };
 
-  getRaw = (path: string) => {
-    if (this.authEnabled) {
-      return this.login().then(
-        token => this.http.getRaw(path, token));
-    }
-    return this.http.getRaw(path);
-  };
-
   query = (query: any) => {
     if (this.authEnabled) {
       return this.login().then(
@@ -89,8 +81,7 @@ export default class Connection {
   };
 
   login = async () => {
-    const localConfig = await new OpenidConfigurationGetter(this).do()
-      .then((resp: any) => resp);
+    const localConfig = await new OpenidConfigurationGetter(this.http).do();
 
     if (localConfig === undefined) {
       console.warn("client is configured for authentication, but server is not");
