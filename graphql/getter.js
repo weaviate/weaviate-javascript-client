@@ -26,6 +26,11 @@ export default class Getter {
     return this;
   };
 
+  withAfter = (id) => {
+    this.after = id;
+    return this;
+  };
+
   withGroup = (groupObj) => {
     try {
       this.groupString = new Group(groupObj).toString();
@@ -202,7 +207,8 @@ export default class Getter {
       this.limit ||
       this.offset ||
       this.groupString ||
-      this.sortString
+      this.sortString ||
+      this.after
     ) {
       let args = [];
 
@@ -252,6 +258,10 @@ export default class Getter {
 
       if (this.sortString) {
         args = [...args, `sort:[${this.sortString}]`];
+      }
+
+      if (this.after) {
+        args = [...args, `after:"${this.after}"`];
       }
 
       params = `(${args.join(",")})`;

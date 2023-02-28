@@ -46,6 +46,23 @@ test("a simple query with a limit and offset", () => {
   expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
 });
 
+test("a simple query with a limit and after", () => {
+  const mockClient = {
+    query: jest.fn(),
+  };
+
+  const expectedQuery = `{Get{Person(limit:7,after:"c6f379dd-94b7-4017-acd3-df769a320c92"){name}}}`;
+
+  new Getter(mockClient)
+    .withClassName("Person")
+    .withFields("name")
+    .withAfter("c6f379dd-94b7-4017-acd3-df769a320c92")
+    .withLimit(7)
+    .do();
+
+  expect(mockClient.query).toHaveBeenCalledWith(expectedQuery);
+});
+
 test("a simple query with a group", () => {
   const mockClient = {
     query: jest.fn(),
