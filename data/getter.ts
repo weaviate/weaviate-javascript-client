@@ -8,7 +8,7 @@ export default class Getter {
   private additionals: any[];
   private className?: string;
   private limit?: number;
-  private after: string
+  private after?: string
   constructor(client: Connection, objectsPath: ObjectsPath) {
     this.client = client;
     this.objectsPath = objectsPath;
@@ -48,7 +48,8 @@ export default class Getter {
     }
 
     return this.objectsPath.buildGet(this.className, this.limit,
-      this.additionals, this.after)
-      .then(this.client.get);
+	this.additionals!, this.after!)
+        return this.client.get(path)
+      });
   };
 }

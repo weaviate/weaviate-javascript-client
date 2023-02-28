@@ -72,6 +72,8 @@ export default class GetterById {
     }
 
     return this.buildPath()
-      .then(this.client.get);
+      .then(path => {
+        return this.client.get(path)
+      });
   };
 }

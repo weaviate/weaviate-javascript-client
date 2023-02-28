@@ -53,7 +53,9 @@ export default class Deleter {
     }
     this.validate();
 
-    return this.objectsPath.buildDelete(this.id, this.className, this.consistencyLevel)
-      .then(this.client.delete);
+    return this.objectsPath.buildDelete(this.id!, this.className!, this.consistencyLevel!)
+      .then((path: string) => {
+        return this.client.delete(path, undefined, false)
+      });
   };
 }

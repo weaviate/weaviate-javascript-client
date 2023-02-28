@@ -47,7 +47,9 @@ export default class Checker {
     }
     this.validate();
 
-    return this.objectsPath.buildCheck(this.id, this.className)
-      .then(this.client.head)
+    return this.objectsPath.buildCheck(this.id!, this.className!)
+      .then((path: string) => {
+        return this.client.head(path, undefined)
+      })
   };
 }

@@ -77,7 +77,9 @@ export default class ShardsUpdater {
 
     return getShards(this.client, this.className)
       .then((shards: any) => this.shards = shards)
-      .then(this.updateShards)
+      .then(() => {
+        return this.updateShards()
+      })
       .then((payload: any) => {return payload})
       .catch((err: any) => {
         return Promise.reject(err);
