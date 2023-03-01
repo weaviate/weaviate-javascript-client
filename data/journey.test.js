@@ -618,6 +618,381 @@ describe("data", () => {
       .catch((e) => fail("it should not have errord: " + e));
   })
 
+  it("creates object with consistency_level set", async () => {
+    const id = "144d1944-3ab4-4aa1-8095-92429d6cbaba";
+    const properties = { foo: "bar" };
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    await client.data
+      .creator()
+      .withClassName(classCustomVectorClassName)
+      .withProperties(properties)
+      .withVector(vector)
+      .withId(id)
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ALL)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.vector).toEqual(vector);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: properties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("deletes object with consistency_level set", async () => {
+    const id = "7a78b029-e7b4-499f-9bd8-70ea11b12345";
+    const properties = { foo: "bar" };
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    await client.data
+      .creator()
+      .withClassName(classCustomVectorClassName)
+      .withProperties(properties)
+      .withVector(vector)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.vector).toEqual(vector);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: properties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .deleter()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
+      .do()
+      .then()
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("patches object with consistency_level set", async () => {
+    const id = "7a78b029-e7b4-499f-9bd8-70ea11b12345";
+    const properties = { foo: "bar" };
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    await client.data
+      .creator()
+      .withClassName(classCustomVectorClassName)
+      .withProperties(properties)
+      .withVector(vector)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.vector).toEqual(vector);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: properties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    const newProperties = { foo: "baz" }
+
+    await client.data
+      .merger()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .withProperties(newProperties)
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
+      .do()
+      .then()
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: newProperties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("updates object with consistency_level set", async () => {
+    const id = "55eaf761-11fd-48a9-bf21-60e2048db188";
+    const properties = { foo: "bar" };
+    const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
+
+    await client.data
+      .creator()
+      .withClassName(classCustomVectorClassName)
+      .withProperties(properties)
+      .withVector(vector)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(properties);
+        expect(res.vector).toEqual(vector);
+        expect(res.id).toEqual(id);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: properties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    const newProperties = { foo: "baz" }
+
+    await client.data
+      .updater()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .withProperties(newProperties)
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
+      .do()
+      .then()
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .getterById()
+      .withClassName(classCustomVectorClassName)
+      .withId(id)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id,
+            properties: newProperties,
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("creates reference with consistency_level set", async () => {
+    const id1 = "5a99f759-400a-453e-b83a-766472994d05";
+    const props1 = { stringProp: "foobar" };
+
+    const id2 = "8d3ae97a-664b-4252-91d5-9886eda9b580";
+
+    await client.data
+      .creator()
+      .withClassName(thingClassName)
+      .withProperties(props1)
+      .withId(id1)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(props1);
+        expect(res.id).toEqual(id1);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .creator()
+      .withClassName(refSourceClassName)
+      .withId(id2)
+      .do()
+      .then((res) => {
+        expect(res.id).toEqual(id2);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .referenceCreator()
+      .withId(id2)
+      .withReferenceProperty("refProp")
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ONE)
+      .withReference(
+        client.data.referencePayloadBuilder().withId(id1).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .getterById()
+      .withClassName(refSourceClassName)
+      .withId(id2)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id2,
+            properties: {
+              refProp: [{
+                beacon: `weaviate://localhost/${id1}`,
+                href: `/v1/objects/${id1}`
+              }]
+            },
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("replaces reference with consistency_level set", async () => {
+    const id1 = "84c58d72-7303-4528-90d2-ebaa39bdd9d4";
+    const props1 = { stringProp: "foobar" };
+
+    const id2 = "6ca5a30f-f3df-400f-92d2-7de1a48d80ac";
+
+    await client.data
+      .creator()
+      .withClassName(thingClassName)
+      .withProperties(props1)
+      .withId(id1)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(props1);
+        expect(res.id).toEqual(id1);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .creator()
+      .withClassName(refSourceClassName)
+      .withId(id2)
+      .do()
+      .then((res) => {
+        expect(res.id).toEqual(id2);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .referenceReplacer()
+      .withId(id2)
+      .withReferenceProperty("refProp")
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ONE)
+      .withReferences(
+        client.data.referencePayloadBuilder().withId(id1).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
+  it("deletes reference with consistency_level set", async () => {
+    const id1 = "cfc3151c-6f45-45e2-bb6a-55789c1fbbb2";
+    const props1 = { stringProp: "foobar" };
+
+    const id2 = "70ff8bc0-1d3d-4df4-8bf0-774806ba53e3";
+
+    await client.data
+      .creator()
+      .withClassName(thingClassName)
+      .withProperties(props1)
+      .withId(id1)
+      .do()
+      .then((res) => {
+        expect(res.properties).toEqual(props1);
+        expect(res.id).toEqual(id1);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .creator()
+      .withClassName(refSourceClassName)
+      .withId(id2)
+      .do()
+      .then((res) => {
+        expect(res.id).toEqual(id2);
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .referenceCreator()
+      .withId(id2)
+      .withReferenceProperty("refProp")
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ONE)
+      .withReference(
+        client.data.referencePayloadBuilder().withId(id1).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+
+    await client.data
+      .getterById()
+      .withClassName(refSourceClassName)
+      .withId(id2)
+      .do()
+      .then((res) => {
+        expect(res).toEqual(
+          expect.objectContaining({
+            id: id2,
+            properties: {
+              refProp: [{
+                beacon: `weaviate://localhost/${id1}`,
+                href: `/v1/objects/${id1}`
+              }]
+            },
+          })
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+
+    return client.data
+      .referenceDeleter()
+      .withId(id2)
+      .withReferenceProperty("refProp")
+      .withConsistencyLevel(weaviate.replication.ConsistencyLevel.ONE)
+      .withReference(
+        client.data.referencePayloadBuilder().withId(id1).payload()
+      )
+      .do()
+      .catch((e) => fail("it should not have errord: " + e));
+  })
+
   it("tears down and cleans up", () => {
     return Promise.all([
       client.schema.classDeleter().withClassName(thingClassName).do(),

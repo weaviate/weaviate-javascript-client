@@ -1,3 +1,5 @@
+import { buildRefsPath } from "./path"
+
 export default class ReferencesBatcher {
   constructor(client, beaconPath) {
     this.client = client;
@@ -26,6 +28,11 @@ export default class ReferencesBatcher {
     return this.withReferences(reference);
   }
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   payload = () => this.references;
 
   validateReferenceCount = () => {
@@ -49,7 +56,11 @@ export default class ReferencesBatcher {
         new Error("invalid usage: " + this.errors.join(", "))
       );
     }
-    const path = `/batch/references`;
+    let params = new URLSearchParams()
+    if (this.consistencyLevel) {
+      params.set("consistency_level", this.consistencyLevel)
+    }
+    const path = buildRefsPath(params);
     const payloadPromise = Promise.all(this.references.map(ref => this.rebuildReferencePromise(ref)));
 
     return payloadPromise.then(payload => this.client.post(path, payload));

@@ -40,6 +40,11 @@ export default class Updater {
     }
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   payload = () => ({
     properties: this.properties,
     class: this.className,
@@ -60,7 +65,7 @@ export default class Updater {
       );
     }
 
-    return this.objectsPath.buildUpdate(this.id, this.className)
+    return this.objectsPath.buildUpdate(this.id, this.className, this.consistencyLevel)
       .then(path => this.client.put(path, this.payload()));
   };
 }

@@ -26,6 +26,11 @@ export default class ReferenceCreator {
     return this;
   };
 
+  withConsistencyLevel = (cl) => {
+    this.consistencyLevel = cl;
+    return this;
+  };
+
   validateIsSet = (prop, name, setter) => {
     if (prop == undefined || prop == null || prop.length == 0) {
       this.errors = [
@@ -56,7 +61,7 @@ export default class ReferenceCreator {
     }
 
     return Promise.all([
-      this.referencesPath.build(this.id, this.className, this.refProp),
+      this.referencesPath.build(this.id, this.className, this.refProp, this.consistencyLevel),
       this.beaconPath.rebuild(this.reference.beacon)
     ]).then(results => {
       const path = results[0];
