@@ -156,6 +156,16 @@ describe("schema", () => {
                 dynamicEfMin: 100,
                 ef: -1,
                 maxConnections: 64,
+                pq: {
+                  bitCompression: false,
+                  centroids: 256,
+                  enabled: false,
+                  encoder: {
+                    distribution: "log-normal",
+                    type: "kmeans"
+                  },
+                  segments: 0,
+                },
                 skip: false,
                 efConstruction: 128,
                 vectorCacheMaxObjects: 500000,
@@ -421,6 +431,16 @@ function newClassObject(className) {
       dynamicEfMin: 100,
       ef: -1,
       maxConnections: 64,
+      pq: {
+        bitCompression: false,
+        centroids: 256,
+        enabled: false,
+        encoder: {
+          distribution: "log-normal",
+          type: "kmeans"
+        },
+        segments: 0,
+      },
       skip: false,
       efConstruction: 128,
       vectorCacheMaxObjects: 500000,
