@@ -34,6 +34,20 @@ describe("the graphql journey", () => {
       });
   });
 
+  test("graphql get objects after id (Cursor API)", () => {
+    return client.graphql
+      .get()
+      .withClassName("Article")
+      .withLimit(10)
+      .withAfter("abefd256-8574-442b-9293-9205193737e0")
+      .withFields("title url wordCount")
+      .do()
+      .then(function (result) {
+        // one fewer than all
+        expect(result.data.Get.Article.length).toEqual(2);
+      });
+  });
+
   test("graphql get method with optional fields (with certainty)", () => {
     return client.graphql
       .get()
@@ -129,7 +143,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.7 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.7 })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -142,7 +156,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .get()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.3 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.3 })
       .withFields("_additional { id }")
       .do()
       .then((res) => {
@@ -297,7 +311,7 @@ describe("the graphql journey", () => {
         .get()
         .withClassName("Article")
         .withNearText({ concepts: ["iphone"] })
-        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.65 })
+        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.65 })
         .do()
     })
       .toThrow("cannot use multiple near<Media> filters in a single query")
@@ -309,7 +323,7 @@ describe("the graphql journey", () => {
         .get()
         .withClassName("Article")
         .withNearText({ concepts: ["iphone"] })
-        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.35 })
+        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.35 })
         .do()
     })
       .toThrow("cannot use multiple near<Media> filters in a single query")
@@ -386,7 +400,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.7 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.7 })
       .withFields("meta { count }")
       .do()
       .then((res) => {
@@ -400,7 +414,7 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.3 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.3 })
       .withFields("meta { count }")
       .do()
       .then((res) => {
@@ -444,7 +458,7 @@ describe("the graphql journey", () => {
         .aggregate()
         .withClassName("Article")
         .withNearText({ concepts: ["iphone"] })
-        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.65 })
+        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.65 })
         .do()
     })
       .toThrow("cannot use multiple near<Media> filters in a single query")
@@ -456,7 +470,7 @@ describe("the graphql journey", () => {
         .aggregate()
         .withClassName("Article")
         .withNearText({ concepts: ["iphone"] })
-        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.35 })
+        .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.35 })
         .do()
     })
       .toThrow("cannot use multiple near<Media> filters in a single query")
@@ -472,7 +486,7 @@ describe("the graphql journey", () => {
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -493,7 +507,7 @@ describe("the graphql journey", () => {
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -508,11 +522,11 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", certainty: 0.7 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", certainty: 0.7 })
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -527,11 +541,11 @@ describe("the graphql journey", () => {
     return client.graphql
       .aggregate()
       .withClassName("Article")
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee", distance: 0.3 })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0", distance: 0.3 })
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -550,7 +564,7 @@ describe("the graphql journey", () => {
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -569,7 +583,7 @@ describe("the graphql journey", () => {
       .withWhere({
         operator: weaviate.filters.Operator.EQUAL,
         path: ["_id"],
-        valueString: "abefd256-8574-442b-9293-9205193737ee",
+        valueString: "abefd256-8574-442b-9293-9205193737e0",
       })
       .withFields("meta { count }")
       .do()
@@ -672,7 +686,7 @@ describe("the graphql journey", () => {
   test("graphql explore with nearObject field", () => {
     return client.graphql
       .explore()
-      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737ee" })
+      .withNearObject({ id: "abefd256-8574-442b-9293-9205193737e0" })
       .withFields("beacon certainty distance className")
       .do()
       .then((res) => {
@@ -846,9 +860,11 @@ const setup = async (client) => {
 
   await Promise.all([client.schema.classCreator().withClass(thing).do()]);
 
+  // Note that the UUIDs are in ascending order. This is on purpose as the
+  // Cursor API test relies on this fact.
   const toImport = [
     {
-      id: "abefd256-8574-442b-9293-9205193737ee",
+      id: "abefd256-8574-442b-9293-9205193737e0",
       class: "Article",
       properties: {
         wordCount: 60,

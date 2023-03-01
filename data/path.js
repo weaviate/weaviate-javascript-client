@@ -22,8 +22,8 @@ export class ObjectsPath {
     return this.build({id, className, additionals, consistencyLevel, nodeName}, 
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(className, limit, additionals) {
-    return this.build({className, limit, additionals}, [this.addQueryParamsForGet]);
+  buildGet(className, limit, additionals, after) {
+    return this.build({className, limit, additionals, after}, [this.addQueryParamsForGet]);
   }
   buildUpdate(id, className, consistencyLevel) {
     return this.build({id, className, consistencyLevel}, 
@@ -102,6 +102,9 @@ export class ObjectsPath {
       } else {
         support.warns.notSupportedClassParameterInEndpointsForObjects();
       }
+    }
+    if (isValidStringProperty(params.after)) {
+      queryParams.push(`after=${params.after}`)
     }
     if (queryParams.length > 0) {
       return `${path}?${queryParams.join("&")}`;

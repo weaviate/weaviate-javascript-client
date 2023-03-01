@@ -65,7 +65,12 @@ describe("data", () => {
 
   it("creates a new thing object with an explicit id", () => {
     const properties = { stringProp: "with-id" };
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    // explicitly make this an all-zero UUID. This way we can be sure that it's
+    // the first to come up when using the cursor API. Since this test suite
+    // also contains dynamicaly generated IDs, this is the only way to make
+    // sure that this ID is first. This way the tests returning objects after
+    // this ID won't be flaky.
+    const id = "00000000-0000-0000-0000-000000000000";
 
     return client.data
       .creator()
@@ -128,7 +133,7 @@ describe("data", () => {
         expect(res.objects).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: "1565c06c-463f-466c-9092-5930dbac3887",
+              id: "00000000-0000-0000-0000-000000000000",
               properties: { stringProp: "with-id" },
             }),
             expect.objectContaining({
@@ -150,9 +155,29 @@ describe("data", () => {
         expect(res.objects).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: "1565c06c-463f-466c-9092-5930dbac3887",
+              id: "00000000-0000-0000-0000-000000000000",
               properties: { stringProp: "with-id" },
             }),
+            expect.objectContaining({
+              properties: { stringProp: "without-id" },
+            }),
+          ])
+        );
+      })
+      .catch((e) => fail("it should not have errord: " + e));
+  });
+
+  it("gets all classes after a specfic object (Cursor API)", () => {
+    return client.data
+      .getter()
+      .withClassName(thingClassName)
+      .withLimit(100)
+      .withAfter("00000000-0000-0000-0000-000000000000")
+      .do()
+      .then((res) => {
+        expect(res.objects).toHaveLength(1);
+        expect(res.objects).toEqual(
+          expect.arrayContaining([
             expect.objectContaining({
               properties: { stringProp: "without-id" },
             }),
@@ -207,12 +232,12 @@ describe("data", () => {
   it("gets one thing by id only", () => {
     return client.data
       .getterById()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .then((res) => {
         expect(res).toEqual(
           expect.objectContaining({
-            id: "1565c06c-463f-466c-9092-5930dbac3887",
+            id: "00000000-0000-0000-0000-000000000000",
             properties: { stringProp: "with-id" },
           })
         );
@@ -224,12 +249,12 @@ describe("data", () => {
     return client.data
       .getterById()
       .withClassName(thingClassName)
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .then((res) => {
         expect(res).toEqual(
           expect.objectContaining({
-            id: "1565c06c-463f-466c-9092-5930dbac3887",
+            id: "00000000-0000-0000-0000-000000000000",
             properties: { stringProp: "with-id" },
           })
         );
@@ -241,7 +266,7 @@ describe("data", () => {
     return client.data
       .getterById()
       .withClassName("DoesNotExist")
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .catch(err =>
         expect(err).toEqual("usage error (404): ")
@@ -251,7 +276,7 @@ describe("data", () => {
   it("gets one thing by id with all optional additional props", () => {
     return client.data
       .getterById()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .withAdditional("classification")
       .withAdditional("interpretation")
       .withAdditional("nearestNeighbors")
@@ -282,7 +307,7 @@ describe("data", () => {
   });
 
   it("updates a thing by id only", () => {
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    const id = "00000000-0000-0000-0000-000000000000";
     return client.data
       .getterById()
       .withId(id)
@@ -307,7 +332,7 @@ describe("data", () => {
   });
 
   it("updates a thing by id and class name", () => {
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    const id = "00000000-0000-0000-0000-000000000000";
     return client.data
       .getterById()
       .withId(id)
@@ -332,7 +357,7 @@ describe("data", () => {
   });
 
   it("merges a thing", () => {
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    const id = "00000000-0000-0000-0000-000000000000";
     return client.data
       .getterById()
       .withId(id)
@@ -353,7 +378,7 @@ describe("data", () => {
 
   it("adds a reference to a thing by id only", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = "1565c06c-463f-466c-9092-5930dbac3887";
+    const targetId = "00000000-0000-0000-0000-000000000000";
 
     return client.data
       .referenceCreator()
@@ -398,7 +423,7 @@ describe("data", () => {
 
   it("adds a reference to a thing by id and class name", () => {
     const sourceId = "599a0c64-5ed5-4d30-978b-6c9c45516db1";
-    const targetId = "1565c06c-463f-466c-9092-5930dbac3887";
+    const targetId = "00000000-0000-0000-0000-000000000000";
 
     return client.data
       .referenceCreator()
@@ -447,7 +472,7 @@ describe("data", () => {
   it("checks that object exists by id only", () => {
     return client.data
       .checker()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .then((exists) => {
         if (!exists) {
@@ -460,7 +485,7 @@ describe("data", () => {
   it("checks that object exists by id and class name", () => {
     return client.data
       .checker()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .withClassName(thingClassName)
       .do()
       .then((exists) => {
@@ -474,7 +499,7 @@ describe("data", () => {
   it("deletes a thing by id only", () => {
     return client.data
       .deleter()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .catch((e) => fail("it should not have errord: " + e));
   });
@@ -482,7 +507,7 @@ describe("data", () => {
   it("checks that object doesn't exist anymore with delete by id only", () => {
     return client.data
       .checker()
-      .withId("1565c06c-463f-466c-9092-5930dbac3887")
+      .withId("00000000-0000-0000-0000-000000000000")
       .do()
       .then((exists) => {
         if (exists) {
@@ -585,7 +610,7 @@ describe("data", () => {
   });
 
   it("forms a get by id query with node_name set", () => {
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    const id = "00000000-0000-0000-0000-000000000000";
 
     return client.data
       .getterById()
@@ -602,7 +627,7 @@ describe("data", () => {
   })
 
   it("forms a get by id query with consistency_level set", () => {
-    const id = "1565c06c-463f-466c-9092-5930dbac3887";
+    const id = "00000000-0000-0000-0000-000000000000";
 
     return client.data
       .getterById()

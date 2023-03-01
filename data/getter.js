@@ -11,6 +11,11 @@ export default class Getter {
     return this;
   };
 
+  withAfter = (id) => {
+    this.after = id;
+    return this;
+  };
+
   withLimit = (limit) => {
     this.limit = limit;
     return this;
@@ -32,7 +37,8 @@ export default class Getter {
       );
     }
 
-    return this.objectsPath.buildGet(this.className, this.limit, this.additionals)
+    return this.objectsPath.buildGet(this.className, this.limit, 
+      this.additionals, this.after)
       .then(this.client.get);
   };
 }
