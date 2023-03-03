@@ -4,7 +4,7 @@ Official JavaScript client for easy interaction with a Weaviate instance.
 
 ## Documentation
 
-- [Documentation](https://weaviate.io/developers/weaviate/current/client-libraries/javascript).
+- [Documentation](https://weaviate.io/developers/weaviate/client-libraries/javascript).
 
 ## Support
 
