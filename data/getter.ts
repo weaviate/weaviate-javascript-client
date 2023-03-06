@@ -47,9 +47,10 @@ export default class Getter {
       );
     }
 
-    return this.objectsPath.buildGet(this.className, this.limit,
-	this.additionals!, this.after!)
+    return this.objectsPath.buildGet(this.className, this.limit, this.additionals!, this.after!)
+      .then((path: string) => {
         return this.client.get(path)
-      });
+      })
+
   };
 }

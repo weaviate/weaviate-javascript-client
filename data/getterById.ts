@@ -7,7 +7,7 @@ export default class GetterById {
   private objectsPath: any;
   private id?: string;
   private className?: string;
-  private consistencyLevel: any;
+  private consistencyLevel?: string;
   private nodeName: any;
   constructor(client: Connection, objectsPath: any) {
     this.client = client;

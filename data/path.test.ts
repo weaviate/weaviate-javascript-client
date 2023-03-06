@@ -1,4 +1,4 @@
-import { DbVersionProvider } from "../test/dbVersionProvider"
+import {TestDbVersionProvider} from "../test/dbVersionProvider"
 import { DbVersionSupport } from "../utils/dbVersion"
 import { ObjectsPath, ReferencesPath } from "./path"
 
@@ -7,14 +7,12 @@ import { ObjectsPath, ReferencesPath } from "./path"
 const version = "1.18.0"
 
 const objectsPathBuilder = new ObjectsPath(
-  new DbVersionSupport(
-    new DbVersionProvider(version)
-  )
+  new DbVersionSupport(new TestDbVersionProvider(version))
 );
 
 const refsPathBuilder = new ReferencesPath(
   new DbVersionSupport(
-    new DbVersionProvider(version)
+    new TestDbVersionProvider(version)
   )
 );
 

@@ -10,6 +10,7 @@ export default class Updater {
   private id?: string;
   private properties?: any[];
   private consistencyLevel?: string
+
   constructor(client: Connection, objectsPath: ObjectsPath) {
     this.client = client;
     this.objectsPath = objectsPath;
@@ -74,7 +75,7 @@ export default class Updater {
       );
     }
 
-    return this.objectsPath.buildUpdate(this.id!, this.className, this.consistencyLevel)
+    return this.objectsPath.buildUpdate(this.id!, this.className!, this.consistencyLevel!)
       .then((path: string) => this.client.put(path, this.payload()));
   };
 }

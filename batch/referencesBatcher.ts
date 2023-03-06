@@ -1,5 +1,4 @@
 import { buildRefsPath } from "./path"
-import connection from "../connection";
 import { BeaconPath } from "../utils/beaconPath";
 import Connection from "../connection";
 
@@ -8,7 +7,7 @@ export default class ReferencesBatcher {
   private beaconPath: BeaconPath;
   public references: any[];
   private errors: any[];
-  private consistencyLevel: any
+  private consistencyLevel?: string
   constructor(client: Connection, beaconPath: BeaconPath) {
     this.client = client;
     this.beaconPath = beaconPath;

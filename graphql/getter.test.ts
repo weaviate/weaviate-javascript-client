@@ -47,7 +47,7 @@ test("a simple query with a limit and offset", () => {
 });
 
 test("a simple query with a limit and after", () => {
-  const mockClient = {
+  const mockClient: any = {
     query: jest.fn(),
   };
 

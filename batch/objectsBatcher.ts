@@ -5,7 +5,7 @@ export default class ObjectsBatcher {
   private client: Connection;
   public objects: any[];
   private errors: any[];
-  private consistencyLevel: any
+  private consistencyLevel?: string
   constructor(client: Connection) {
     this.client = client;
     this.objects = [];

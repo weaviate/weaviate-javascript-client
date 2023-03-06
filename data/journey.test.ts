@@ -180,6 +180,7 @@ describe("data", () => {
       })
       .catch((e: any) => {
         throw new Error("it should not have errord: " + e)
+      });
   });
 
   it("gets all classes after a specfic object (Cursor API)", () => {
@@ -712,6 +713,7 @@ describe("data", () => {
       .catch((e: any) => {
         throw new Error("it should not have errord: " + e)
       });
+  });
 
   it("creates object with consistency_level set", async () => {
     const id = "144d1944-3ab4-4aa1-8095-92429d6cbaba";
@@ -766,7 +768,7 @@ describe("data", () => {
         expect(res.vector).toEqual(vector);
         expect(res.id).toEqual(id);
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
     await client.data
       .getterById()
@@ -781,7 +783,7 @@ describe("data", () => {
           })
         );
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
     return client.data
       .deleter()
@@ -790,12 +792,12 @@ describe("data", () => {
       .withConsistencyLevel(weaviate.replication.ConsistencyLevel.QUORUM)
       .do()
       .then()
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
   })
 
   it("patches object with consistency_level set", async () => {
     const id = "7a78b029-e7b4-499f-9bd8-70ea11b12345";
-    const properties = { foo: "bar" };
+    const properties: any = { foo: "bar" };
     const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
 
     await client.data
@@ -810,7 +812,7 @@ describe("data", () => {
         expect(res.vector).toEqual(vector);
         expect(res.id).toEqual(id);
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
     await client.data
       .getterById()
@@ -825,9 +827,9 @@ describe("data", () => {
           })
         );
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
-    const newProperties = { foo: "baz" }
+    const newProperties: any = { foo: "baz" }
 
     await client.data
       .merger()
@@ -857,7 +859,7 @@ describe("data", () => {
 
   it("updates object with consistency_level set", async () => {
     const id = "55eaf761-11fd-48a9-bf21-60e2048db188";
-    const properties = { foo: "bar" };
+    const properties: any = { foo: "bar" };
     const vector = [-0.26736435, -0.112380296, 0.29648793, 0.39212644, 0.0033650293, -0.07112332, 0.07513781, 0.22459874];
 
     await client.data
@@ -872,7 +874,7 @@ describe("data", () => {
         expect(res.vector).toEqual(vector);
         expect(res.id).toEqual(id);
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
     await client.data
       .getterById()
@@ -887,9 +889,9 @@ describe("data", () => {
           })
         );
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
 
-    const newProperties = { foo: "baz" }
+    const newProperties: any = { foo: "baz" }
 
     await client.data
       .updater()
@@ -914,7 +916,7 @@ describe("data", () => {
           })
         );
       })
-      .catch((e) => fail("it should not have errord: " + e));
+      .catch((e: any) => fail("it should not have errord: " + e));
   })
 
   it("creates reference with consistency_level set", async () => {

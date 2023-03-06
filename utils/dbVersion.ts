@@ -1,8 +1,8 @@
 export class DbVersionSupport {
 
-  private dbVersionProvider: DbVersionProvider
+  private dbVersionProvider: IDbVersionProvider
 
-  constructor(dbVersionProvider: DbVersionProvider) {
+  constructor(dbVersionProvider: IDbVersionProvider) {
     this.dbVersionProvider = dbVersionProvider;
   }
 
@@ -37,8 +37,13 @@ export class DbVersionSupport {
 }
 
 const EMPTY_VERSION = "";
-export class DbVersionProvider {
-  private versionPromise?: Promise<string | undefined>;
+
+export interface IDbVersionProvider {
+  getVersionPromise(): Promise<string>
+}
+
+export class DbVersionProvider implements IDbVersionProvider{
+  private versionPromise?: Promise<string>;
   private readonly emptyVersionPromise: Promise<string>;
   private versionGetter: () => Promise<string>;
 
@@ -49,14 +54,14 @@ export class DbVersionProvider {
     this.versionPromise = undefined;
   }
 
-  getVersionPromise() {
+  getVersionPromise(): Promise<string> {
     if (this.versionPromise) {
       return this.versionPromise;
     }
     return this.versionGetter().then(version => this.assignPromise(version));
   }
 
-  refresh(force = false) {
+  refresh(force = false): Promise<boolean> {
     if (force || !this.versionPromise) {
       this.versionPromise = undefined;
       return this.versionGetter()
@@ -66,7 +71,7 @@ export class DbVersionProvider {
     return Promise.resolve(false);
   }
 
-  assignPromise(version?: string) {
+  assignPromise(version: string): Promise<string> {
     if (version === EMPTY_VERSION) {
       return this.emptyVersionPromise;
     }

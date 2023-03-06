@@ -10,29 +10,29 @@ export class ObjectsPath {
     this.dbVersionSupport = dbVersionSupport;
   }
 
-  buildCreate(consistencyLevel: string): Promise<string> {
+  buildCreate(consistencyLevel: string | undefined): Promise<string> {
     return this.build({consistencyLevel}, [this.addQueryParams]);
   }
-  buildDelete(id: string, className: string, consistencyLevel: string): Promise<string> {
-    return this.build({id, className, consistencyLevel}, 
+  buildDelete(id: string, className: string, consistencyLevel: string | undefined): Promise<string> {
+    return this.build({id, className, consistencyLevel},
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
   buildCheck(id: string, className: string): Promise<string> {
     return this.build({id, className}, [this.addClassNameDeprecatedNotSupportedCheck, this.addId]);
   }
-  buildGetOne(id: string, className: string, additionals: any, consistencyLevel: string, nodeName: any): Promise<string> {
+  buildGetOne(id: string, className: string, additionals: any, consistencyLevel: string | undefined, nodeName: any): Promise<string> {
     return this.build({id, className, additionals, consistencyLevel, nodeName},
       [this.addClassNameDeprecatedNotSupportedCheck, this.addId, this.addQueryParams]);
   }
-  buildGet(className: string, limit: any, additionals: any): Promise<string> {
+  buildGet(className: string | undefined, limit: any, additionals: any, after: string): Promise<string> {
     return this.build({className, limit, additionals, after}, [this.addQueryParamsForGet]);
   }
-  buildUpdate(id: string, className: string | undefined): Promise<string> {
-    return this.build({id, className, consistencyLevel}, 
+  buildUpdate(id: string, className: string, consistencyLevel: string | undefined): Promise<string> {
+    return this.build({id, className, consistencyLevel},
       [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
-  buildMerge(id: string, className: string | undefined): Promise<string> {
-    return this.build({id, className, consistencyLevel}, 
+  buildMerge(id: string, className: string, consistencyLevel: string | undefined): Promise<string> {
+    return this.build({id, className, consistencyLevel},
       [this.addClassNameDeprecatedCheck, this.addId, this.addQueryParams]);
   }
 

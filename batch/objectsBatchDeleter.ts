@@ -9,6 +9,7 @@ export default class ObjectsBatchDeleter {
   private dryRun?: boolean;
   private errors: any[];
   private client: Connection;
+  private consistencyLevel?: string
 
   constructor(client: Connection) {
     this.client = client;
@@ -35,7 +36,7 @@ export default class ObjectsBatchDeleter {
     return this;
   }
 
-  withConsistencyLevel = (cl) => {
+  withConsistencyLevel = (cl: string) => {
     this.consistencyLevel = cl;
     return this;
   };
