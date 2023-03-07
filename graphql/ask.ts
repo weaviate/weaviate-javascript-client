@@ -1,11 +1,12 @@
 export default class GraphQLAsk {
-  private source: any;
-  private question?: string;
-  private properties?: string[];
-  private certainty?: number;
   private autocorrect?: boolean;
-  private rerank?: boolean;
+  private certainty?: number;
   private distance?: number;
+  private properties?: string[];
+  private question?: string;
+  private rerank?: boolean;
+  private source: any;
+
   constructor(askObj: any) {
     this.source = askObj;
   }

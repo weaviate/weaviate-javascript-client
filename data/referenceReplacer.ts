@@ -1,22 +1,21 @@
 import Connection from "../connection";
 import {BeaconPath} from "../utils/beaconPath";
 import {ReferencesPath} from "./path";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ReferenceReplacer {
-  private client: Connection;
-  private referencesPath: ReferencesPath;
+export default class ReferenceReplacer extends CommandBase {
   private beaconPath: BeaconPath;
-  private errors: any[];
-  private references?: any[];
   private className?: string;
-  private refProp?: string;
-  private id?: string;
   private consistencyLevel?: string
+  private id?: string;
+  private references?: any[];
+  private referencesPath: ReferencesPath;
+  private refProp?: string;
+
   constructor(client: Connection, referencesPath: ReferencesPath, beaconPath: BeaconPath) {
-    this.client = client;
-    this.referencesPath = referencesPath;
+    super(client)
     this.beaconPath = beaconPath;
-    this.errors = [];
+    this.referencesPath = referencesPath;
   }
 
   withId = (id: string) => {
@@ -46,10 +45,7 @@ export default class ReferenceReplacer {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

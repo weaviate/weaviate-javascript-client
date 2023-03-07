@@ -1,9 +1,10 @@
 export default class GraphQLNearImage {
-  private source: any;
-  private distance?: number;
   private certainty?: number;
+  private distance?: number;
   private image?: string;
   private imageBlob: any;
+  private source: any;
+
   constructor(nearImageObj: any) {
     this.source = nearImageObj;
   }

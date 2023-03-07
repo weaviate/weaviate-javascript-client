@@ -1,12 +1,17 @@
 import Connection from "../connection";
 import {DbVersionProvider} from "../utils/dbVersion";
+import {CommandBase} from "../validation/commandBase";
 
-export default class LiveChecker {
-  private client: Connection;
+export default class LiveChecker extends CommandBase {
   private dbVersionProvider: DbVersionProvider;
+
   constructor(client: Connection, dbVersionProvider: DbVersionProvider) {
-    this.client = client;
+    super(client)
     this.dbVersionProvider = dbVersionProvider;
+  }
+
+  validate() {
+    // nothing to validate
   }
 
   do = () => {

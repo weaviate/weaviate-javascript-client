@@ -1,19 +1,17 @@
 import { isValidStringProperty } from "../validation/string";
 import { buildObjectsPath } from "./path"
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ObjectsBatchDeleter {
+export default class ObjectsBatchDeleter extends CommandBase {
   private className?: string;
-  private whereFilter?: any;
-  private output?: any;
-  private dryRun?: boolean;
-  private errors: any[];
-  private client: Connection;
   private consistencyLevel?: string
+  private dryRun?: boolean;
+  private output?: any;
+  private whereFilter?: any;
 
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClassName(className: string) {
@@ -54,19 +52,13 @@ export default class ObjectsBatchDeleter {
 
   validateClassName() {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "string className must be set - set with .withClassName(className)",
-      ];
+      this.addError("string className must be set - set with .withClassName(className)")
     }
   }
 
   validateWhereFilter() {
     if (typeof this.whereFilter != "object") {
-      this.errors = [
-        ...this.errors,
-        "object where must be set - set with .withWhere(whereFilter)"
-      ]
+      this.addError("object where must be set - set with .withWhere(whereFilter)")
     }
   }
 

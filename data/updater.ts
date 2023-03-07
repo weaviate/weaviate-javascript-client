@@ -1,20 +1,18 @@
 import { isValidStringProperty } from "../validation/string";
 import {ObjectsPath} from "./path";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Updater {
-  private client: Connection;
-  private objectsPath: ObjectsPath;
-  private errors: any[];
+export default class Updater extends CommandBase {
   private className?: string;
-  private id?: string;
-  private properties?: any[];
   private consistencyLevel?: string
+  private id?: string;
+  private objectsPath: ObjectsPath;
+  private properties?: any[];
 
   constructor(client: Connection, objectsPath: ObjectsPath) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
   }
 
   withProperties = (properties: any[]) => {
@@ -34,19 +32,13 @@ export default class Updater {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - use withClassName(className)",
-      ];
+      this.addError("className must be set - use withClassName(className)")
     }
   };
 
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
-      this.errors = [
-        ...this.errors,
-        "id must be set - initialize with updater(id)",
-      ];
+      this.addError("id must be set - initialize with updater(id)")
     }
   };
 

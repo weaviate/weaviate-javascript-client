@@ -1,9 +1,14 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class MetaGetter {
-  private client: Connection;
+export default class MetaGetter extends CommandBase {
+
   constructor(client: Connection) {
-    this.client = client;
+    super(client)
+  }
+
+  validate() {
+    // nothing to validate
   }
 
   do = () => {

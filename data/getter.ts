@@ -1,18 +1,17 @@
 import Connection from "../connection";
 import {ObjectsPath} from "./path";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Getter {
-  private client: Connection;
-  private objectsPath: ObjectsPath;
-  private errors: any[];
+export default class Getter extends CommandBase {
   private additionals: any[];
+  private after?: string
   private className?: string;
   private limit?: number;
-  private after?: string
+  private objectsPath: ObjectsPath;
+
   constructor(client: Connection, objectsPath: ObjectsPath) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
     this.additionals = [];
   }
 
@@ -39,6 +38,10 @@ export default class Getter {
   withAdditional = (additionalFlag: any) => this.extendAdditionals(additionalFlag);
 
   withVector = () => this.extendAdditionals("vector");
+
+  validate() {
+    // nothing to validate
+  }
 
   do = () => {
     if (this.errors.length > 0) {

@@ -1,19 +1,18 @@
 import Getter from "./getter";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Scheduler {
-  private client: Connection;
-  private errors: any[];
-  private waitTimeout: number;
-  private waitForCompletion: boolean;
-  private classifyProperties?: string[];
+export default class Scheduler extends CommandBase {
   private basedOnProperties?: string[];
+  private classifyProperties?: string[];
+  private className?: string;
   private settings?: any;
   private type?: string;
-  private className?: string;
+  private waitForCompletion: boolean;
+  private waitTimeout: number;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
     this.waitTimeout = 10 * 60 * 1000; // 10 minutes
     this.waitForCompletion = false;
   }
@@ -55,10 +54,7 @@ export default class Scheduler {
 
   validateIsSet = (prop: string | undefined | null | any[], name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

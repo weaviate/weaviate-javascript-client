@@ -1,13 +1,12 @@
 import { isValidStringProperty } from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ClassDeleter {
-  private client: Connection;
-  private errors: any[];
+export default class ClassDeleter extends CommandBase {
   private className?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClassName = (className: string) => {
@@ -17,10 +16,7 @@ export default class ClassDeleter {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)")
     }
   };
 

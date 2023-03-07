@@ -4,23 +4,22 @@ import NearVector from "./nearVector";
 import NearObject from "./nearObject";
 import {isValidPositiveIntProperty} from "../validation/number";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Aggregator {
-  private client: Connection;
-  private errors: any[];
-  private includesNearMediaFilter: boolean;
-  private fields?: string;
+export default class Aggregator extends CommandBase {
   private className?: string;
-  private whereString?: string;
-  private nearTextString?: string;
-  private nearObjectString?: string;
-  private objectLimit?: number;
-  private nearVectorString?: string;
-  private limit?: number;
+  private fields?: string;
   private groupBy?: string[];
+  private includesNearMediaFilter: boolean;
+  private limit?: number;
+  private nearObjectString?: string;
+  private nearTextString?: string;
+  private nearVectorString?: string;
+  private objectLimit?: number;
+  private whereString?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
     this.includesNearMediaFilter = false
   }
 
@@ -37,24 +36,22 @@ export default class Aggregator {
   withWhere = (whereObj: any) => {
     try {
       this.whereString = new Where(whereObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e as string);
     }
     return this;
   };
 
   withNearText = (nearTextObj: any) => {
     if (this.includesNearMediaFilter) {
-      throw new Error(
-        "cannot use multiple near<Media> filters in a single query"
-      )
+      throw new Error("cannot use multiple near<Media> filters in a single query")
     }
 
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -62,16 +59,14 @@ export default class Aggregator {
 
   withNearObject = (nearObjectObj: any) => {
     if (this.includesNearMediaFilter) {
-      throw new Error(
-        "cannot use multiple near<Media> filters in a single query"
-      )
+      throw new Error("cannot use multiple near<Media> filters in a single query")
     }
 
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -79,16 +74,14 @@ export default class Aggregator {
 
   withNearVector = (nearVectorObj: any) => {
     if (this.includesNearMediaFilter) {
-      throw new Error(
-        "cannot use multiple near<Media> filters in a single query"
-      )
+      throw new Error("cannot use multiple near<Media> filters in a single query")
     }
 
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -96,9 +89,7 @@ export default class Aggregator {
 
   withObjectLimit = (objectLimit: number) => {
     if (!isValidPositiveIntProperty(objectLimit)) {
-      throw new Error(
-        "objectLimit must be a non-negative integer"
-      )
+      throw new Error("objectLimit must be a non-negative integer")
     }
 
     this.objectLimit = objectLimit;
@@ -128,10 +119,7 @@ export default class Aggregator {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

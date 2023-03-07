@@ -1,10 +1,11 @@
 export default class GraphQLWhere {
-  private source: any;
   private operands?: string;
-  private path?: string[];
-  private valueType?: string;
-  private valueContent: any;
   private operator?: string;
+  private path?: string[];
+  private readonly source: any;
+  private valueContent: any;
+  private valueType?: string;
+
   constructor(whereObj: any) {
     this.source = whereObj;
   }

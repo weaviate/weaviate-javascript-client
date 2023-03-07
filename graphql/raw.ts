@@ -1,13 +1,11 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class RawGraphQL {
-  private client: Connection;
-  private errors: any[];
+export default class RawGraphQL extends CommandBase {
   private query?: string;
 
-    constructor(client: Connection/*, quer*/) { // FIXME extra param
-        this.client = client;
-        this.errors = [];
+    constructor(client: Connection) {
+      super(client)
     }
 
     withQuery = (query: any) => {
@@ -18,10 +16,7 @@ export default class RawGraphQL {
 
     validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
         if (prop == undefined || prop == null || prop.length == 0) {
-            this.errors = [
-                ...this.errors,
-                `${name} must be set - set with ${setter}`,
-            ];
+            this.addError(`${name} must be set - set with ${setter}`)
         }
     };
 

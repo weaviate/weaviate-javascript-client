@@ -1,14 +1,13 @@
 import { isValidStringProperty } from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class PropertyCreator {
-  private client: Connection;
-  private errors: any[];
-  private property: any;
+export default class PropertyCreator extends CommandBase {
   private className?: string;
+  private property: any;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClassName = (className: string) => {
@@ -23,19 +22,13 @@ export default class PropertyCreator {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)")
     }
   };
 
   validateProperty = () => {
     if (this.property == undefined || this.property == null) {
-      this.errors = [
-        ...this.errors,
-        "property must be set - set with .withProperty(property)",
-      ];
+      this.addError("property must be set - set with .withProperty(property)")
     }
   };
 

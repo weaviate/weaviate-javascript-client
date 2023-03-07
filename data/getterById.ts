@@ -1,18 +1,17 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class GetterById {
-  private client: Connection;
-  private errors: any[];
+export default class GetterById extends CommandBase{
   private additionals: any[];
-  private objectsPath: any;
-  private id?: string;
   private className?: string;
   private consistencyLevel?: string;
+  private id?: string;
   private nodeName: any;
+  private objectsPath: any;
+
   constructor(client: Connection, objectsPath: any) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
     this.additionals = [];
   }
 
@@ -47,10 +46,7 @@ export default class GetterById {
 
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
-      this.errors = [
-        ...this.errors,
-        "id must be set - initialize with getterById(id)",
-      ];
+      this.addError("id must be set - initialize with getterById(id)")
     }
   };
 

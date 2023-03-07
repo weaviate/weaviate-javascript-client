@@ -1,15 +1,14 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Checker {
-  private client: Connection;
-  private objectsPath: any;
-  private errors: any[];
+export default class Checker extends CommandBase {
   private className?: string;
   private id?: string;
+  private objectsPath: any;
+
   constructor(client: Connection, objectsPath: any) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
   }
 
   withId = (id: string) => {
@@ -24,10 +23,7 @@ export default class Checker {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

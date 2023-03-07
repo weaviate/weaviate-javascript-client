@@ -1,16 +1,14 @@
 import { validateBackupId, validateBackend } from "./validation";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class BackupRestoreStatusGetter {
+export default class BackupRestoreStatusGetter extends CommandBase {
 
   private backend?: string
   private backupId?: string;
-  private errors: any[]
-  private client: Connection;
 
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [] // FIXME it was not initialized
+    super(client)
   }
 
   withBackend(backend: string) {
@@ -24,10 +22,10 @@ export default class BackupRestoreStatusGetter {
   }
 
   validate() {
-    this.errors = [
+    [
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ];
+    ].forEach(this.addError, this)
   }
 
   do() {

@@ -1,18 +1,17 @@
 import { buildRefsPath } from "./path"
 import { BeaconPath } from "../utils/beaconPath";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ReferencesBatcher {
-  private client: Connection;
+export default class ReferencesBatcher extends CommandBase {
   private beaconPath: BeaconPath;
-  public references: any[];
-  private errors: any[];
   private consistencyLevel?: string
+  public references: any[];
+
   constructor(client: Connection, beaconPath: BeaconPath) {
-    this.client = client;
+    super(client)
     this.beaconPath = beaconPath;
     this.references = [];
-    this.errors = [];
   }
 
   /**
@@ -44,11 +43,7 @@ export default class ReferencesBatcher {
 
   validateReferenceCount = () => {
     if (this.references.length == 0) {
-      this.errors = [
-        ...this.errors,
-        "need at least one reference to send a request, " +
-          "add one with .withReference(obj)",
-      ];
+      this.addError("need at least one reference to send a request, add one with .withReference(obj)")
     }
   };
 

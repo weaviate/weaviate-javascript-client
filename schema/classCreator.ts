@@ -1,12 +1,11 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ClassCreator {
+export default class ClassCreator extends CommandBase {
   private class: any;
-  private client: Connection;
-  private errors: any[];
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClass = (classObj: any) => {
@@ -16,12 +15,13 @@ export default class ClassCreator {
 
   validateClass = () => {
     if (this.class == undefined || this.class == null) {
-      this.errors = [
-        ...this.errors,
-        "class object must be set - set with .withClass(class)",
-      ];
+      this.addError("class object must be set - set with .withClass(class)")
     }
   };
+
+  validate() {
+    this.validateClass()
+  }
 
   do = () => {
     this.validateClass();

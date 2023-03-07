@@ -1,15 +1,14 @@
 import { buildObjectsPath } from "./path"
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ObjectsBatcher {
-  private client: Connection;
-  public objects: any[];
-  private errors: any[];
+export default class ObjectsBatcher extends CommandBase {
   private consistencyLevel?: string
+  public objects: any[];
+
   constructor(client: Connection) {
-    this.client = client;
+    super(client)
     this.objects = [];
-    this.errors = [];
   }
 
   /**
@@ -43,11 +42,7 @@ export default class ObjectsBatcher {
 
   validateObjectCount = () => {
     if (this.objects.length == 0) {
-      this.errors = [
-        ...this.errors,
-        "need at least one object to send a request, " +
-          "add one with .withObject(obj)",
-      ];
+      this.addError("need at least one object to send a request, add one with .withObject(obj)")
     }
   };
 

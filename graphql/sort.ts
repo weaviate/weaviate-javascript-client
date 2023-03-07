@@ -1,9 +1,9 @@
 export default class GraphQLSort {
-  private source: any;
-  private sortArgs: any[];
-  private errors: any[];
+  private errors: string[];
   private order?: string;
   private path?: string[];
+  private sortArgs: any[];
+  private source: any;
 
   constructor(sortObj: any) {
     this.source = sortObj;

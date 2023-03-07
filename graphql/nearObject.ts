@@ -1,9 +1,10 @@
 export default class GraphQLNearObject {
-  source: any;
-  private distance?: number;
-  private certainty?: number;
   private beacon?: string;
+  private certainty?: number;
+  private distance?: number;
   private id?: string;
+  private readonly source: any;
+
   constructor(nearObjectObj: any) {
     this.source = nearObjectObj;
   }

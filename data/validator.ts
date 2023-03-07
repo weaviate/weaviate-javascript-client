@@ -1,15 +1,14 @@
 import { isValidStringProperty } from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Validator {
-  private client: Connection;
-  private errors: any[];
+export default class Validator extends CommandBase {
+  private className?: string;
   private id?: string;
   private properties?: any;
-  private className?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClassName = (className: string) => {
@@ -29,10 +28,7 @@ export default class Validator {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)",)
     }
   };
 

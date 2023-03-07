@@ -4,23 +4,22 @@ import NearObject from "./nearObject";
 import NearImage from "./nearImage";
 import Ask from "./ask";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Explorer {
-  private client: Connection;
-  private errors: any[];
-  private params: {};
-  private group?: string[];
-  private nearVectorString?: string;
-  private nearImageString?: string;
+export default class Explorer extends CommandBase {
   private askString?: string;
+  private fields?: string;
+  private group?: string[];
+  private limit?: number
+  private nearImageString?: string;
   private nearObjectString?: string;
   private nearTextString?: string;
-  private limit?: number
-  private fields?: string;
+  private nearVectorString?: string;
+  private params: {};
+
   constructor(client: Connection) {
-    this.client = client;
+    super(client)
     this.params = {};
-    this.errors = [];
   }
 
   withFields = (fields: string) => {
@@ -36,8 +35,8 @@ export default class Explorer {
   withNearText = (nearTextObj: any) => {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -45,8 +44,8 @@ export default class Explorer {
   withNearObject = (nearObjectObj: any) => {
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -54,8 +53,8 @@ export default class Explorer {
   withAsk = (askObj: any) => {
     try {
       this.askString = new Ask(askObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -63,8 +62,8 @@ export default class Explorer {
   withNearImage = (nearImageObj: any) => {
     try {
       this.nearImageString = new NearImage(nearImageObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -72,8 +71,8 @@ export default class Explorer {
   withNearVector = (nearVectorObj: any) => {
     try {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -91,10 +90,7 @@ export default class Explorer {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 
@@ -102,7 +98,7 @@ export default class Explorer {
     this.validateIsSet(this.fields, "fields", ".withFields(fields)");
   };
 
-  do = () => {
+  do = (): Promise<any> => {
     let params = "";
 
     this.validate();

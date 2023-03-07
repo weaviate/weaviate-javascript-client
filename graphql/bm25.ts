@@ -1,9 +1,9 @@
 import { isValidStringArray, isValidStringProperty } from "../validation/string";
 
 export default class GraphQLBm25 {
-  private source: any;
-  private query?: string;
   private properties?: string[];
+  private query?: string;
+  private source: any;
 
   constructor(bm25Obj: any) {
     this.source = bm25Obj;

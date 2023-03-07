@@ -1,6 +1,8 @@
 export default class GraphQLNearText {
-  private source: any;
   private autocorrect?: boolean;
+  private certainty?: number;
+  private concepts?: string[];
+  private distance?: number;
   private moveAwayFrom: any;
   private moveAwayFromConcepts?: string[];
   private moveAwayFromForce?: number;
@@ -9,9 +11,8 @@ export default class GraphQLNearText {
   private moveToConcepts?: string[];
   private moveToForce?: number;
   private moveToObjects?: string;
-  private distance?: number;
-  private concepts?: string[];
-  private certainty?: number;
+  private readonly source: any;
+
   constructor(nearTextObj: any) {
     this.source = nearTextObj;
   }

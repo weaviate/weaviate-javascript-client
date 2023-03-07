@@ -1,15 +1,13 @@
 import { validateBackend } from "./validation";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class BackupGetter {
+export default class BackupGetter extends CommandBase {
 
-  private client: Connection
   private backend?: string;
-  private errors: any[];
 
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = []
+    super(client)
   }
 
   withBackend(backend: string) {
@@ -18,7 +16,7 @@ export default class BackupGetter {
   }
 
   validate() {
-    this.errors = validateBackend(this.backend);
+    this.addErrors(validateBackend(this.backend))
   }
 
   do() {

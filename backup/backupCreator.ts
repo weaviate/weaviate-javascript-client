@@ -2,23 +2,21 @@ import {CreateStatus} from "./consts";
 import {validateBackend, validateBackupId, validateExcludeClassNames, validateIncludeClassNames} from "./validation";
 import BackupCreateStatusGetter from "./backupCreateStatusGetter";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
 const WAIT_INTERVAL = 1000;
 
-export default class BackupCreator {
+export default class BackupCreator extends CommandBase {
 
-  private includeClassNames?: string[];
-  private excludeClassNames?: string[];
   private backend?: string;
   private backupId?: string;
-  private waitForCompletion!: boolean;
-  private errors: any[];
-  private client: Connection;
+  private excludeClassNames?: string[];
+  private includeClassNames?: string[];
   private statusGetter: BackupCreateStatusGetter;
+  private waitForCompletion!: boolean;
 
   constructor(client: Connection, statusGetter: BackupCreateStatusGetter) {
-    this.client = client;
-    this.errors = []
+    super(client)
     this.statusGetter = statusGetter;
   }
 
@@ -56,12 +54,12 @@ export default class BackupCreator {
   }
 
   validate() {
-    this.errors = [
+    [
       ...validateIncludeClassNames(this.includeClassNames),
       ...validateExcludeClassNames(this.excludeClassNames),
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ];
+    ].forEach(this.addError, this)
   }
 
   do() {

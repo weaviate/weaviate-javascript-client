@@ -1,14 +1,13 @@
 import { isValidStringProperty } from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ReferencePayloadBuilder {
-  private client: Connection;
-  private errors: any[];
+export default class ReferencePayloadBuilder extends CommandBase {
   private className?: string;
   private id?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withId = (id: string) => {
@@ -23,10 +22,7 @@ export default class ReferencePayloadBuilder {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 
@@ -48,4 +44,8 @@ export default class ReferencePayloadBuilder {
       beacon: `${beacon}/${this.id}`,
     };
   };
+
+  do(): Promise<any> {
+    return Promise.reject('Should never be called');
+  }
 }

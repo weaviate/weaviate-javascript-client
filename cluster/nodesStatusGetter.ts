@@ -1,10 +1,14 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class NodesStatusGetter {
-  private client: Connection;
+export default class NodesStatusGetter extends CommandBase {
 
   constructor(client: Connection) {
-    this.client = client;
+    super(client)
+  }
+
+  validate() {
+    //nothing to validate
   }
 
   do() {

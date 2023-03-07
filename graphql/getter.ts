@@ -9,29 +9,28 @@ import Ask from "./ask";
 import Group from "./group";
 import Sort from "./sort";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Getter {
-  private client: Connection;
-  private errors: any[];
-  private includesNearMediaFilter: boolean;
-  private nearVectorString?: string;
-  private nearTextString?: string;
-  private groupString?: string;
-  private whereString?: string;
+export default class Getter extends CommandBase {
+  private after?: string
+  private askString?: string;
+  private bm25String?: string;
   private className?: string;
   private fields: any;
-  private sortString?: string;
-  private offset: any;
-  private limit: any;
-  private nearObjectString?: string;
-  private bm25String?: string;
+  private groupString?: string;
   private hybridString?: string;
-  private askString?: string;
+  private includesNearMediaFilter: boolean;
+  private limit: any;
   private nearImageString?: string;
-  private after?: string
+  private nearObjectString?: string;
+  private nearTextString?: string;
+  private nearVectorString?: string;
+  private offset: any;
+  private sortString?: string;
+  private whereString?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
     this.includesNearMediaFilter = false
   }
 
@@ -53,8 +52,8 @@ export default class Getter {
   withGroup = (groupObj: any) => {
     try {
       this.groupString = new Group(groupObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -63,8 +62,8 @@ export default class Getter {
   withWhere = (whereObj: any) => {
     try {
       this.whereString = new Where(whereObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -79,8 +78,8 @@ export default class Getter {
     try {
       this.nearTextString = new NearText(nearTextObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -89,8 +88,8 @@ export default class Getter {
   withBm25 = (bm25Obj: any) => {
     try {
       this.bm25String = new Bm25(bm25Obj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -99,8 +98,8 @@ export default class Getter {
   withHybrid = (hybridObj: any) => {
     try {
       this.hybridString = new Hybrid(hybridObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -117,8 +116,8 @@ export default class Getter {
     try {
       this.nearObjectString = new NearObject(nearObjectObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -127,8 +126,8 @@ export default class Getter {
   withAsk = (askObj: any) => {
     try {
       this.askString = new Ask(askObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
@@ -143,8 +142,8 @@ export default class Getter {
     try {
       this.nearImageString = new NearImage(nearImageObj).toString();
       this.includesNearMediaFilter = true;
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
 
     return this;
@@ -161,7 +160,7 @@ export default class Getter {
       this.nearVectorString = new NearVector(nearVectorObj).toString();
       this.includesNearMediaFilter = true;
     } catch (e: any) {
-      this.errors = [...this.errors, e];
+      this.addError(e.toString())
     }
 
     return this;
@@ -180,18 +179,15 @@ export default class Getter {
   withSort = (sortObj: any) => {
     try {
       this.sortString = new Sort(sortObj).toString();
-    } catch (e) {
-      this.errors = [...this.errors, e];
+    } catch (e: any) {
+      this.addError(e.toString())
     }
     return this;
   };
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 
@@ -284,7 +280,7 @@ export default class Getter {
       }
 
       params = `(${args.join(",")})`;
-    } 
+    }
 
     return this.client.query(
       `{Get{${this.className}${params}{${this.fields}}}}`

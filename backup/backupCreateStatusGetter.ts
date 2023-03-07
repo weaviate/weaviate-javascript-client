@@ -1,16 +1,13 @@
 import Connection from '../connection'
 import { validateBackupId, validateBackend } from "./validation";
+import {CommandBase} from "../validation/commandBase";
 
-export default class BackupCreateStatusGetter {
-
+export default class BackupCreateStatusGetter extends CommandBase {
   private backend?: string;
   private backupId?: string;
-  private errors: any[];
-  private client: Connection;
 
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = []
+    super(client)
   }
 
   withBackend(backend: string) {
@@ -24,10 +21,10 @@ export default class BackupCreateStatusGetter {
   }
 
   validate() {
-    this.errors = [
+    [
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ];
+    ].forEach(this.addError, this)
   }
 
   do() {

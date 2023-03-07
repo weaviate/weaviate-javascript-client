@@ -1,14 +1,13 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ExtensionCreator {
-  private client: Connection;
-  private errors: any[];
+export default class ExtensionCreator extends CommandBase {
   private concept?: string;
   private definition?: string;
   private weight?: number;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withConcept = (concept: string) => {
@@ -28,10 +27,7 @@ export default class ExtensionCreator {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

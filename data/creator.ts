@@ -1,20 +1,19 @@
 import { isValidStringProperty } from "../validation/string";
 import Connection from "../connection";
 import {ObjectsPath} from "./path";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Creator {
-  private client: Connection;
-  private objectsPath: ObjectsPath;
-  private errors: any[];
-  private vector: any;
+export default class Creator extends CommandBase {
   private className?: string;
-  private properties?: any;
-  private id?: string;
   private consistencyLevel?: string
+  private id?: string;
+  private objectsPath: ObjectsPath;
+  private properties?: any;
+  private vector: any;
+
   constructor(client: Connection, objectsPath: ObjectsPath) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
   }
 
   withVector = (vector: any) => {
@@ -44,10 +43,7 @@ export default class Creator {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)")
     }
   };
 

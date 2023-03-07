@@ -1,20 +1,16 @@
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ConceptsGetter {
-  private client: Connection;
-  private errors: any[];
+export default class ConceptsGetter extends CommandBase {
   private concept?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 

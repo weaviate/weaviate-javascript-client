@@ -1,19 +1,18 @@
 import Connection from "../connection";
 import {isValidStringProperty} from "../validation/string";
 import {ObjectsPath} from "./path";
+import {CommandBase} from "../validation/commandBase";
 
-export default class Merger {
-  private client: Connection;
-  private objectsPath: ObjectsPath;
-  private errors: any[];
+export default class Merger extends CommandBase {
   private className?: string;
-  private properties?: any[];
-  private id?: string;
   private consistencyLevel?: string
+  private id?: string;
+  private objectsPath: ObjectsPath;
+  private properties?: any[];
+
   constructor(client: Connection, objectsPath: ObjectsPath) {
-    this.client = client;
+    super(client)
     this.objectsPath = objectsPath;
-    this.errors = [];
   }
 
   withProperties = (properties: any[]) => {
@@ -38,16 +37,13 @@ export default class Merger {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with withClassName(className)",
-      ];
+      this.addError("className must be set - set with withClassName(className)")
     }
   };
 
   validateId = () => {
     if (this.id == undefined || this.id == null || this.id.length == 0) {
-      this.errors = [...this.errors, "id must be set - set with withId(id)"];
+      this.addError("id must be set - set with withId(id)")
     }
   };
 

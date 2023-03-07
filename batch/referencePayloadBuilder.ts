@@ -1,17 +1,16 @@
 import {isValidStringProperty} from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ReferencesBatcher {
-  private client: Connection;
-  private errors: any[];
-  private fromId?: string;
-  private toId?: string;
+export default class ReferencesBatcher extends CommandBase {
   private fromClassName?: string;
+  private fromId?: string;
   private fromRefProp?: string;
   private toClassName?: string;
+  private toId?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withFromId = (id: string) => {
@@ -41,10 +40,7 @@ export default class ReferencesBatcher {
 
   validateIsSet = (prop: string | undefined | null, name: string, setter: string) => {
     if (prop == undefined || prop == null || prop.length == 0) {
-      this.errors = [
-        ...this.errors,
-        `${name} must be set - set with ${setter}`,
-      ];
+      this.addError(`${name} must be set - set with ${setter}`)
     }
   };
 
@@ -81,4 +77,8 @@ export default class ReferencesBatcher {
       to: `${beaconTo}/${this.toId}`,
     };
   };
+
+  do(): Promise<any> {
+    return Promise.reject('Should never be called');
+  }
 }

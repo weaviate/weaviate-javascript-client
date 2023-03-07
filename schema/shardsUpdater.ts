@@ -2,16 +2,15 @@ import { isValidStringProperty } from "../validation/string";
 import { getShards } from "./shardsGetter";
 import { updateShard } from "./shardUpdater";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ShardsUpdater {
-  private client: Connection;
-  private errors: any[];
+export default class ShardsUpdater extends CommandBase {
+  private className?: string;
   private shards: any[];
   private status?: string;
-  private className?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
     this.shards = [];
   }
 
@@ -22,10 +21,7 @@ export default class ShardsUpdater {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)")
     }
   };
 
@@ -36,10 +32,7 @@ export default class ShardsUpdater {
 
   validateStatus = () => {
     if (!isValidStringProperty(this.status)) {
-      this.errors = [
-        ...this.errors,
-        "status must be set - set with .withStatus(status)",
-      ];
+      this.addError("status must be set - set with .withStatus(status)")
     }
   };
 
@@ -55,7 +48,7 @@ export default class ShardsUpdater {
         .then((res: any) => {
           payload.push({name: this.shards[i].name, status: res.status})
         })
-        .catch((err: any) => this.errors = [...this.errors, err]);
+        .catch((err: any) => this.addError(err.toString()));
     }
 
     if (this.errors.length > 0) {

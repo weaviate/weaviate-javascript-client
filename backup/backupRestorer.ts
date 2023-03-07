@@ -2,24 +2,22 @@ import {RestoreStatus} from "./consts";
 import {validateBackend, validateBackupId, validateExcludeClassNames, validateIncludeClassNames} from "./validation";
 import Connection from "../connection";
 import BackupRestoreStatusGetter from "./backupRestoreStatusGetter";
+import {CommandBase} from "../validation/commandBase";
 
 const WAIT_INTERVAL = 1000;
 
-export default class BackupRestorer {
+export default class BackupRestorer extends CommandBase {
 
-  private client: Connection
-  private includeClassNames?: string[];
-  private excludeClassNames?: string[];
   private backend?: string;
   private backupId?: string;
-  private waitForCompletion?: boolean;
-  private errors: any[];
+  private excludeClassNames?: string[];
+  private includeClassNames?: string[];
   private statusGetter: BackupRestoreStatusGetter;
+  private waitForCompletion?: boolean;
 
   constructor(client: Connection, statusGetter: BackupRestoreStatusGetter) {
-    this.client = client;
+    super(client)
     this.statusGetter = statusGetter;
-    this.errors = []
   }
 
   withIncludeClassNames(...classNames: string[]) {
@@ -56,12 +54,12 @@ export default class BackupRestorer {
   }
 
   validate() {
-    this.errors = [
+    [
       ...validateIncludeClassNames(this.includeClassNames || []),
       ...validateExcludeClassNames(this.excludeClassNames || []),
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ];
+    ].forEach(this.addError, this)
   }
 
   do() {

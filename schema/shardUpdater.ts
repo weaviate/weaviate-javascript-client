@@ -1,15 +1,14 @@
 import {isValidStringProperty} from "../validation/string";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ShardUpdater {
-  private client: Connection;
-  private errors: any[];
+export default class ShardUpdater extends CommandBase {
   private className?: string;
   private shardName?: string;
   private status?: string;
+
   constructor(client: Connection) {
-    this.client = client;
-    this.errors = [];
+    super(client)
   }
 
   withClassName = (className: string) => {
@@ -19,10 +18,7 @@ export default class ShardUpdater {
 
   validateClassName = () => {
     if (!isValidStringProperty(this.className)) {
-      this.errors = [
-        ...this.errors,
-        "className must be set - set with .withClassName(className)",
-      ];
+      this.addError("className must be set - set with .withClassName(className)")
     }
   };
 
@@ -33,10 +29,7 @@ export default class ShardUpdater {
 
   validateShardName = () => {
     if (!isValidStringProperty(this.shardName)) {
-      this.errors = [
-        ...this.errors,
-        "shardName must be set - set with .withShardName(shardName)",
-      ];
+      this.addError("shardName must be set - set with .withShardName(shardName)")
     }
   };
 
@@ -47,10 +40,7 @@ export default class ShardUpdater {
 
   validateStatus = () => {
     if (!isValidStringProperty(this.status)) {
-      this.errors = [
-        ...this.errors,
-        "status must be set - set with .withStatus(status)",
-      ];
+      this.addError("status must be set - set with .withStatus(status)")
     }
   };
 

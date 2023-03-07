@@ -2,10 +2,10 @@ import { isValidNumber, isValidNumberArray } from "../validation/number";
 import { isValidStringProperty } from "../validation/string";
 
 export default class GraphQLHybrid {
-  private source: any;
-  private query?: string;
-  private vector?: number[];
   private alpha?: number;
+  private query?: string;
+  private source: any;
+  private vector?: number[];
 
   constructor(hybridObj: any) {
     this.source = hybridObj;

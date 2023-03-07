@@ -1,12 +1,17 @@
 import {DbVersionProvider} from "../utils/dbVersion";
 import Connection from "../connection";
+import {CommandBase} from "../validation/commandBase";
 
-export default class ReadyChecker {
-  private client: Connection;
+export default class ReadyChecker extends CommandBase {
   private dbVersionProvider: DbVersionProvider;
+
   constructor(client: Connection, dbVersionProvider: DbVersionProvider) {
-    this.client = client;
+    super(client)
     this.dbVersionProvider = dbVersionProvider;
+  }
+
+  validate() {
+    // nothing to validate
   }
 
   do = () => {
