@@ -108,6 +108,10 @@ describe("connection", () => {
   })
 
   it("makes a scopeless WCS logged-in request with username/password", async () => {
+    if (process.env.WCS_DUMMY_CI_PW == undefined || process.env.WCS_DUMMY_CI_PW == "") {
+      console.warn("Skipping because `WCS_DUMMY_CI_PW` is not set");
+      return;
+    }
     const client = weaviate.client({
       scheme: "http",
       host: "localhost:8086",
