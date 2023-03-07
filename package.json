@@ -8,7 +8,8 @@
   },
   "files": [
     "/dist/index.js",
-    "/dist/index.js.map"
+    "/dist/index.js.map",
+    "/dist/**/*.d.ts"
   ],
   "scripts": {
     "test": " tsc -noEmit -p tsconfig-test.json && jest --useStderr --runInBand --detectOpenHandles --forceExit",
