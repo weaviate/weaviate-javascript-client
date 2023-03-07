@@ -2,6 +2,7 @@ export const Backend = {
   FILESYSTEM: "filesystem",
   S3: "s3",
   GCS: "gcs",
+  AZURE: "azure",
 };
 
 export const CreateStatus = {
