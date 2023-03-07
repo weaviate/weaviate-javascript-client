@@ -54,12 +54,12 @@ export default class BackupRestorer extends CommandBase {
   }
 
   validate() {
-    [
+    this.addErrors([
       ...validateIncludeClassNames(this.includeClassNames || []),
       ...validateExcludeClassNames(this.excludeClassNames || []),
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ].forEach(this.addError, this)
+    ])
   }
 
   do() {

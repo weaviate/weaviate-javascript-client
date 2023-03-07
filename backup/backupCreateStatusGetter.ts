@@ -21,10 +21,10 @@ export default class BackupCreateStatusGetter extends CommandBase {
   }
 
   validate() {
-    [
+    this.addErrors([
       ...validateBackend(this.backend),
       ...validateBackupId(this.backupId),
-    ].forEach(this.addError, this)
+    ])
   }
 
   do() {
