@@ -7,3 +7,4 @@ lib.js
 weaviate-data/
 .vscode/
 .idea/
+*.tgz
