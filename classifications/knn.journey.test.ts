@@ -46,16 +46,18 @@ describe("a classification journey", () => {
     });
 
     it("eventually turns to completed", () => {
-      const timeout = 5 * 1000;
+      const timeoutMS = 5 * 1000;
 
       return new Promise((resolve, reject) => {
-        setTimeout(reject, timeout);
-        setInterval(() => {
+        var timeout = setTimeout(reject, timeoutMS);
+        var backgroundWork = setInterval(() => {
           client.classifications
             .getter()
             .withId(id)
             .do()
             .then((res: any) => {
+              clearInterval(backgroundWork);
+              clearTimeout(timeout);
               res.status == "completed" && resolve(undefined);
             });
         }, 500);
@@ -108,7 +110,7 @@ describe("a classification journey", () => {
 
     let id; // will be assigned by weaviate, see then block in scheduler
 
-    it("triggers a classification without waiting", async () => {
+    it("triggers a classification and waits", async () => {
       return client.classifications
         .scheduler()
         .withType("knn")

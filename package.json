@@ -11,7 +11,7 @@
     "/dist/index.js.map"
   ],
   "scripts": {
-    "test": " tsc -noEmit -p tsconfig-test.json && jest --useStderr --runInBand --detectOpenHandles",
+    "test": " tsc -noEmit -p tsconfig-test.json && jest --useStderr --runInBand --detectOpenHandles --forceExit",
     "build": "tsc -noEmit && ./build.js",
     "prepack": "npm run build"
   },

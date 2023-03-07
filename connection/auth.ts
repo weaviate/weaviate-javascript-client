@@ -59,7 +59,7 @@ export class Authenticator {
         this.accessToken = resp.accessToken;
         this.expiresAt = resp.expiresAt;
         this.refreshToken = resp.refreshToken;
-        if (!this.refreshRunning) {
+        if (!this.refreshRunning && this.refreshTokenProvided()) {
           this.runBackgroundTokenRefresh(authenticator);
           this.refreshRunning = true;
         }
@@ -90,6 +90,10 @@ export class Authenticator {
       }
     }, 30_000)
   };
+
+  refreshTokenProvided = () => {
+    return this.refreshToken && this.refreshToken != ""
+  }
 }
 
 export interface IAuthUserPasswordCredentials {
