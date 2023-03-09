@@ -1,3 +1,9 @@
+# No Longer Maintained
+
+This library, while functional, is no longer being maintained.
+
+It has been replaced by the [Weaviate TypeScript client](https://github.com/weaviate/typescript-client). Please direct all issues and PRs there.
+
 # Weaviate JavaScript client <img alt='Weaviate logo' src='https://raw.githubusercontent.com/semi-technologies/weaviate/19de0956c69b66c5552447e84d016f4fe29d12c9/docs/assets/weaviate-logo.png' width='180' align='right' />
 
 Official JavaScript client for easy interaction with a Weaviate instance.
